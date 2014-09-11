@@ -1,0 +1,2319 @@
+Archive member included because of file (symbol)
+
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+                              avr32/drivers/flashc/flashc.o (__avr32_lsr64)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+                              avr32/drivers/flashc/flashc.o (__avr32_lsl64)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o (atexit)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o (exit)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o) (_global_impure_ptr)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memcpy.o)
+                              avr32/drivers/flashc/flashc.o (memcpy)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o (_init_startup)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o) (__register_exitproc)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o) (__call_exitprocs)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o) (__errno)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o) (__sf_fake_stdin)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o) (_fwalk)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o) (free)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o) (_malloc_r)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o) (memset)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o) (__malloc_lock)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o) (errno)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o) (_sbrk_r)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o) (__sclose)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o) (_write_r)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o) (_close_r)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o) (fclose)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o) (_fflush_r)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o) (_free_r)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o) (_lseek_r)
+/Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o) (_read_r)
+
+Allocating common symbols
+Common symbol       size              file
+
+errno               0x4               /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+
+Discarded input sections
+
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .data.__dso_handle
+                0x0000000000000000        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .text          0x0000000000000000        0x0 avr32/applications/blank/main.o
+ .data          0x0000000000000000        0x0 avr32/applications/blank/main.o
+ .bss           0x0000000000000000        0x0 avr32/applications/blank/main.o
+ .text          0x0000000000000000        0x0 avr32/boards/evk1101/led.o
+ .data          0x0000000000000000        0x0 avr32/boards/evk1101/led.o
+ .bss           0x0000000000000000        0x0 avr32/boards/evk1101/led.o
+ .debug_abbrev  0x0000000000000000      0x286 avr32/boards/evk1101/led.o
+ .debug_info    0x0000000000000000      0xf0f avr32/boards/evk1101/led.o
+ .debug_line    0x0000000000000000      0x931 avr32/boards/evk1101/led.o
+ .debug_macinfo
+                0x0000000000000000    0xd77fb avr32/boards/evk1101/led.o
+ .text.LED_Read_Display
+                0x0000000000000000        0xc avr32/boards/evk1101/led.o
+ .text.LED_Display
+                0x0000000000000000       0x50 avr32/boards/evk1101/led.o
+ .text.LED_Read_Display_Mask
+                0x0000000000000000        0xc avr32/boards/evk1101/led.o
+ .text.LED_Test
+                0x0000000000000000       0x10 avr32/boards/evk1101/led.o
+ .text.LED_Set_Intensity
+                0x0000000000000000       0x98 avr32/boards/evk1101/led.o
+ .text.LED_Get_Intensity
+                0x0000000000000000       0x3c avr32/boards/evk1101/led.o
+ .text.LED_Read_Display_Field
+                0x0000000000000000       0x18 avr32/boards/evk1101/led.o
+ .text.LED_Toggle
+                0x0000000000000000       0x50 avr32/boards/evk1101/led.o
+ .text.LED_On   0x0000000000000000       0x50 avr32/boards/evk1101/led.o
+ .text.LED_Off  0x0000000000000000       0x54 avr32/boards/evk1101/led.o
+ .text.LED_Display_Mask
+                0x0000000000000000       0x74 avr32/boards/evk1101/led.o
+ .text.LED_Display_Field
+                0x0000000000000000       0x18 avr32/boards/evk1101/led.o
+ .data.LED_State
+                0x0000000000000000        0x4 avr32/boards/evk1101/led.o
+ .rodata.LED_DESCRIPTOR
+                0x0000000000000000       0x40 avr32/boards/evk1101/led.o
+ .debug_frame   0x0000000000000000      0x108 avr32/boards/evk1101/led.o
+ .debug_loc     0x0000000000000000      0x22a avr32/boards/evk1101/led.o
+ .debug_pubnames
+                0x0000000000000000       0xf6 avr32/boards/evk1101/led.o
+ .debug_aranges
+                0x0000000000000000       0x78 avr32/boards/evk1101/led.o
+ .debug_ranges  0x0000000000000000       0x70 avr32/boards/evk1101/led.o
+ .debug_str     0x0000000000000000      0x4ed avr32/boards/evk1101/led.o
+ .comment       0x0000000000000000       0x29 avr32/boards/evk1101/led.o
+ .text          0x0000000000000000        0x0 avr32/drivers/adc/adc.o
+ .data          0x0000000000000000        0x0 avr32/drivers/adc/adc.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/adc/adc.o
+ .debug_abbrev  0x0000000000000000      0x1c9 avr32/drivers/adc/adc.o
+ .debug_info    0x0000000000000000     0x10e9 avr32/drivers/adc/adc.o
+ .debug_line    0x0000000000000000      0x66b avr32/drivers/adc/adc.o
+ .debug_macinfo
+                0x0000000000000000    0xd663d avr32/drivers/adc/adc.o
+ .text.adc_configure
+                0x0000000000000000       0x12 avr32/drivers/adc/adc.o
+ .text.adc_start
+                0x0000000000000000        0x6 avr32/drivers/adc/adc.o
+ .text.adc_enable
+                0x0000000000000000        0xa avr32/drivers/adc/adc.o
+ .text.adc_disable
+                0x0000000000000000       0x16 avr32/drivers/adc/adc.o
+ .text.adc_get_status
+                0x0000000000000000       0x10 avr32/drivers/adc/adc.o
+ .text.adc_check_eoc
+                0x0000000000000000       0x10 avr32/drivers/adc/adc.o
+ .text.adc_check_ovr
+                0x0000000000000000       0x10 avr32/drivers/adc/adc.o
+ .text.adc_get_value
+                0x0000000000000000       0x18 avr32/drivers/adc/adc.o
+ .text.adc_get_latest_value
+                0x0000000000000000        0xc avr32/drivers/adc/adc.o
+ .debug_frame   0x0000000000000000       0xa0 avr32/drivers/adc/adc.o
+ .debug_loc     0x0000000000000000       0x72 avr32/drivers/adc/adc.o
+ .debug_pubnames
+                0x0000000000000000       0xb3 avr32/drivers/adc/adc.o
+ .debug_aranges
+                0x0000000000000000       0x60 avr32/drivers/adc/adc.o
+ .debug_ranges  0x0000000000000000       0x58 avr32/drivers/adc/adc.o
+ .debug_str     0x0000000000000000      0x459 avr32/drivers/adc/adc.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/adc/adc.o
+ .text          0x0000000000000000        0x0 avr32/drivers/flashc/flashc.o
+ .data          0x0000000000000000        0x0 avr32/drivers/flashc/flashc.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/flashc/flashc.o
+ .debug_abbrev  0x0000000000000000      0x476 avr32/drivers/flashc/flashc.o
+ .debug_info    0x0000000000000000     0x1f63 avr32/drivers/flashc/flashc.o
+ .debug_line    0x0000000000000000     0x141c avr32/drivers/flashc/flashc.o
+ .debug_macinfo
+                0x0000000000000000    0xd674f avr32/drivers/flashc/flashc.o
+ .text.flashc_get_flash_size
+                0x0000000000000000       0x34 avr32/drivers/flashc/flashc.o
+ .text.flashc_get_page_count
+                0x0000000000000000       0x34 avr32/drivers/flashc/flashc.o
+ .text.flashc_get_page_count_per_region
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_get_page_region
+                0x0000000000000000       0x24 avr32/drivers/flashc/flashc.o
+ .text.flashc_get_region_first_page_number
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_get_wait_state
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_set_wait_state
+                0x0000000000000000        0xe avr32/drivers/flashc/flashc.o
+ .text.flashc_set_bus_freq
+                0x0000000000000000       0x28 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_ready_int_enabled
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_enable_ready_int
+                0x0000000000000000        0xe avr32/drivers/flashc/flashc.o
+ .text.flashc_is_lock_error_int_enabled
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_enable_lock_error_int
+                0x0000000000000000        0xe avr32/drivers/flashc/flashc.o
+ .text.flashc_is_prog_error_int_enabled
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_enable_prog_error_int
+                0x0000000000000000        0xe avr32/drivers/flashc/flashc.o
+ .text.flashc_is_ready
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_default_wait_until_ready
+                0x0000000000000000       0x14 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_lock_error
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_programming_error
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_get_command
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_get_page_number
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_issue_command
+                0x0000000000000000       0x44 avr32/drivers/flashc/flashc.o
+ .text.flashc_no_operation
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_all
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_security_bit_active
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_activate_security_bit
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_get_bootloader_protected_size
+                0x0000000000000000       0x60 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_external_privileged_fetch_locked
+                0x0000000000000000       0x20 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_page_region_locked
+                0x0000000000000000       0x24 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_region_locked
+                0x0000000000000000       0x18 avr32/drivers/flashc/flashc.o
+ .text.flashc_lock_page_region
+                0x0000000000000000       0x1c avr32/drivers/flashc/flashc.o
+ .text.flashc_lock_region
+                0x0000000000000000       0x20 avr32/drivers/flashc/flashc.o
+ .text.flashc_lock_all_regions
+                0x0000000000000000       0x2c avr32/drivers/flashc/flashc.o
+ .text.flashc_read_gp_fuse_bit
+                0x0000000000000000       0x28 avr32/drivers/flashc/flashc.o
+ .text.flashc_read_gp_fuse_bitfield
+                0x0000000000000000       0x50 avr32/drivers/flashc/flashc.o
+ .text.flashc_read_gp_fuse_byte
+                0x0000000000000000       0x2c avr32/drivers/flashc/flashc.o
+ .text.flashc_read_all_gp_fuses
+                0x0000000000000000       0x20 avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_gp_fuse_bit
+                0x0000000000000000       0x40 avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_gp_fuse_bitfield
+                0x0000000000000000       0xa0 avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_all_gp_fuses
+                0x0000000000000000       0x34 avr32/drivers/flashc/flashc.o
+ .text.flashc_write_gp_fuse_bit
+                0x0000000000000000       0x18 avr32/drivers/flashc/flashc.o
+ .text.flashc_write_gp_fuse_bitfield
+                0x0000000000000000       0x44 avr32/drivers/flashc/flashc.o
+ .text.flashc_write_gp_fuse_byte
+                0x0000000000000000       0x18 avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_gp_fuse_byte
+                0x0000000000000000       0x94 avr32/drivers/flashc/flashc.o
+ .text.flashc_write_all_gp_fuses
+                0x0000000000000000       0x38 avr32/drivers/flashc/flashc.o
+ .text.flashc_set_gp_fuse_bit
+                0x0000000000000000       0x1c avr32/drivers/flashc/flashc.o
+ .text.flashc_lock_external_privileged_fetch
+                0x0000000000000000       0x18 avr32/drivers/flashc/flashc.o
+ .text.flashc_set_gp_fuse_bitfield
+                0x0000000000000000       0x44 avr32/drivers/flashc/flashc.o
+ .text.flashc_set_gp_fuse_byte
+                0x0000000000000000       0x4c avr32/drivers/flashc/flashc.o
+ .text.flashc_set_all_gp_fuses
+                0x0000000000000000       0x50 avr32/drivers/flashc/flashc.o
+ .text.flashc_clear_page_buffer
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_is_page_erased
+                0x0000000000000000        0xc avr32/drivers/flashc/flashc.o
+ .text.flashc_quick_page_read
+                0x0000000000000000       0x1c avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_page
+                0x0000000000000000       0x34 avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_all_pages
+                0x0000000000000000       0x3c avr32/drivers/flashc/flashc.o
+ .text.flashc_write_page
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_quick_user_page_read
+                0x0000000000000000       0x1c avr32/drivers/flashc/flashc.o
+ .text.flashc_erase_user_page
+                0x0000000000000000       0x20 avr32/drivers/flashc/flashc.o
+ .text.flashc_write_user_page
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_memset64
+                0x0000000000000000      0x270 avr32/drivers/flashc/flashc.o
+ .text.flashc_memset32
+                0x0000000000000000       0x20 avr32/drivers/flashc/flashc.o
+ .text.flashc_memset16
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .text.flashc_memset8
+                0x0000000000000000       0x14 avr32/drivers/flashc/flashc.o
+ .text.flashc_memcpy
+                0x0000000000000000       0xdc avr32/drivers/flashc/flashc.o
+ .text.flashc_set_bootloader_protected_size
+                0x0000000000000000       0xa4 avr32/drivers/flashc/flashc.o
+ .data.flashc_wait_until_ready
+                0x0000000000000000        0x4 avr32/drivers/flashc/flashc.o
+ .rodata.C.34.9735
+                0x0000000000000000       0x10 avr32/drivers/flashc/flashc.o
+ .bss.flashc_error_status
+                0x0000000000000000        0x4 avr32/drivers/flashc/flashc.o
+ .debug_frame   0x0000000000000000      0x738 avr32/drivers/flashc/flashc.o
+ .debug_loc     0x0000000000000000      0xfb3 avr32/drivers/flashc/flashc.o
+ .debug_pubnames
+                0x0000000000000000      0x771 avr32/drivers/flashc/flashc.o
+ .debug_aranges
+                0x0000000000000000      0x218 avr32/drivers/flashc/flashc.o
+ .debug_ranges  0x0000000000000000      0x3e8 avr32/drivers/flashc/flashc.o
+ .debug_str     0x0000000000000000      0xc67 avr32/drivers/flashc/flashc.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/flashc/flashc.o
+ .text          0x0000000000000000        0x0 avr32/drivers/gpio/gpio.o
+ .data          0x0000000000000000        0x0 avr32/drivers/gpio/gpio.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/gpio/gpio.o
+ .text.gpio_enable_gpio
+                0x0000000000000000       0x26 avr32/drivers/gpio/gpio.o
+ .text.gpio_enable_pin_pull_up
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_disable_pin_pull_up
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_configure_pin
+                0x0000000000000000       0xbe avr32/drivers/gpio/gpio.o
+ .text.gpio_configure_group
+                0x0000000000000000       0x70 avr32/drivers/gpio/gpio.o
+ .text.gpio_get_pin_value
+                0x0000000000000000       0x16 avr32/drivers/gpio/gpio.o
+ .text.gpio_get_gpio_pin_output_value
+                0x0000000000000000       0x16 avr32/drivers/gpio/gpio.o
+ .text.gpio_get_gpio_open_drain_pin_output_value
+                0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
+ .text.gpio_set_gpio_pin
+                0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
+ .text.gpio_set_pin_high
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_set_group_high
+                0x0000000000000000        0xc avr32/drivers/gpio/gpio.o
+ .text.gpio_set_pin_low
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_clr_gpio_pin
+                0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
+ .text.gpio_set_group_low
+                0x0000000000000000        0xc avr32/drivers/gpio/gpio.o
+ .text.gpio_toggle_pin
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_toggle_group
+                0x0000000000000000        0xc avr32/drivers/gpio/gpio.o
+ .text.gpio_set_gpio_open_drain_pin
+                0x0000000000000000       0x16 avr32/drivers/gpio/gpio.o
+ .text.gpio_clr_gpio_open_drain_pin
+                0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
+ .text.gpio_tgl_gpio_open_drain_pin
+                0x0000000000000000       0x1a avr32/drivers/gpio/gpio.o
+ .text.gpio_enable_pin_glitch_filter
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_disable_pin_glitch_filter
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_enable_pin_interrupt
+                0x0000000000000000       0x42 avr32/drivers/gpio/gpio.o
+ .text.gpio_disable_pin_interrupt
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text.gpio_get_pin_interrupt_flag
+                0x0000000000000000       0x18 avr32/drivers/gpio/gpio.o
+ .text.gpio_clear_pin_interrupt_flag
+                0x0000000000000000       0x14 avr32/drivers/gpio/gpio.o
+ .text          0x0000000000000000        0x0 avr32/drivers/intc/intc.o
+ .data          0x0000000000000000        0x0 avr32/drivers/intc/intc.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/intc/intc.o
+ .debug_abbrev  0x0000000000000000      0x1f2 avr32/drivers/intc/intc.o
+ .debug_info    0x0000000000000000      0x585 avr32/drivers/intc/intc.o
+ .debug_line    0x0000000000000000      0x61e avr32/drivers/intc/intc.o
+ .debug_macinfo
+                0x0000000000000000    0xd68da avr32/drivers/intc/intc.o
+ .text._unhandled_interrupt
+                0x0000000000000000        0x2 avr32/drivers/intc/intc.o
+ .text.INTC_register_interrupt
+                0x0000000000000000       0x74 avr32/drivers/intc/intc.o
+ .text.INTC_init_interrupts
+                0x0000000000000000       0x4c avr32/drivers/intc/intc.o
+ .text._get_interrupt_handler
+                0x0000000000000000       0x38 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_6
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_7
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_8
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_9
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_10
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_11
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_12
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_13
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_14
+                0x0000000000000000        0xc avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_15
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_16
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_17
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .rodata._int_handler_table
+                0x0000000000000000       0x90 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_0
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_1
+                0x0000000000000000       0x2c avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_2
+                0x0000000000000000       0x18 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_3
+                0x0000000000000000       0x1c avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_4
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .bss._int_line_handler_table_5
+                0x0000000000000000        0x4 avr32/drivers/intc/intc.o
+ .debug_frame   0x0000000000000000       0x64 avr32/drivers/intc/intc.o
+ .debug_loc     0x0000000000000000       0x89 avr32/drivers/intc/intc.o
+ .debug_pubnames
+                0x0000000000000000       0x62 avr32/drivers/intc/intc.o
+ .debug_aranges
+                0x0000000000000000       0x38 avr32/drivers/intc/intc.o
+ .debug_ranges  0x0000000000000000       0x50 avr32/drivers/intc/intc.o
+ .debug_str     0x0000000000000000      0x473 avr32/drivers/intc/intc.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/intc/intc.o
+ .text          0x0000000000000000        0x0 avr32/drivers/pm/pm.o
+ .data          0x0000000000000000        0x0 avr32/drivers/pm/pm.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/pm/pm.o
+ .text.pm_enable_osc0_ext_clock
+                0x0000000000000000        0xc avr32/drivers/pm/pm.o
+ .text.pm_enable_osc0_crystal
+                0x0000000000000000       0x3a avr32/drivers/pm/pm.o
+ .text.pm_enable_clk0
+                0x0000000000000000       0x18 avr32/drivers/pm/pm.o
+ .text.pm_disable_clk0
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_enable_clk0_no_wait
+                0x0000000000000000       0x10 avr32/drivers/pm/pm.o
+ .text.pm_wait_for_clk0_ready
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_enable_osc1_ext_clock
+                0x0000000000000000        0xc avr32/drivers/pm/pm.o
+ .text.pm_enable_osc1_crystal
+                0x0000000000000000       0x3a avr32/drivers/pm/pm.o
+ .text.pm_enable_clk1
+                0x0000000000000000       0x18 avr32/drivers/pm/pm.o
+ .text.pm_disable_clk1
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_enable_clk1_no_wait
+                0x0000000000000000       0x10 avr32/drivers/pm/pm.o
+ .text.pm_wait_for_clk1_ready
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_enable_osc32_ext_clock
+                0x0000000000000000        0xc avr32/drivers/pm/pm.o
+ .text.pm_enable_osc32_crystal
+                0x0000000000000000        0xc avr32/drivers/pm/pm.o
+ .text.pm_enable_clk32
+                0x0000000000000000       0x18 avr32/drivers/pm/pm.o
+ .text.pm_disable_clk32
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_enable_clk32_no_wait
+                0x0000000000000000       0x10 avr32/drivers/pm/pm.o
+ .text.pm_wait_for_clk32_ready
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_cksel_get
+                0x0000000000000000        0x6 avr32/drivers/pm/pm.o
+ .text.pm_cksel_set
+                0x0000000000000000        0xc avr32/drivers/pm/pm.o
+ .text.pm_cksel
+                0x0000000000000000       0x40 avr32/drivers/pm/pm.o
+ .text.pm_gc_setup
+                0x0000000000000000       0x1e avr32/drivers/pm/pm.o
+ .text.pm_gc_enable
+                0x0000000000000000        0xe avr32/drivers/pm/pm.o
+ .text.pm_gc_disable
+                0x0000000000000000        0xe avr32/drivers/pm/pm.o
+ .text.pm_pll_setup
+                0x0000000000000000       0x1e avr32/drivers/pm/pm.o
+ .text.pm_pll_set_option
+                0x0000000000000000       0x18 avr32/drivers/pm/pm.o
+ .text.pm_pll_get_option
+                0x0000000000000000        0xc avr32/drivers/pm/pm.o
+ .text.pm_pll_enable
+                0x0000000000000000        0xe avr32/drivers/pm/pm.o
+ .text.pm_pll_disable
+                0x0000000000000000        0xe avr32/drivers/pm/pm.o
+ .text.pm_wait_for_pll0_locked
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_wait_for_pll1_locked
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_get_clock
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_switch_to_clock
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_bod_enable_irq
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_bod_clear_irq
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_bod_get_irq_status
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_bod_get_irq_enable_bit
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_bod_get_level
+                0x0000000000000000        0xa avr32/drivers/pm/pm.o
+ .text.pm_read_gplp
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_write_gplp
+                0x0000000000000000        0x8 avr32/drivers/pm/pm.o
+ .text.pm_enable_module
+                0x0000000000000000       0x1a avr32/drivers/pm/pm.o
+ .text.pm_disable_module
+                0x0000000000000000       0x1c avr32/drivers/pm/pm.o
+ .text.pm_bod_disable_irq
+                0x0000000000000000       0x22 avr32/drivers/pm/pm.o
+ .text          0x0000000000000000        0x0 avr32/drivers/pm/pm_conf_clocks.o
+ .data          0x0000000000000000        0x0 avr32/drivers/pm/pm_conf_clocks.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_abbrev  0x0000000000000000      0x185 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_info    0x0000000000000000      0xf50 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_line    0x0000000000000000      0x6ed avr32/drivers/pm/pm_conf_clocks.o
+ .debug_macinfo
+                0x0000000000000000    0xd66e9 avr32/drivers/pm/pm_conf_clocks.o
+ .text.pm_configure_usb_clock
+                0x0000000000000000       0x70 avr32/drivers/pm/pm_conf_clocks.o
+ .text.pm_configure_clocks
+                0x0000000000000000      0x180 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_frame   0x0000000000000000       0x84 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_loc     0x0000000000000000      0x274 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_pubnames
+                0x0000000000000000       0x45 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_aranges
+                0x0000000000000000       0x28 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_ranges  0x0000000000000000       0x20 avr32/drivers/pm/pm_conf_clocks.o
+ .debug_str     0x0000000000000000      0x550 avr32/drivers/pm/pm_conf_clocks.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/pm/pm_conf_clocks.o
+ .text          0x0000000000000000        0x0 avr32/drivers/pm/power_clocks_lib.o
+ .data          0x0000000000000000        0x0 avr32/drivers/pm/power_clocks_lib.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/pm/power_clocks_lib.o
+ .debug_abbrev  0x0000000000000000      0x1cd avr32/drivers/pm/power_clocks_lib.o
+ .debug_info    0x0000000000000000      0xf89 avr32/drivers/pm/power_clocks_lib.o
+ .debug_line    0x0000000000000000      0x606 avr32/drivers/pm/power_clocks_lib.o
+ .debug_macinfo
+                0x0000000000000000    0xd6778 avr32/drivers/pm/power_clocks_lib.o
+ .text.pcl_read_gplp
+                0x0000000000000000       0x14 avr32/drivers/pm/power_clocks_lib.o
+ .text.pcl_write_gplp
+                0x0000000000000000       0x14 avr32/drivers/pm/power_clocks_lib.o
+ .text.pcl_configure_usb_clock
+                0x0000000000000000        0xc avr32/drivers/pm/power_clocks_lib.o
+ .text.pcl_switch_to_osc
+                0x0000000000000000       0x20 avr32/drivers/pm/power_clocks_lib.o
+ .text.pcl_configure_clocks
+                0x0000000000000000        0xc avr32/drivers/pm/power_clocks_lib.o
+ .debug_frame   0x0000000000000000       0x94 avr32/drivers/pm/power_clocks_lib.o
+ .debug_loc     0x0000000000000000      0x141 avr32/drivers/pm/power_clocks_lib.o
+ .debug_pubnames
+                0x0000000000000000       0x82 avr32/drivers/pm/power_clocks_lib.o
+ .debug_aranges
+                0x0000000000000000       0x40 avr32/drivers/pm/power_clocks_lib.o
+ .debug_ranges  0x0000000000000000       0x38 avr32/drivers/pm/power_clocks_lib.o
+ .debug_str     0x0000000000000000      0x55d avr32/drivers/pm/power_clocks_lib.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/pm/power_clocks_lib.o
+ .text          0x0000000000000000        0x0 avr32/drivers/spi/spi.o
+ .data          0x0000000000000000        0x0 avr32/drivers/spi/spi.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/spi/spi.o
+ .debug_abbrev  0x0000000000000000      0x28e avr32/drivers/spi/spi.o
+ .debug_info    0x0000000000000000     0x108c avr32/drivers/spi/spi.o
+ .debug_line    0x0000000000000000      0x94b avr32/drivers/spi/spi.o
+ .debug_macinfo
+                0x0000000000000000    0xd667b avr32/drivers/spi/spi.o
+ .text.getBaudDiv
+                0x0000000000000000       0x20 avr32/drivers/spi/spi.o
+ .text.spi_initSlave
+                0x0000000000000000       0x4a avr32/drivers/spi/spi.o
+ .text.spi_initTest
+                0x0000000000000000       0x14 avr32/drivers/spi/spi.o
+ .text.spi_initMaster
+                0x0000000000000000       0x3e avr32/drivers/spi/spi.o
+ .text.spi_selectionMode
+                0x0000000000000000       0x2a avr32/drivers/spi/spi.o
+ .text.spi_selectChip
+                0x0000000000000000       0x50 avr32/drivers/spi/spi.o
+ .text.spi_unselectChip
+                0x0000000000000000       0x28 avr32/drivers/spi/spi.o
+ .text.spi_setupChipReg
+                0x0000000000000000       0xa8 avr32/drivers/spi/spi.o
+ .text.spi_enable
+                0x0000000000000000        0x6 avr32/drivers/spi/spi.o
+ .text.spi_disable
+                0x0000000000000000        0x6 avr32/drivers/spi/spi.o
+ .text.spi_is_enabled
+                0x0000000000000000        0x8 avr32/drivers/spi/spi.o
+ .text.spi_writeRegisterEmptyCheck
+                0x0000000000000000        0x8 avr32/drivers/spi/spi.o
+ .text.spi_write
+                0x0000000000000000       0x1c avr32/drivers/spi/spi.o
+ .text.spi_variableSlaveWrite
+                0x0000000000000000       0x40 avr32/drivers/spi/spi.o
+ .text.spi_writeEndCheck
+                0x0000000000000000        0x8 avr32/drivers/spi/spi.o
+ .text.spi_readRegisterFullCheck
+                0x0000000000000000        0x8 avr32/drivers/spi/spi.o
+ .text.spi_read
+                0x0000000000000000       0x22 avr32/drivers/spi/spi.o
+ .text.spi_getStatus
+                0x0000000000000000       0x28 avr32/drivers/spi/spi.o
+ .debug_frame   0x0000000000000000      0x168 avr32/drivers/spi/spi.o
+ .debug_loc     0x0000000000000000      0x387 avr32/drivers/spi/spi.o
+ .debug_pubnames
+                0x0000000000000000      0x178 avr32/drivers/spi/spi.o
+ .debug_aranges
+                0x0000000000000000       0xa8 avr32/drivers/spi/spi.o
+ .debug_ranges  0x0000000000000000       0xa0 avr32/drivers/spi/spi.o
+ .debug_str     0x0000000000000000      0x58e avr32/drivers/spi/spi.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/spi/spi.o
+ .text          0x0000000000000000        0x0 avr32/drivers/tc/tc.o
+ .data          0x0000000000000000        0x0 avr32/drivers/tc/tc.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/tc/tc.o
+ .debug_abbrev  0x0000000000000000      0x24d avr32/drivers/tc/tc.o
+ .debug_info    0x0000000000000000     0x1182 avr32/drivers/tc/tc.o
+ .debug_line    0x0000000000000000      0x83e avr32/drivers/tc/tc.o
+ .debug_macinfo
+                0x0000000000000000    0xd6f10 avr32/drivers/tc/tc.o
+ .text.tc_get_interrupt_settings
+                0x0000000000000000       0x12 avr32/drivers/tc/tc.o
+ .text.tc_select_external_clock
+                0x0000000000000000       0x2e avr32/drivers/tc/tc.o
+ .text.tc_init_capture
+                0x0000000000000000       0x1e avr32/drivers/tc/tc.o
+ .text.tc_init_waveform
+                0x0000000000000000       0xa0 avr32/drivers/tc/tc.o
+ .text.tc_start
+                0x0000000000000000       0x12 avr32/drivers/tc/tc.o
+ .text.tc_stop  0x0000000000000000       0x12 avr32/drivers/tc/tc.o
+ .text.tc_software_trigger
+                0x0000000000000000       0x12 avr32/drivers/tc/tc.o
+ .text.tc_sync_trigger
+                0x0000000000000000        0x8 avr32/drivers/tc/tc.o
+ .text.tc_sync_start
+                0x0000000000000000       0x12 avr32/drivers/tc/tc.o
+ .text.tc_read_sr
+                0x0000000000000000       0x12 avr32/drivers/tc/tc.o
+ .text.tc_read_tc
+                0x0000000000000000       0x16 avr32/drivers/tc/tc.o
+ .text.tc_read_ra
+                0x0000000000000000       0x16 avr32/drivers/tc/tc.o
+ .text.tc_read_rb
+                0x0000000000000000       0x16 avr32/drivers/tc/tc.o
+ .text.tc_read_rc
+                0x0000000000000000       0x16 avr32/drivers/tc/tc.o
+ .text.tc_write_ra
+                0x0000000000000000       0x34 avr32/drivers/tc/tc.o
+ .text.tc_write_rb
+                0x0000000000000000       0x34 avr32/drivers/tc/tc.o
+ .text.tc_write_rc
+                0x0000000000000000       0x34 avr32/drivers/tc/tc.o
+ .text.tc_configure_interrupts
+                0x0000000000000000       0xc8 avr32/drivers/tc/tc.o
+ .debug_frame   0x0000000000000000      0x14c avr32/drivers/tc/tc.o
+ .debug_loc     0x0000000000000000      0x41e avr32/drivers/tc/tc.o
+ .debug_pubnames
+                0x0000000000000000      0x164 avr32/drivers/tc/tc.o
+ .debug_aranges
+                0x0000000000000000       0xa8 avr32/drivers/tc/tc.o
+ .debug_ranges  0x0000000000000000       0xa0 avr32/drivers/tc/tc.o
+ .debug_str     0x0000000000000000      0x4f6 avr32/drivers/tc/tc.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/tc/tc.o
+ .text          0x0000000000000000        0x0 avr32/drivers/usart/usart.o
+ .data          0x0000000000000000        0x0 avr32/drivers/usart/usart.o
+ .bss           0x0000000000000000        0x0 avr32/drivers/usart/usart.o
+ .text.usart_spi_selectChip
+                0x0000000000000000        0x8 avr32/drivers/usart/usart.o
+ .text.usart_spi_unselectChip
+                0x0000000000000000       0x1c avr32/drivers/usart/usart.o
+ .text.usart_write_char
+                0x0000000000000000       0x14 avr32/drivers/usart/usart.o
+ .text.usart_putchar
+                0x0000000000000000       0x1c avr32/drivers/usart/usart.o
+ .text.usart_read_char
+                0x0000000000000000       0x24 avr32/drivers/usart/usart.o
+ .text.usart_getchar
+                0x0000000000000000       0x1a avr32/drivers/usart/usart.o
+ .text.usart_get_echo_line
+                0x0000000000000000       0x7c avr32/drivers/usart/usart.o
+ .text.usart_init_spi_slave
+                0x0000000000000000       0x94 avr32/drivers/usart/usart.o
+ .text.usart_init_spi_master
+                0x0000000000000000       0xb0 avr32/drivers/usart/usart.o
+ .text.usart_init_lin_slave
+                0x0000000000000000       0x38 avr32/drivers/usart/usart.o
+ .text.usart_init_lin_master
+                0x0000000000000000       0x38 avr32/drivers/usart/usart.o
+ .text.usart_init_iso7816
+                0x0000000000000000       0xa4 avr32/drivers/usart/usart.o
+ .text.usart_init_sync_slave
+                0x0000000000000000       0xc0 avr32/drivers/usart/usart.o
+ .text.usart_init_sync_master
+                0x0000000000000000       0xe4 avr32/drivers/usart/usart.o
+ .text.usart_init_rs232_tx_only
+                0x0000000000000000       0xe0 avr32/drivers/usart/usart.o
+ .text.usart_init_IrDA
+                0x0000000000000000       0x30 avr32/drivers/usart/usart.o
+ .text.usart_init_rs485
+                0x0000000000000000       0x20 avr32/drivers/usart/usart.o
+ .text.usart_init_modem
+                0x0000000000000000       0x20 avr32/drivers/usart/usart.o
+ .text.usart_init_hw_handshaking
+                0x0000000000000000       0x20 avr32/drivers/usart/usart.o
+ .text.usart_send_address
+                0x0000000000000000       0x26 avr32/drivers/usart/usart.o
+ .rodata.str1.4
+                0x0000000000000000        0xc avr32/drivers/usart/usart.o
+ .text          0x0000000000000000        0x0 avr32/utils/debug/print_funcs.o
+ .data          0x0000000000000000        0x0 avr32/utils/debug/print_funcs.o
+ .bss           0x0000000000000000        0x0 avr32/utils/debug/print_funcs.o
+ .text.print_char
+                0x0000000000000000        0xc avr32/utils/debug/print_funcs.o
+ .text.print_dbg_char
+                0x0000000000000000       0x14 avr32/utils/debug/print_funcs.o
+ .text.print    0x0000000000000000        0xc avr32/utils/debug/print_funcs.o
+ .text.print_hex
+                0x0000000000000000       0x38 avr32/utils/debug/print_funcs.o
+ .text.print_dbg_hex
+                0x0000000000000000       0x14 avr32/utils/debug/print_funcs.o
+ .text.print_short_hex
+                0x0000000000000000       0x50 avr32/utils/debug/print_funcs.o
+ .text.print_dbg_short_hex
+                0x0000000000000000       0x14 avr32/utils/debug/print_funcs.o
+ .text.print_char_hex
+                0x0000000000000000       0x30 avr32/utils/debug/print_funcs.o
+ .text.print_dbg_char_hex
+                0x0000000000000000       0x14 avr32/utils/debug/print_funcs.o
+ .text.print_ulong
+                0x0000000000000000       0x34 avr32/utils/debug/print_funcs.o
+ .text.print_dbg_ulong
+                0x0000000000000000       0x14 avr32/utils/debug/print_funcs.o
+ .rodata.HEX_DIGITS
+                0x0000000000000000       0x10 avr32/utils/debug/print_funcs.o
+ .text          0x0000000000000000        0x0 avr32/utils/startup/trampoline_uc3.o
+ .data          0x0000000000000000        0x0 avr32/utils/startup/trampoline_uc3.o
+ .bss           0x0000000000000000        0x0 avr32/utils/startup/trampoline_uc3.o
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_abbrev  0x0000000000000000       0xfd /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_info    0x0000000000000000      0x19a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_line    0x0000000000000000       0xa5 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .text.__lshrdi3
+                0x0000000000000000       0x2c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_frame   0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_loc     0x0000000000000000       0x63 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_pubnames
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_aranges
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_ranges  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .debug_str     0x0000000000000000      0x18e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_abbrev  0x0000000000000000       0xfd /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_info    0x0000000000000000      0x19a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_line    0x0000000000000000       0xa5 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .text.__ashldi3
+                0x0000000000000000       0x2a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_frame   0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_loc     0x0000000000000000       0x6e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_pubnames
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_aranges
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_ranges  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .debug_str     0x0000000000000000      0x18e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .text          0x0000000000000000      0x148 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memcpy.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memcpy.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memcpy.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._open    0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._close   0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._lseek   0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._read    0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._write   0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text.isatty   0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._fstat_host
+                0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._stat_host
+                0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._fstat   0x0000000000000000       0x50 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._stat    0x0000000000000000       0x50 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._gettimeofday_host
+                0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._gettimeofday
+                0x0000000000000000       0x24 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._unlink  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._system  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._execve  0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._fork    0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._wait    0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text.sigfillset
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text.sigprocmask
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._fcntl   0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._link    0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._kill    0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._getpid  0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text._times   0x0000000000000000       0x12 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__sfp_lock_acquire
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__sfp_lock_release
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__sinit_lock_acquire
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__sinit_lock_release
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__fp_lock
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__fp_unlock
+                0x0000000000000000        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__fp_unlock_all
+                0x0000000000000000       0x1c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__fp_lock_all
+                0x0000000000000000       0x1c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text._cleanup_r
+                0x0000000000000000       0x14 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text._cleanup
+                0x0000000000000000       0x14 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__sfmoreglue
+                0x0000000000000000       0x30 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__sfp    0x0000000000000000       0x7c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text.__sinit  0x0000000000000000       0xb0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_abbrev  0x0000000000000000      0x1e1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_info    0x0000000000000000      0xa65 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_line    0x0000000000000000      0x256 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .text._fwalk_reent
+                0x0000000000000000       0x58 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .text._fwalk   0x0000000000000000       0x54 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_frame   0x0000000000000000       0x70 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_loc     0x0000000000000000       0xe7 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_pubnames
+                0x0000000000000000       0x2e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_aranges
+                0x0000000000000000       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_ranges  0x0000000000000000       0xa0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .debug_str     0x0000000000000000      0x506 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_abbrev  0x0000000000000000       0x87 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_info    0x0000000000000000       0xd1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_line    0x0000000000000000      0x131 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .text.memset   0x0000000000000000        0xe /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_frame   0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_pubnames
+                0x0000000000000000       0x1d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_aranges
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_ranges  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .debug_str     0x0000000000000000      0x13a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .text._wrapup_reent
+                0x0000000000000000       0x3c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .text.cleanup_glue
+                0x0000000000000000       0x24 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .text._reclaim_reent
+                0x0000000000000000       0xd4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_abbrev  0x0000000000000000      0x194 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_info    0x0000000000000000      0xa2c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_line    0x0000000000000000      0x259 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .text.__sclose
+                0x0000000000000000       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .text.__sseek  0x0000000000000000       0x24 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .text.__swrite
+                0x0000000000000000       0x38 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .text.__sread  0x0000000000000000       0x24 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_frame   0x0000000000000000       0x94 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_loc     0x0000000000000000      0x1ee /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_pubnames
+                0x0000000000000000       0x44 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_aranges
+                0x0000000000000000       0x38 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_ranges  0x0000000000000000       0x30 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .debug_str     0x0000000000000000      0x502 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_abbrev  0x0000000000000000      0x177 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_info    0x0000000000000000      0x911 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_line    0x0000000000000000      0x1c1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .text._write_r
+                0x0000000000000000       0x2c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_frame   0x0000000000000000       0x34 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_loc     0x0000000000000000       0x94 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_pubnames
+                0x0000000000000000       0x1f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_aranges
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_ranges  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .debug_str     0x0000000000000000      0x4df /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_abbrev  0x0000000000000000      0x172 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_info    0x0000000000000000      0x8d6 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_line    0x0000000000000000      0x1b5 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .text._close_r
+                0x0000000000000000       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_frame   0x0000000000000000       0x34 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_loc     0x0000000000000000       0x63 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_pubnames
+                0x0000000000000000       0x1f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_aranges
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_ranges  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .debug_str     0x0000000000000000      0x4cf /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_abbrev  0x0000000000000000      0x1a3 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_info    0x0000000000000000      0x9c0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_line    0x0000000000000000      0x21b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .text._fclose_r
+                0x0000000000000000       0xd0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .text.fclose   0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_frame   0x0000000000000000       0x4c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_loc     0x0000000000000000       0xb6 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_pubnames
+                0x0000000000000000       0x2b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_aranges
+                0x0000000000000000       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_ranges  0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .debug_str     0x0000000000000000      0x526 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_abbrev  0x0000000000000000      0x1c8 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_info    0x0000000000000000      0xa26 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_line    0x0000000000000000      0x2a5 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .text._fflush_r
+                0x0000000000000000      0x114 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .text.fflush   0x0000000000000000       0x30 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_frame   0x0000000000000000       0x4c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_loc     0x0000000000000000      0x13f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_pubnames
+                0x0000000000000000       0x2b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_aranges
+                0x0000000000000000       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_ranges  0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .debug_str     0x0000000000000000      0x542 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_abbrev  0x0000000000000000      0x181 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_info    0x0000000000000000      0x8ff /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_line    0x0000000000000000      0x1c1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .text._lseek_r
+                0x0000000000000000       0x2c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_frame   0x0000000000000000       0x34 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_loc     0x0000000000000000       0x94 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_pubnames
+                0x0000000000000000       0x1f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_aranges
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_ranges  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .debug_str     0x0000000000000000      0x4dd /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_abbrev  0x0000000000000000      0x172 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_info    0x0000000000000000      0x90a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_line    0x0000000000000000      0x1c0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .text._read_r  0x0000000000000000       0x2c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_frame   0x0000000000000000       0x34 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_loc     0x0000000000000000       0x94 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_pubnames
+                0x0000000000000000       0x1e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_aranges
+                0x0000000000000000       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_ranges  0x0000000000000000       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .debug_str     0x0000000000000000      0x4dd /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+ .text          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtn.o
+ .data          0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtn.o
+ .bss           0x0000000000000000        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtn.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x0000000080000000 0x0000000000040000 axrl !w
+INTRAM           0x0000000000000004 0x0000000000007ffc axw !rl
+USERPAGE         0x0000000080800000 0x0000000000000200
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000001000                _stack_size = 0x1000
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+                0xffffffffffffffff                __max_heap_size__ = 0xffffffffffffffff
+                [0xffffffffffffffff]                __heap_size__ = DEFINED (__heap_size__)?__heap_size__:__max_heap_size__
+                [0x0000000000001000]                __stack_size__ = DEFINED (__stack_size__)?__stack_size__:0x1000
+                0x0000000080000000                PROVIDE (__executable_start, 0x80000000)
+                0x0000000080000000                . = 0x80000000
+
+.interp
+ *(.interp)
+
+.reset          0x0000000080000000     0x200c
+ *(.reset)
+ .reset         0x0000000080000000        0x8 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+                0x0000000080000000                _start
+ .reset         0x0000000080000008     0x2004 avr32/utils/startup/trampoline_uc3.o
+                                       0x2008 (size before relaxing)
+                0x0000000080000008                _trampoline
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
+
+.rela.text
+ *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
+
+.rela.rodata
+ *(.rela.rodata .rela.rodata.* .rela.gnu.linkonce.r.*)
+
+.rel.data.rel.ro
+ *(.rel.data.rel.ro*)
+
+.rela.data.rel.ro
+ *(.rel.data.rel.ro*)
+
+.rel.data
+ *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
+
+.rela.data
+ *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*)
+
+.rel.tdata
+ *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
+
+.rela.tdata
+ *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*)
+
+.rel.tbss
+ *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
+
+.rela.tbss
+ *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got       0x000000008000200c        0x0
+ *(.rela.got)
+ .rela.got      0x000000008000200c        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+
+.rel.bss
+ *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
+
+.rela.bss
+ *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.init           0x000000008000200c       0x1a
+ *(.init)
+ .init          0x000000008000200c       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+                0x000000008000200c                _init
+ .init          0x000000008000201c        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+                                          0x4 (size before relaxing)
+ .init          0x000000008000201e        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+ .init          0x0000000080002022        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtn.o
+
+.plt
+ *(.plt)
+
+.text           0x0000000080002028      0xc30
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text          0x0000000080002028       0x54 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+                                         0x84 (size before relaxing)
+                0x0000000080002028                _stext
+ .text.__do_global_dtors_aux
+                0x000000008000207c       0x3c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+                                         0x48 (size before relaxing)
+ .text.frame_dummy
+                0x00000000800020b8       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+                                         0x1c (size before relaxing)
+ .text.main     0x00000000800020d0       0x5c avr32/applications/blank/main.o
+                                         0x80 (size before relaxing)
+                0x00000000800020d0                main
+ .text.gpio_enable_module_pin
+                0x000000008000212c       0x4e avr32/drivers/gpio/gpio.o
+                0x000000008000212c                gpio_enable_module_pin
+ *fill*         0x000000008000217a        0x2 d703d703
+ .text.gpio_enable_module
+                0x000000008000217c       0x20 avr32/drivers/gpio/gpio.o
+                                         0x28 (size before relaxing)
+                0x000000008000217c                gpio_enable_module
+ .text.gpio_enable_gpio_pin
+                0x000000008000219c       0x16 avr32/drivers/gpio/gpio.o
+                0x000000008000219c                gpio_enable_gpio_pin
+ .text.gpio_tgl_gpio_pin
+                0x00000000800021b2       0x1a avr32/drivers/gpio/gpio.o
+                0x00000000800021b2                gpio_tgl_gpio_pin
+ .text.pm_switch_to_osc0
+                0x00000000800021cc       0x5a avr32/drivers/pm/pm.o
+                0x00000000800021cc                pm_switch_to_osc0
+ .text.usart_set_async_baudrate
+                0x0000000080002226       0x5c avr32/drivers/usart/usart.o
+ .text.usart_write_line
+                0x0000000080002282       0x24 avr32/drivers/usart/usart.o
+                0x0000000080002282                usart_write_line
+ .text.usart_reset
+                0x00000000800022a6       0x2c avr32/drivers/usart/usart.o
+                0x00000000800022a6                usart_reset
+ *fill*         0x00000000800022d2        0x2 d703d703
+ .text.usart_init_rs232
+                0x00000000800022d4       0xc0 avr32/drivers/usart/usart.o
+                                         0xcc (size before relaxing)
+                0x00000000800022d4                usart_init_rs232
+ .text.print_dbg
+                0x0000000080002394        0xc avr32/utils/debug/print_funcs.o
+                                         0x14 (size before relaxing)
+                0x0000000080002394                print_dbg
+ .text.init_dbg_rs232_ex
+                0x00000000800023a0       0x30 avr32/utils/debug/print_funcs.o
+                                         0x3c (size before relaxing)
+                0x00000000800023a0                init_dbg_rs232_ex
+ .text.init_dbg_rs232
+                0x00000000800023d0        0xc avr32/utils/debug/print_funcs.o
+                                         0x14 (size before relaxing)
+                0x00000000800023d0                init_dbg_rs232
+ .text.atexit   0x00000000800023dc       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+                                         0x14 (size before relaxing)
+                0x00000000800023dc                atexit
+ .text.exit     0x00000000800023ec       0x1c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+                                         0x28 (size before relaxing)
+                0x00000000800023ec                exit
+ .text._init_startup
+                0x0000000080002408        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x0000000080002408                _init_startup
+ .text._init_argv
+                0x000000008000240a        0xa /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x000000008000240a                _init_argv
+ .text._exit    0x0000000080002414        0xa /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x0000000080002414                _exit
+ *fill*         0x000000008000241e        0x2 d703d703
+ .text._sbrk    0x0000000080002420       0x38 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                         0x40 (size before relaxing)
+                0x0000000080002420                _sbrk
+ .text.__register_exitproc
+                0x0000000080002458       0xa0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+                                         0xac (size before relaxing)
+                0x0000000080002458                __register_exitproc
+ .text.__call_exitprocs
+                0x00000000800024f8       0xc8 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+                                         0xd0 (size before relaxing)
+                0x00000000800024f8                __call_exitprocs
+ .text.__errno  0x00000000800025c0        0xc /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+                0x00000000800025c0                __errno
+ .text.free     0x00000000800025cc       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                                         0x18 (size before relaxing)
+                0x00000000800025cc                free
+ .text.malloc   0x00000000800025dc       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                                         0x18 (size before relaxing)
+                0x00000000800025dc                malloc
+ .text._malloc_r
+                0x00000000800025ec      0x428 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                        0x44c (size before relaxing)
+                0x00000000800025ec                _malloc_r
+ .text.__malloc_lock
+                0x0000000080002a14        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                0x0000000080002a14                __malloc_lock
+ .text.__malloc_unlock
+                0x0000000080002a16        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                0x0000000080002a16                __malloc_unlock
+ .text._sbrk_r  0x0000000080002a18       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+                                         0x28 (size before relaxing)
+                0x0000000080002a18                _sbrk_r
+ .text._malloc_trim_r
+                0x0000000080002a38       0x8c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                                         0xa8 (size before relaxing)
+                0x0000000080002a38                _malloc_trim_r
+ .text._free_r  0x0000000080002ac4      0x180 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                                        0x19c (size before relaxing)
+                0x0000000080002ac4                _free_r
+ .text.__do_global_ctors_aux
+                0x0000000080002c44       0x14 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+                                         0x18 (size before relaxing)
+ *(.text.*personality*)
+ *(.gnu.warning)
+
+.fini           0x0000000080002c58       0x18
+ *(.fini)
+ .fini          0x0000000080002c58       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+                0x0000000080002c58                _fini
+ .fini          0x0000000080002c68        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .fini          0x0000000080002c6c        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtn.o
+                0x0000000080002c70                PROVIDE (__etext, .)
+                0x0000000080002c70                PROVIDE (_etext, .)
+                0x0000000080002c70                PROVIDE (etext, .)
+
+.rodata         0x0000000080002c70       0x88
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+ .rodata.str1.4
+                0x0000000080002c70        0xe avr32/applications/blank/main.o
+                                         0x10 (size before relaxing)
+ *fill*         0x0000000080002c7e        0x2 
+ .rodata.DBG_USART_GPIO_MAP.10085
+                0x0000000080002c80       0x10 avr32/utils/debug/print_funcs.o
+ .rodata.str1.4
+                0x0000000080002c90        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .rodata._global_impure_ptr
+                0x0000000080002c94        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+                0x0000000080002c94                _global_impure_ptr
+ .rodata.__sf_fake_stdin
+                0x0000000080002c98       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                0x0000000080002c98                __sf_fake_stdin
+ .rodata.__sf_fake_stdout
+                0x0000000080002cb8       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                0x0000000080002cb8                __sf_fake_stdout
+ .rodata.__sf_fake_stderr
+                0x0000000080002cd8       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                0x0000000080002cd8                __sf_fake_stderr
+
+.rodata1
+ *(.rodata1)
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table)
+ *(.gcc_except_table.*)
+
+.lalign         0x0000000080002cf8        0x0
+                0x0000000080002cf8                . = ALIGN (0x8)
+ *fill*         0x0000000080002cf8        0x0 
+                0x0000000080002cf8                PROVIDE (_data_lma, .)
+                0x0000000000000004                . = ORIGIN (INTRAM)
+
+.dalign         0x0000000000000004        0x4
+                0x0000000000000008                . = ALIGN (0x8)
+ *fill*         0x0000000000000004        0x4 
+                0x0000000000000008                PROVIDE (_data, .)
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table)
+ *(.gcc_except_table.*)
+
+.tdata
+ *(.tdata .tdata.* .gnu.linkonce.td.*)
+
+.tbss
+ *(.tbss .tbss.* .gnu.linkonce.tb.*)
+ *(.tcommon)
+                0x0000000000000008                PROVIDE (__preinit_array_start, ALIGN (0x4))
+
+.preinit_array
+ *(.preinit_array)
+                0x0000000000000008                PROVIDE (__preinit_array_end, .)
+                0x0000000000000008                PROVIDE (__init_array_start, .)
+
+.init_array
+ *(.init_array)
+                0x0000000000000008                PROVIDE (__init_array_end, .)
+                0x0000000000000008                PROVIDE (__fini_array_start, .)
+
+.fini_array
+ *(.fini_array)
+                0x0000000000000008                PROVIDE (__fini_array_end, .)
+
+.ctors          0x0000000000000008        0x8 load address 0x0000000080002cf8
+ *crtbegin*.o(.ctors)
+ .ctors         0x0000000000000008        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ *(EXCLUDE_FILE(*crtend*.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+ .ctors         0x000000000000000c        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+
+.dtors          0x0000000000000010        0x8 load address 0x0000000080002d00
+ *crtbegin*.o(.dtors)
+ .dtors         0x0000000000000010        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ *(EXCLUDE_FILE(*crtend*.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+ .dtors         0x0000000000000014        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+                0x0000000000000014                __DTOR_END__
+
+.jcr            0x0000000000000018        0x4 load address 0x0000000080002d08
+ *(.jcr)
+ .jcr           0x0000000000000018        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .jcr           0x0000000000000018        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+
+.data.rel.ro
+ *(.data.rel.ro.local)
+ *(.data.rel.ro*)
+
+.dynamic
+ *(.dynamic)
+
+.got            0x000000000000001c        0x0 load address 0x0000000080002d0c
+ *(.got.plt)
+ *(.got)
+ .got           0x000000000000001c        0x0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+                0x000000000000001c                _GLOBAL_OFFSET_TABLE_
+
+.ramtext
+ *(.ramtext .ramtext.*)
+
+.ddalign        0x000000000000001c        0x0 load address 0x0000000080002d0c
+                0x0000000000000020                . = ALIGN (0x8)
+
+.data           0x000000000000001c      0x504 load address 0x0000000080002d0c
+ *(.data .data.* .gnu.linkonce.d.*)
+ .data.impure_data
+                0x000000000000001c       0xf0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .data._impure_ptr
+                0x000000000000010c        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+                0x000000000000010c                _impure_ptr
+ .data.__malloc_av_
+                0x0000000000000110      0x408 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000000000110                __malloc_av_
+ .data.__malloc_trim_threshold
+                0x0000000000000518        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000000000518                __malloc_trim_threshold
+ .data.__malloc_sbrk_base
+                0x000000000000051c        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x000000000000051c                __malloc_sbrk_base
+ *(.gnu.linkonce.d.*personality*)
+
+.data1
+ *(.data1)
+
+.balign         0x0000000000000520        0x0 load address 0x0000000080003210
+                0x0000000000000520                . = ALIGN (0x8)
+ *fill*         0x0000000000000520        0x0 
+                0x0000000000000520                PROVIDE (_edata, .)
+                0x0000000000000520                PROVIDE (edata, .)
+                0x0000000000000520                __bss_start = .
+
+.bss            0x0000000000000520       0x48
+ *(.dynbss)
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss.completed.2746
+                0x0000000000000520        0x1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ *fill*         0x0000000000000521        0x3 
+ .bss.dtor_idx.2748
+                0x0000000000000524        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .bss.cur_heap_pos.1869
+                0x0000000000000528        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .bss.__malloc_max_total_mem
+                0x000000000000052c        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x000000000000052c                __malloc_max_total_mem
+ .bss.__malloc_max_sbrked_mem
+                0x0000000000000530        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000000000530                __malloc_max_sbrked_mem
+ .bss.__malloc_top_pad
+                0x0000000000000534        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000000000534                __malloc_top_pad
+ .bss.__malloc_current_mallinfo
+                0x0000000000000538       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000000000538                __malloc_current_mallinfo
+ *(COMMON)
+ COMMON         0x0000000000000560        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+                0x0000000000000560                errno
+                0x0000000000000568                . = ALIGN (0x8)
+ *fill*         0x0000000000000564        0x4 
+                0x0000000000000568                . = ALIGN (0x8)
+                0x0000000000000568                _end = .
+                0x0000000000000568                PROVIDE (end, .)
+                0x0000000000000568                __heap_start__ = ALIGN (0x8)
+
+.heap           0x0000000000000568     0x6a98
+ *(.heap)
+                0x0000000000006a98                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0x7ffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
+ *fill*         0x0000000000000568     0x6a98 
+                0x0000000000007000                __heap_end__ = .
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000       0x28
+ *(.comment)
+ .comment       0x0000000000000000       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+                                         0x29 (size before relaxing)
+ .comment       0x0000000000000000       0x29 avr32/applications/blank/main.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/gpio/gpio.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/pm/pm.o
+ .comment       0x0000000000000000       0x29 avr32/drivers/usart/usart.o
+ .comment       0x0000000000000000       0x29 avr32/utils/debug/print_funcs.o
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+ .comment       0x0000000000000000       0x29 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x0000000000000000      0x6f8
+ *(.debug_aranges)
+ .debug_aranges
+                0x0000000000000000       0x20 avr32/applications/blank/main.o
+ .debug_aranges
+                0x0000000000000020      0x100 avr32/drivers/gpio/gpio.o
+ .debug_aranges
+                0x0000000000000120      0x178 avr32/drivers/pm/pm.o
+ .debug_aranges
+                0x0000000000000298       0xd8 avr32/drivers/usart/usart.o
+ .debug_aranges
+                0x0000000000000370       0x88 avr32/utils/debug/print_funcs.o
+ .debug_aranges
+                0x00000000000003f8       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_aranges
+                0x0000000000000418       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_aranges
+                0x0000000000000438       0xf8 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_aranges
+                0x0000000000000530       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_aranges
+                0x0000000000000550       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_aranges
+                0x0000000000000570       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_aranges
+                0x0000000000000590       0x80 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_aranges
+                0x0000000000000610       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_aranges
+                0x0000000000000638       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_aranges
+                0x0000000000000658       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_aranges
+                0x0000000000000680       0x30 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_aranges
+                0x00000000000006b0       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_aranges
+                0x00000000000006d0       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+
+.debug_pubnames
+                0x0000000000000000      0xfa6
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x0000000000000000       0x1b avr32/applications/blank/main.o
+ .debug_pubnames
+                0x000000000000001b      0x330 avr32/drivers/gpio/gpio.o
+ .debug_pubnames
+                0x000000000000034b      0x3ee avr32/drivers/pm/pm.o
+ .debug_pubnames
+                0x0000000000000739      0x227 avr32/drivers/usart/usart.o
+ .debug_pubnames
+                0x0000000000000960      0x10f avr32/utils/debug/print_funcs.o
+ .debug_pubnames
+                0x0000000000000a6f       0x1d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_pubnames
+                0x0000000000000a8c       0x1b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_pubnames
+                0x0000000000000aa7       0x39 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .debug_pubnames
+                0x0000000000000ae0      0x171 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_pubnames
+                0x0000000000000c51       0x2a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_pubnames
+                0x0000000000000c7b       0x27 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_pubnames
+                0x0000000000000ca2       0x1e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_pubnames
+                0x0000000000000cc0      0x119 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_pubnames
+                0x0000000000000dd9       0x26 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_pubnames
+                0x0000000000000dff       0xce /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_pubnames
+                0x0000000000000ecd       0x38 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_pubnames
+                0x0000000000000f05       0x52 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_pubnames
+                0x0000000000000f57       0x1e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_pubnames
+                0x0000000000000f75       0x31 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+
+.debug_info     0x0000000000000000     0xf002
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x0000000000000000      0xfa9 avr32/applications/blank/main.o
+ .debug_info    0x0000000000000fa9      0xb50 avr32/drivers/gpio/gpio.o
+ .debug_info    0x0000000000001af9     0x1d8b avr32/drivers/pm/pm.o
+ .debug_info    0x0000000000003884     0x2127 avr32/drivers/usart/usart.o
+ .debug_info    0x00000000000059ab     0x1747 avr32/utils/debug/print_funcs.o
+ .debug_info    0x00000000000070f2       0xc9 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_info    0x00000000000071bb      0x8bb /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_info    0x0000000000007a76      0x964 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .debug_info    0x00000000000083da      0x93e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_info    0x0000000000008d18      0x930 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_info    0x0000000000009648      0x935 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_info    0x0000000000009f7d      0x8aa /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_info    0x000000000000a827      0xc2e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_info    0x000000000000b455      0x8ee /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_info    0x000000000000bd43      0xc52 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_info    0x000000000000c995      0x8d3 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_info    0x000000000000d268      0x977 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_info    0x000000000000dbdf      0x8e2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_info    0x000000000000e4c1      0xb41 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+
+.debug_abbrev   0x0000000000000000     0x237f
+ *(.debug_abbrev)
+ .debug_abbrev  0x0000000000000000      0x1d4 avr32/applications/blank/main.o
+ .debug_abbrev  0x00000000000001d4      0x2e9 avr32/drivers/gpio/gpio.o
+ .debug_abbrev  0x00000000000004bd      0x362 avr32/drivers/pm/pm.o
+ .debug_abbrev  0x000000000000081f      0x311 avr32/drivers/usart/usart.o
+ .debug_abbrev  0x0000000000000b30      0x1f6 avr32/utils/debug/print_funcs.o
+ .debug_abbrev  0x0000000000000d26       0x83 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_abbrev  0x0000000000000da9      0x161 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_abbrev  0x0000000000000f0a      0x162 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .debug_abbrev  0x000000000000106c      0x19c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_abbrev  0x0000000000001208      0x1b7 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_abbrev  0x00000000000013bf      0x1be /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_abbrev  0x000000000000157d      0x152 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_abbrev  0x00000000000016cf      0x28e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_abbrev  0x000000000000195d      0x17a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_abbrev  0x0000000000001ad7      0x207 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_abbrev  0x0000000000001cde      0x15d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_abbrev  0x0000000000001e3b      0x1e8 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_abbrev  0x0000000000002023      0x181 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_abbrev  0x00000000000021a4      0x1db /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+
+.debug_line     0x0000000000000000     0x57ea
+ *(.debug_line)
+ .debug_line    0x0000000000000000      0x836 avr32/applications/blank/main.o
+ .debug_line    0x0000000000000836      0xb94 avr32/drivers/gpio/gpio.o
+ .debug_line    0x00000000000013ca      0xc54 avr32/drivers/pm/pm.o
+ .debug_line    0x000000000000201e      0xd77 avr32/drivers/usart/usart.o
+ .debug_line    0x0000000000002d95      0x859 avr32/utils/debug/print_funcs.o
+ .debug_line    0x00000000000035ee       0xe2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_line    0x00000000000036d0      0x1a9 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_line    0x0000000000003879      0x11b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .debug_line    0x0000000000003994      0x54b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_line    0x0000000000003edf      0x1f4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_line    0x00000000000040d3      0x219 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_line    0x00000000000042ec      0x141 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_line    0x000000000000442d      0x509 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_line    0x0000000000004936      0x1b1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_line    0x0000000000004ae7      0x4ea /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_line    0x0000000000004fd1      0x147 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_line    0x0000000000005118      0x25f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_line    0x0000000000005377      0x1b4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_line    0x000000000000552b      0x2bf /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+
+.debug_frame    0x0000000000000000     0x1008
+ *(.debug_frame)
+ .debug_frame   0x0000000000000000       0x4c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+ .debug_frame   0x000000000000004c       0x34 avr32/applications/blank/main.o
+ .debug_frame   0x0000000000000080      0x1fc avr32/drivers/gpio/gpio.o
+ .debug_frame   0x000000000000027c      0x30c avr32/drivers/pm/pm.o
+ .debug_frame   0x0000000000000588      0x2a8 avr32/drivers/usart/usart.o
+ .debug_frame   0x0000000000000830      0x18c avr32/utils/debug/print_funcs.o
+ .debug_frame   0x00000000000009bc       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_frame   0x00000000000009e4       0x34 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_frame   0x0000000000000a18      0x220 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_frame   0x0000000000000c38       0x40 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_frame   0x0000000000000c78       0x44 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_frame   0x0000000000000cbc       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_frame   0x0000000000000cdc      0x13c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_frame   0x0000000000000e18       0x40 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_frame   0x0000000000000e58       0x40 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_frame   0x0000000000000e98       0x30 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_frame   0x0000000000000ec8       0x80 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_frame   0x0000000000000f48       0x34 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_frame   0x0000000000000f7c       0x58 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+ .debug_frame   0x0000000000000fd4       0x34 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+
+.debug_str      0x0000000000000000     0x2582
+ *(.debug_str)
+ .debug_str     0x0000000000000000      0x45c avr32/applications/blank/main.o
+                                        0x571 (size before relaxing)
+ .debug_str     0x000000000000045c      0x420 avr32/drivers/gpio/gpio.o
+                                        0x555 (size before relaxing)
+ .debug_str     0x000000000000087c      0x529 avr32/drivers/pm/pm.o
+                                        0x9c1 (size before relaxing)
+ .debug_str     0x0000000000000da5      0x792 avr32/drivers/usart/usart.o
+                                        0x928 (size before relaxing)
+ .debug_str     0x0000000000001537      0x124 avr32/utils/debug/print_funcs.o
+                                        0x667 (size before relaxing)
+ .debug_str     0x000000000000165b       0xc7 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+                                        0x163 (size before relaxing)
+ .debug_str     0x0000000000001722      0x38a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+                                        0x4dd (size before relaxing)
+ .debug_str     0x0000000000001aac       0xe0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+                                        0x52a (size before relaxing)
+ .debug_str     0x0000000000001b8c      0x361 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                        0x46c (size before relaxing)
+ .debug_str     0x0000000000001eed       0x55 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+                                        0x52a (size before relaxing)
+ .debug_str     0x0000000000001f42       0x65 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+                                        0x505 (size before relaxing)
+ .debug_str     0x0000000000001fa7       0x9c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+                                        0x4d3 (size before relaxing)
+ .debug_str     0x0000000000002043      0x15d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                        0x604 (size before relaxing)
+ .debug_str     0x00000000000021a0       0x5e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                                        0x4ed (size before relaxing)
+ .debug_str     0x00000000000021fe      0x20c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                        0x6c2 (size before relaxing)
+ .debug_str     0x000000000000240a       0x71 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                                        0x4f4 (size before relaxing)
+ .debug_str     0x000000000000247b       0x77 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+                                        0x510 (size before relaxing)
+ .debug_str     0x00000000000024f2       0x54 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+                                        0x4dc (size before relaxing)
+ .debug_str     0x0000000000002546       0x3c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                                        0x614 (size before relaxing)
+
+.debug_loc      0x0000000000000000     0x24f3
+ *(.debug_loc)
+ .debug_loc     0x0000000000000000       0x1f avr32/applications/blank/main.o
+ .debug_loc     0x000000000000001f      0x360 avr32/drivers/gpio/gpio.o
+ .debug_loc     0x000000000000037f      0x338 avr32/drivers/pm/pm.o
+ .debug_loc     0x00000000000006b7      0x8ea avr32/drivers/usart/usart.o
+ .debug_loc     0x0000000000000fa1      0x3d2 avr32/utils/debug/print_funcs.o
+ .debug_loc     0x0000000000001373       0x32 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_loc     0x00000000000013a5       0x3d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_loc     0x00000000000013e2      0x268 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_loc     0x000000000000164a       0xe9 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_loc     0x0000000000001733       0xf0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_loc     0x0000000000001823      0x202 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_loc     0x0000000000001a25       0x64 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_loc     0x0000000000001a89      0x5b0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_loc     0x0000000000002039      0x10a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_loc     0x0000000000002143       0x63 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_loc     0x00000000000021a6      0x34d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+
+.debug_macinfo  0x0000000000000000   0x436497
+ *(.debug_macinfo)
+ .debug_macinfo
+                0x0000000000000000    0xda265 avr32/applications/blank/main.o
+ .debug_macinfo
+                0x00000000000da265    0xd682d avr32/drivers/gpio/gpio.o
+ .debug_macinfo
+                0x00000000001b0a92    0xd6697 avr32/drivers/pm/pm.o
+ .debug_macinfo
+                0x0000000000287129    0xd6a3e avr32/drivers/usart/usart.o
+ .debug_macinfo
+                0x000000000035db67    0xd8930 avr32/utils/debug/print_funcs.o
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.stack          0x0000000000007000     0x1000
+                0x0000000000007000                _stack = .
+ *(.stack)
+                0x0000000000001000                . = __stack_size__
+ *fill*         0x0000000000007000     0x1000 
+                0x0000000000008000                _estack = .
+
+.userpage
+ *(.userpage .userpage.*)
+
+/DISCARD/
+ *(.note.GNU-stack)
+LOAD avr32/applications/blank/main.o
+LOAD avr32/boards/evk1101/led.o
+LOAD avr32/drivers/adc/adc.o
+LOAD avr32/drivers/flashc/flashc.o
+LOAD avr32/drivers/gpio/gpio.o
+LOAD avr32/drivers/intc/intc.o
+LOAD avr32/drivers/pm/pm.o
+LOAD avr32/drivers/pm/pm_conf_clocks.o
+LOAD avr32/drivers/pm/power_clocks_lib.o
+LOAD avr32/drivers/spi/spi.o
+LOAD avr32/drivers/tc/tc.o
+LOAD avr32/drivers/usart/usart.o
+LOAD avr32/utils/debug/print_funcs.o
+LOAD avr32/utils/startup/trampoline_uc3.o
+START GROUP
+END GROUP
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtn.o
+OUTPUT(evk1101-demo.elf elf32-avr32)
+
+.debug_ranges   0x0000000000000000      0x6d0
+ .debug_ranges  0x0000000000000000       0x18 avr32/applications/blank/main.o
+ .debug_ranges  0x0000000000000018      0x128 avr32/drivers/gpio/gpio.o
+ .debug_ranges  0x0000000000000140      0x170 avr32/drivers/pm/pm.o
+ .debug_ranges  0x00000000000002b0       0xd0 avr32/drivers/usart/usart.o
+ .debug_ranges  0x0000000000000380       0x80 avr32/utils/debug/print_funcs.o
+ .debug_ranges  0x0000000000000400       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_ranges  0x0000000000000418       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_ranges  0x0000000000000430       0xf0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_ranges  0x0000000000000520       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_ranges  0x0000000000000538       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_ranges  0x0000000000000550       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_ranges  0x0000000000000568       0xb0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_ranges  0x0000000000000618       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_ranges  0x0000000000000638       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_ranges  0x0000000000000650       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_ranges  0x0000000000000670       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_ranges  0x0000000000000698       0x18 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_ranges  0x00000000000006b0       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+
+Cross Reference Table
+
+Symbol                                            File
+INTC_init_interrupts                              avr32/drivers/intc/intc.o
+INTC_register_interrupt                           avr32/drivers/intc/intc.o
+LED_Display                                       avr32/boards/evk1101/led.o
+LED_Display_Field                                 avr32/boards/evk1101/led.o
+LED_Display_Mask                                  avr32/boards/evk1101/led.o
+LED_Get_Intensity                                 avr32/boards/evk1101/led.o
+LED_Off                                           avr32/boards/evk1101/led.o
+LED_On                                            avr32/boards/evk1101/led.o
+LED_Read_Display                                  avr32/boards/evk1101/led.o
+LED_Read_Display_Field                            avr32/boards/evk1101/led.o
+LED_Read_Display_Mask                             avr32/boards/evk1101/led.o
+LED_Set_Intensity                                 avr32/boards/evk1101/led.o
+LED_Test                                          avr32/boards/evk1101/led.o
+LED_Toggle                                        avr32/boards/evk1101/led.o
+_GLOBAL_OFFSET_TABLE_                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+_Jv_RegisterClasses                               /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+__DTOR_END__                                      /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+__ashldi3                                         /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+__avr32_lsl64                                     /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_ashldi3.o)
+                                                  avr32/drivers/flashc/flashc.o
+__avr32_lsr64                                     /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+                                                  avr32/drivers/flashc/flashc.o
+__call_exitprocs                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+__dso_handle                                      /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
+__errno                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+__fp_lock_all                                     /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__fp_unlock_all                                   /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__heap_end__                                      /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+__heap_start__                                    /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+__lshrdi3                                         /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_lshrdi3.o)
+__malloc_av_                                      /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+__malloc_current_mallinfo                         /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+__malloc_lock                                     /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+__malloc_max_sbrked_mem                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+__malloc_max_total_mem                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+__malloc_sbrk_base                                /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+__malloc_top_pad                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+__malloc_trim_threshold                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+__malloc_unlock                                   /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+__register_exitproc                               /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+__sclose                                          /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__sf_fake_stderr                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+__sf_fake_stdin                                   /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+__sf_fake_stdout                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+__sfmoreglue                                      /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__sfp                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__sfp_lock_acquire                                /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+__sfp_lock_release                                /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+__sinit                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+__sinit_lock_acquire                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__sinit_lock_release                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__sread                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__sseek                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+__swrite                                          /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+_cleanup                                          /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+_cleanup_r                                        /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+_close                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+_close_r                                          /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+_data                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_data_lma                                         /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_edata                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_end                                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_estack                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_evba                                             avr32/drivers/intc/intc.o
+_execve                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_exit                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+_fclose_r                                         /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+_fcntl                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_fflush_r                                         /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+_fini                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_fork                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_free_r                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+_fstat                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_fstat_host                                       /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_fwalk                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+_fwalk_reent                                      /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fwalk.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+_get_interrupt_handler                            avr32/drivers/intc/intc.o
+_getpid                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_gettimeofday                                     /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_gettimeofday_host                                /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_global_impure_ptr                                /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+_impure_ptr                                       /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+_init                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crti.o
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_init_argv                                        /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_init_startup                                     /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_int0                                             avr32/drivers/intc/intc.o
+_int1                                             avr32/drivers/intc/intc.o
+_int2                                             avr32/drivers/intc/intc.o
+_int3                                             avr32/drivers/intc/intc.o
+_kill                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_link                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_lseek                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+_lseek_r                                          /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+_malloc_r                                         /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+_malloc_trim_r                                    /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+_open                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_read                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+_read_r                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+_reclaim_reent                                    /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+_sbrk                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+_sbrk_r                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+_start                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+_stat                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_stat_host                                        /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_stext                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+                                                  avr32/utils/startup/trampoline_uc3.o
+_system                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_times                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_trampoline                                       avr32/utils/startup/trampoline_uc3.o
+_unlink                                           /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_wait                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+_wrapup_reent                                     /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+_write                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+_write_r                                          /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-stdio.o)
+adc_check_eoc                                     avr32/drivers/adc/adc.o
+adc_check_ovr                                     avr32/drivers/adc/adc.o
+adc_configure                                     avr32/drivers/adc/adc.o
+adc_disable                                       avr32/drivers/adc/adc.o
+adc_enable                                        avr32/drivers/adc/adc.o
+adc_get_latest_value                              avr32/drivers/adc/adc.o
+adc_get_status                                    avr32/drivers/adc/adc.o
+adc_get_value                                     avr32/drivers/adc/adc.o
+adc_start                                         avr32/drivers/adc/adc.o
+atexit                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+cleanup_glue                                      /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+errno                                             /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-readr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-lseekr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-closer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-writer.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+exit                                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+fclose                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fclose.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+fflush                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-fflush.o)
+flashc_activate_security_bit                      avr32/drivers/flashc/flashc.o
+flashc_clear_page_buffer                          avr32/drivers/flashc/flashc.o
+flashc_default_wait_until_ready                   avr32/drivers/flashc/flashc.o
+flashc_enable_lock_error_int                      avr32/drivers/flashc/flashc.o
+flashc_enable_prog_error_int                      avr32/drivers/flashc/flashc.o
+flashc_enable_ready_int                           avr32/drivers/flashc/flashc.o
+flashc_erase_all                                  avr32/drivers/flashc/flashc.o
+flashc_erase_all_gp_fuses                         avr32/drivers/flashc/flashc.o
+flashc_erase_all_pages                            avr32/drivers/flashc/flashc.o
+flashc_erase_gp_fuse_bit                          avr32/drivers/flashc/flashc.o
+flashc_erase_gp_fuse_bitfield                     avr32/drivers/flashc/flashc.o
+flashc_erase_gp_fuse_byte                         avr32/drivers/flashc/flashc.o
+flashc_erase_page                                 avr32/drivers/flashc/flashc.o
+flashc_erase_user_page                            avr32/drivers/flashc/flashc.o
+flashc_get_bootloader_protected_size              avr32/drivers/flashc/flashc.o
+flashc_get_command                                avr32/drivers/flashc/flashc.o
+flashc_get_flash_size                             avr32/drivers/flashc/flashc.o
+flashc_get_page_count                             avr32/drivers/flashc/flashc.o
+flashc_get_page_count_per_region                  avr32/drivers/flashc/flashc.o
+flashc_get_page_number                            avr32/drivers/flashc/flashc.o
+flashc_get_page_region                            avr32/drivers/flashc/flashc.o
+flashc_get_region_first_page_number               avr32/drivers/flashc/flashc.o
+flashc_get_wait_state                             avr32/drivers/flashc/flashc.o
+flashc_is_external_privileged_fetch_locked        avr32/drivers/flashc/flashc.o
+flashc_is_lock_error                              avr32/drivers/flashc/flashc.o
+flashc_is_lock_error_int_enabled                  avr32/drivers/flashc/flashc.o
+flashc_is_page_erased                             avr32/drivers/flashc/flashc.o
+flashc_is_page_region_locked                      avr32/drivers/flashc/flashc.o
+flashc_is_prog_error_int_enabled                  avr32/drivers/flashc/flashc.o
+flashc_is_programming_error                       avr32/drivers/flashc/flashc.o
+flashc_is_ready                                   avr32/drivers/flashc/flashc.o
+flashc_is_ready_int_enabled                       avr32/drivers/flashc/flashc.o
+flashc_is_region_locked                           avr32/drivers/flashc/flashc.o
+flashc_is_security_bit_active                     avr32/drivers/flashc/flashc.o
+flashc_issue_command                              avr32/drivers/flashc/flashc.o
+flashc_lock_all_regions                           avr32/drivers/flashc/flashc.o
+flashc_lock_external_privileged_fetch             avr32/drivers/flashc/flashc.o
+flashc_lock_page_region                           avr32/drivers/flashc/flashc.o
+flashc_lock_region                                avr32/drivers/flashc/flashc.o
+flashc_memcpy                                     avr32/drivers/flashc/flashc.o
+flashc_memset16                                   avr32/drivers/flashc/flashc.o
+flashc_memset32                                   avr32/drivers/flashc/flashc.o
+flashc_memset64                                   avr32/drivers/flashc/flashc.o
+flashc_memset8                                    avr32/drivers/flashc/flashc.o
+flashc_no_operation                               avr32/drivers/flashc/flashc.o
+flashc_quick_page_read                            avr32/drivers/flashc/flashc.o
+flashc_quick_user_page_read                       avr32/drivers/flashc/flashc.o
+flashc_read_all_gp_fuses                          avr32/drivers/flashc/flashc.o
+flashc_read_gp_fuse_bit                           avr32/drivers/flashc/flashc.o
+flashc_read_gp_fuse_bitfield                      avr32/drivers/flashc/flashc.o
+flashc_read_gp_fuse_byte                          avr32/drivers/flashc/flashc.o
+flashc_set_all_gp_fuses                           avr32/drivers/flashc/flashc.o
+flashc_set_bootloader_protected_size              avr32/drivers/flashc/flashc.o
+flashc_set_bus_freq                               avr32/drivers/flashc/flashc.o
+flashc_set_gp_fuse_bit                            avr32/drivers/flashc/flashc.o
+flashc_set_gp_fuse_bitfield                       avr32/drivers/flashc/flashc.o
+flashc_set_gp_fuse_byte                           avr32/drivers/flashc/flashc.o
+flashc_set_wait_state                             avr32/drivers/flashc/flashc.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+flashc_wait_until_ready                           avr32/drivers/flashc/flashc.o
+flashc_write_all_gp_fuses                         avr32/drivers/flashc/flashc.o
+flashc_write_gp_fuse_bit                          avr32/drivers/flashc/flashc.o
+flashc_write_gp_fuse_bitfield                     avr32/drivers/flashc/flashc.o
+flashc_write_gp_fuse_byte                         avr32/drivers/flashc/flashc.o
+flashc_write_page                                 avr32/drivers/flashc/flashc.o
+flashc_write_user_page                            avr32/drivers/flashc/flashc.o
+free                                              /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+getBaudDiv                                        avr32/drivers/spi/spi.o
+gpio_clear_pin_interrupt_flag                     avr32/drivers/gpio/gpio.o
+gpio_clr_gpio_open_drain_pin                      avr32/drivers/gpio/gpio.o
+gpio_clr_gpio_pin                                 avr32/drivers/gpio/gpio.o
+gpio_configure_group                              avr32/drivers/gpio/gpio.o
+gpio_configure_pin                                avr32/drivers/gpio/gpio.o
+gpio_disable_pin_glitch_filter                    avr32/drivers/gpio/gpio.o
+gpio_disable_pin_interrupt                        avr32/drivers/gpio/gpio.o
+gpio_disable_pin_pull_up                          avr32/drivers/gpio/gpio.o
+gpio_enable_gpio                                  avr32/drivers/gpio/gpio.o
+gpio_enable_gpio_pin                              avr32/drivers/gpio/gpio.o
+                                                  avr32/applications/blank/main.o
+gpio_enable_module                                avr32/drivers/gpio/gpio.o
+                                                  avr32/utils/debug/print_funcs.o
+gpio_enable_module_pin                            avr32/drivers/gpio/gpio.o
+gpio_enable_pin_glitch_filter                     avr32/drivers/gpio/gpio.o
+gpio_enable_pin_interrupt                         avr32/drivers/gpio/gpio.o
+gpio_enable_pin_pull_up                           avr32/drivers/gpio/gpio.o
+gpio_get_gpio_open_drain_pin_output_value         avr32/drivers/gpio/gpio.o
+gpio_get_gpio_pin_output_value                    avr32/drivers/gpio/gpio.o
+gpio_get_pin_interrupt_flag                       avr32/drivers/gpio/gpio.o
+gpio_get_pin_value                                avr32/drivers/gpio/gpio.o
+gpio_set_gpio_open_drain_pin                      avr32/drivers/gpio/gpio.o
+gpio_set_gpio_pin                                 avr32/drivers/gpio/gpio.o
+gpio_set_group_high                               avr32/drivers/gpio/gpio.o
+gpio_set_group_low                                avr32/drivers/gpio/gpio.o
+gpio_set_pin_high                                 avr32/drivers/gpio/gpio.o
+gpio_set_pin_low                                  avr32/drivers/gpio/gpio.o
+gpio_tgl_gpio_open_drain_pin                      avr32/drivers/gpio/gpio.o
+gpio_tgl_gpio_pin                                 avr32/drivers/gpio/gpio.o
+                                                  avr32/applications/blank/main.o
+gpio_toggle_group                                 avr32/drivers/gpio/gpio.o
+gpio_toggle_pin                                   avr32/drivers/gpio/gpio.o
+init_dbg_rs232                                    avr32/utils/debug/print_funcs.o
+                                                  avr32/applications/blank/main.o
+init_dbg_rs232_ex                                 avr32/utils/debug/print_funcs.o
+isatty                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+main                                              avr32/applications/blank/main.o
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
+malloc                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+memcpy                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memcpy.o)
+                                                  avr32/drivers/flashc/flashc.o
+memset                                            /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memset.o)
+                                                  /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+pcl_configure_clocks                              avr32/drivers/pm/power_clocks_lib.o
+pcl_configure_usb_clock                           avr32/drivers/pm/power_clocks_lib.o
+pcl_read_gplp                                     avr32/drivers/pm/power_clocks_lib.o
+pcl_switch_to_osc                                 avr32/drivers/pm/power_clocks_lib.o
+pcl_write_gplp                                    avr32/drivers/pm/power_clocks_lib.o
+pm_bod_clear_irq                                  avr32/drivers/pm/pm.o
+pm_bod_disable_irq                                avr32/drivers/pm/pm.o
+pm_bod_enable_irq                                 avr32/drivers/pm/pm.o
+pm_bod_get_irq_enable_bit                         avr32/drivers/pm/pm.o
+pm_bod_get_irq_status                             avr32/drivers/pm/pm.o
+pm_bod_get_level                                  avr32/drivers/pm/pm.o
+pm_cksel                                          avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_cksel_get                                      avr32/drivers/pm/pm.o
+pm_cksel_set                                      avr32/drivers/pm/pm.o
+pm_configure_clocks                               avr32/drivers/pm/pm_conf_clocks.o
+                                                  avr32/drivers/pm/power_clocks_lib.o
+pm_configure_usb_clock                            avr32/drivers/pm/pm_conf_clocks.o
+                                                  avr32/drivers/pm/power_clocks_lib.o
+pm_disable_clk0                                   avr32/drivers/pm/pm.o
+pm_disable_clk1                                   avr32/drivers/pm/pm.o
+pm_disable_clk32                                  avr32/drivers/pm/pm.o
+pm_disable_module                                 avr32/drivers/pm/pm.o
+pm_enable_clk0                                    avr32/drivers/pm/pm.o
+pm_enable_clk0_no_wait                            avr32/drivers/pm/pm.o
+pm_enable_clk1                                    avr32/drivers/pm/pm.o
+pm_enable_clk1_no_wait                            avr32/drivers/pm/pm.o
+pm_enable_clk32                                   avr32/drivers/pm/pm.o
+pm_enable_clk32_no_wait                           avr32/drivers/pm/pm.o
+pm_enable_module                                  avr32/drivers/pm/pm.o
+pm_enable_osc0_crystal                            avr32/drivers/pm/pm.o
+pm_enable_osc0_ext_clock                          avr32/drivers/pm/pm.o
+pm_enable_osc1_crystal                            avr32/drivers/pm/pm.o
+pm_enable_osc1_ext_clock                          avr32/drivers/pm/pm.o
+pm_enable_osc32_crystal                           avr32/drivers/pm/pm.o
+pm_enable_osc32_ext_clock                         avr32/drivers/pm/pm.o
+pm_gc_disable                                     avr32/drivers/pm/pm.o
+pm_gc_enable                                      avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_gc_setup                                       avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_get_clock                                      avr32/drivers/pm/pm.o
+pm_pll_disable                                    avr32/drivers/pm/pm.o
+pm_pll_enable                                     avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_pll_get_option                                 avr32/drivers/pm/pm.o
+pm_pll_set_option                                 avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_pll_setup                                      avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_read_gplp                                      avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/power_clocks_lib.o
+pm_switch_to_clock                                avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_switch_to_osc0                                 avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/power_clocks_lib.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+                                                  avr32/applications/blank/main.o
+pm_wait_for_clk0_ready                            avr32/drivers/pm/pm.o
+pm_wait_for_clk1_ready                            avr32/drivers/pm/pm.o
+pm_wait_for_clk32_ready                           avr32/drivers/pm/pm.o
+pm_wait_for_pll0_locked                           avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_wait_for_pll1_locked                           avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/pm_conf_clocks.o
+pm_write_gplp                                     avr32/drivers/pm/pm.o
+                                                  avr32/drivers/pm/power_clocks_lib.o
+print                                             avr32/utils/debug/print_funcs.o
+print_char                                        avr32/utils/debug/print_funcs.o
+print_char_hex                                    avr32/utils/debug/print_funcs.o
+print_dbg                                         avr32/utils/debug/print_funcs.o
+                                                  avr32/applications/blank/main.o
+print_dbg_char                                    avr32/utils/debug/print_funcs.o
+print_dbg_char_hex                                avr32/utils/debug/print_funcs.o
+print_dbg_hex                                     avr32/utils/debug/print_funcs.o
+print_dbg_short_hex                               avr32/utils/debug/print_funcs.o
+print_dbg_ulong                                   avr32/utils/debug/print_funcs.o
+print_hex                                         avr32/utils/debug/print_funcs.o
+print_short_hex                                   avr32/utils/debug/print_funcs.o
+print_ulong                                       avr32/utils/debug/print_funcs.o
+sigfillset                                        /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+sigprocmask                                       /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+spi_disable                                       avr32/drivers/spi/spi.o
+spi_enable                                        avr32/drivers/spi/spi.o
+spi_getStatus                                     avr32/drivers/spi/spi.o
+spi_initMaster                                    avr32/drivers/spi/spi.o
+spi_initSlave                                     avr32/drivers/spi/spi.o
+spi_initTest                                      avr32/drivers/spi/spi.o
+spi_is_enabled                                    avr32/drivers/spi/spi.o
+spi_read                                          avr32/drivers/spi/spi.o
+spi_readRegisterFullCheck                         avr32/drivers/spi/spi.o
+spi_selectChip                                    avr32/drivers/spi/spi.o
+spi_selectionMode                                 avr32/drivers/spi/spi.o
+spi_setupChipReg                                  avr32/drivers/spi/spi.o
+spi_unselectChip                                  avr32/drivers/spi/spi.o
+spi_variableSlaveWrite                            avr32/drivers/spi/spi.o
+spi_write                                         avr32/drivers/spi/spi.o
+spi_writeEndCheck                                 avr32/drivers/spi/spi.o
+spi_writeRegisterEmptyCheck                       avr32/drivers/spi/spi.o
+tc_configure_interrupts                           avr32/drivers/tc/tc.o
+tc_get_interrupt_settings                         avr32/drivers/tc/tc.o
+tc_init_capture                                   avr32/drivers/tc/tc.o
+tc_init_waveform                                  avr32/drivers/tc/tc.o
+tc_read_ra                                        avr32/drivers/tc/tc.o
+tc_read_rb                                        avr32/drivers/tc/tc.o
+tc_read_rc                                        avr32/drivers/tc/tc.o
+tc_read_sr                                        avr32/drivers/tc/tc.o
+tc_read_tc                                        avr32/drivers/tc/tc.o
+tc_select_external_clock                          avr32/drivers/tc/tc.o
+tc_software_trigger                               avr32/drivers/tc/tc.o
+tc_start                                          avr32/drivers/tc/tc.o
+tc_stop                                           avr32/drivers/tc/tc.o
+tc_sync_start                                     avr32/drivers/tc/tc.o
+tc_sync_trigger                                   avr32/drivers/tc/tc.o
+tc_write_ra                                       avr32/drivers/tc/tc.o
+tc_write_rb                                       avr32/drivers/tc/tc.o
+tc_write_rc                                       avr32/drivers/tc/tc.o
+usart_get_echo_line                               avr32/drivers/usart/usart.o
+usart_getchar                                     avr32/drivers/usart/usart.o
+usart_init_IrDA                                   avr32/drivers/usart/usart.o
+usart_init_hw_handshaking                         avr32/drivers/usart/usart.o
+usart_init_iso7816                                avr32/drivers/usart/usart.o
+usart_init_lin_master                             avr32/drivers/usart/usart.o
+usart_init_lin_slave                              avr32/drivers/usart/usart.o
+usart_init_modem                                  avr32/drivers/usart/usart.o
+usart_init_rs232                                  avr32/drivers/usart/usart.o
+                                                  avr32/utils/debug/print_funcs.o
+usart_init_rs232_tx_only                          avr32/drivers/usart/usart.o
+usart_init_rs485                                  avr32/drivers/usart/usart.o
+usart_init_spi_master                             avr32/drivers/usart/usart.o
+usart_init_spi_slave                              avr32/drivers/usart/usart.o
+usart_init_sync_master                            avr32/drivers/usart/usart.o
+usart_init_sync_slave                             avr32/drivers/usart/usart.o
+usart_putchar                                     avr32/drivers/usart/usart.o
+                                                  avr32/utils/debug/print_funcs.o
+usart_read_char                                   avr32/drivers/usart/usart.o
+usart_reset                                       avr32/drivers/usart/usart.o
+usart_send_address                                avr32/drivers/usart/usart.o
+usart_spi_selectChip                              avr32/drivers/usart/usart.o
+usart_spi_unselectChip                            avr32/drivers/usart/usart.o
+usart_write_char                                  avr32/drivers/usart/usart.o
+usart_write_line                                  avr32/drivers/usart/usart.o
+                                                  avr32/utils/debug/print_funcs.o

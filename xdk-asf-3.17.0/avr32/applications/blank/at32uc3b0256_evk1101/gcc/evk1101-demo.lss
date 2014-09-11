@@ -1,0 +1,2921 @@
+
+evk1101-demo.elf:     file format elf32-avr32
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .reset        0000200c  80000000  80000000  00000400  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .rela.got     00000000  8000200c  8000200c  0000240c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  2 .init         0000001a  8000200c  8000200c  0000240c  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  3 .text         00000c30  80002028  80002028  00002428  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  4 .fini         00000018  80002c58  80002c58  00003058  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  5 .rodata       00000088  80002c70  80002c70  00003070  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  6 .lalign       00000000  80002cf8  80002cf8  000030f8  2**0
+                  ALLOC
+  7 .dalign       00000004  00000004  00000004  00000000  2**0
+                  ALLOC
+  8 .ctors        00000008  00000008  80002cf8  00003408  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  9 .dtors        00000008  00000010  80002d00  00003410  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 10 .jcr          00000004  00000018  80002d08  00003418  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 11 .got          00000000  0000001c  80002d0c  0000341c  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 12 .data         00000504  0000001c  80002d0c  0000341c  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+ 13 .balign       00000000  00000520  80003210  00003920  2**0
+                  ALLOC
+ 14 .bss          00000048  00000520  00000520  00000000  2**2
+                  ALLOC
+ 15 .heap         00006a98  00000568  00000568  00000000  2**0
+                  ALLOC
+ 16 .comment      00000028  00000000  00000000  00003920  2**0
+                  CONTENTS, READONLY
+ 17 .debug_aranges 000006f8  00000000  00000000  00003948  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 18 .debug_pubnames 00000fa6  00000000  00000000  00004040  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 19 .debug_info   0000f002  00000000  00000000  00004fe6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 20 .debug_abbrev 0000237f  00000000  00000000  00013fe8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 21 .debug_line   000057ea  00000000  00000000  00016367  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 22 .debug_frame  00001008  00000000  00000000  0001bb54  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 23 .debug_str    00002582  00000000  00000000  0001cb5c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 24 .debug_loc    000024f3  00000000  00000000  0001f0de  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 25 .debug_macinfo 00436497  00000000  00000000  000215d1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 26 .stack        00001000  00007000  00007000  00000000  2**0
+                  ALLOC
+ 27 .debug_ranges 000006d0  00000000  00000000  00457a68  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .reset:
+
+80000000 <_start>:
+80000000:	48 1f       	lddpc	pc,80000004 <_start+0x4>
+80000002:	d7 03       	nop
+80000004:	80 00       	ld.sh	r0,r0[0x0]
+80000006:	20 28       	sub	r8,2
+
+80000008 <_trampoline>:
+80000008:	e0 8f 10 00 	bral	80002008 <program_start>
+	...
+
+80002008 <program_start>:
+80002008:	fe cf ff e0 	sub	pc,pc,-32
+
+Disassembly of section .init:
+
+8000200c <_init>:
+8000200c:	eb cd 40 40 	pushm	r6,lr
+80002010:	48 26       	lddpc	r6,80002018 <_init+0xc>
+80002012:	1e 26       	rsub	r6,pc
+80002014:	c0 48       	rjmp	8000201c <_init+0x10>
+80002016:	d7 03       	nop
+80002018:	80 00       	ld.sh	r0,r0[0x0]
+8000201a:	1f f6       	ld.ub	r6,pc[0x7]
+8000201c:	c4 ec       	rcall	800020b8 <frame_dummy>
+8000201e:	e0 a0 06 13 	rcall	80002c44 <__do_global_ctors_aux>
+80002022:	e3 cd 80 40 	ldm	sp++,r6,pc
+
+Disassembly of section .text:
+
+80002028 <_stext>:
+80002028:	30 07       	mov	r7,0
+8000202a:	e0 6a 80 00 	mov	r10,32768
+8000202e:	5b fa       	cp.w	r10,-1
+80002030:	f4 0d 17 10 	movne	sp,r10
+80002034:	fe cb f3 3c 	sub	r11,pc,-3268
+80002038:	30 8c       	mov	r12,8
+8000203a:	18 3b       	cp.w	r11,r12
+8000203c:	c0 70       	breq	8000204a <_stext+0x22>
+8000203e:	e0 6a 05 20 	mov	r10,1312
+80002042:	b7 09       	ld.d	r8,r11++
+80002044:	b9 28       	st.d	r12++,r8
+80002046:	14 3c       	cp.w	r12,r10
+80002048:	cf d5       	brlt	80002042 <_stext+0x1a>
+8000204a:	e0 6a 05 68 	mov	r10,1384
+8000204e:	e0 6c 05 20 	mov	r12,1312
+80002052:	30 08       	mov	r8,0
+80002054:	30 09       	mov	r9,0
+80002056:	b9 28       	st.d	r12++,r8
+80002058:	14 3c       	cp.w	r12,r10
+8000205a:	cf e5       	brlt	80002056 <_stext+0x2e>
+8000205c:	cd 6d       	rcall	80002408 <_init_startup>
+8000205e:	fe cc f4 06 	sub	r12,pc,-3066
+80002062:	cb dd       	rcall	800023dc <atexit>
+80002064:	cd 4f       	rcall	8000200c <_init>
+80002066:	1a 9c       	mov	r12,sp
+80002068:	30 0b       	mov	r11,0
+8000206a:	cd 0d       	rcall	8000240a <_init_argv>
+8000206c:	5b fc       	cp.w	r12,-1
+8000206e:	f9 bc 00 00 	moveq	r12,0
+80002072:	f9 ba 00 00 	moveq	r10,0
+80002076:	14 1d       	sub	sp,r10
+80002078:	c2 cc       	rcall	800020d0 <main>
+8000207a:	cb 9d       	rcall	800023ec <exit>
+
+8000207c <__do_global_dtors_aux>:
+8000207c:	d4 21       	pushm	r4-r7,lr
+8000207e:	e0 68 05 20 	mov	r8,1312
+80002082:	11 89       	ld.ub	r9,r8[0x0]
+80002084:	30 08       	mov	r8,0
+80002086:	f0 09 18 00 	cp.b	r9,r8
+8000208a:	c1 61       	brne	800020b6 <__do_global_dtors_aux+0x3a>
+8000208c:	31 08       	mov	r8,16
+8000208e:	31 46       	mov	r6,20
+80002090:	10 95       	mov	r5,r8
+80002092:	10 16       	sub	r6,r8
+80002094:	e0 67 05 24 	mov	r7,1316
+80002098:	a3 46       	asr	r6,0x2
+8000209a:	20 16       	sub	r6,1
+8000209c:	c0 68       	rjmp	800020a8 <__do_global_dtors_aux+0x2c>
+8000209e:	2f f8       	sub	r8,-1
+800020a0:	8f 08       	st.w	r7[0x0],r8
+800020a2:	ea 08 03 28 	ld.w	r8,r5[r8<<0x2]
+800020a6:	5d 18       	icall	r8
+800020a8:	6e 08       	ld.w	r8,r7[0x0]
+800020aa:	0c 38       	cp.w	r8,r6
+800020ac:	cf 93       	brcs	8000209e <__do_global_dtors_aux+0x22>
+800020ae:	30 19       	mov	r9,1
+800020b0:	e0 68 05 20 	mov	r8,1312
+800020b4:	b0 89       	st.b	r8[0x0],r9
+800020b6:	d8 22       	popm	r4-r7,pc
+
+800020b8 <frame_dummy>:
+800020b8:	d4 01       	pushm	lr
+800020ba:	31 8c       	mov	r12,24
+800020bc:	78 08       	ld.w	r8,r12[0x0]
+800020be:	58 08       	cp.w	r8,0
+800020c0:	c0 50       	breq	800020ca <frame_dummy+0x12>
+800020c2:	48 38       	lddpc	r8,800020cc <frame_dummy+0x14>
+800020c4:	58 08       	cp.w	r8,0
+800020c6:	c0 20       	breq	800020ca <frame_dummy+0x12>
+800020c8:	5d 18       	icall	r8
+800020ca:	d8 02       	popm	pc
+800020cc:	00 00       	add	r0,r0
+	...
+
+800020d0 <main>:
+#include "intc.h"
+#include "pm.h"
+#include "gpio.h"
+
+int main(void)
+{
+800020d0:	d4 21       	pushm	r4-r7,lr
+	// Switch main clock from internal RC to external Oscillator 0
+	pm_switch_to_osc0(&AVR32_PM, FOSC0, OSC0_STARTUP);
+800020d2:	30 3a       	mov	r10,3
+800020d4:	e0 6b 1b 00 	mov	r11,6912
+800020d8:	ea 1b 00 b7 	orh	r11,0xb7
+800020dc:	fe 7c 0c 00 	mov	r12,-62464
+800020e0:	c7 6c       	rcall	800021cc <pm_switch_to_osc0>
+800020e2:	e0 6c 1b 00 	mov	r12,6912
+
+	init_dbg_rs232(FOSC0);
+800020e6:	ea 1c 00 b7 	orh	r12,0xb7
+800020ea:	c7 3d       	rcall	800023d0 <init_dbg_rs232>
+800020ec:	32 0c       	mov	r12,32
+800020ee:	c5 7c       	rcall	8000219c <gpio_enable_gpio_pin>
+
+	gpio_enable_gpio_pin(AVR32_PIN_PB00);
+800020f0:	fe cc f4 80 	sub	r12,pc,-2944
+800020f4:	c5 0d       	rcall	80002394 <print_dbg>
+
+	print_dbg("\r\n\nstart");
+800020f6:	e0 67 c6 c0 	mov	r7,50880
+800020fa:	ea 17 00 2d 	orh	r7,0x2d
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+800020fe:	e1 b8 00 42 	mfsr	r8,0x108
+80002102:	f0 07 00 0a 	add	r10,r8,r7
+ * \param  delay:   (input) delay in CPU cycles before timeout.
+ * \param  cpu_time: (output) internal information used by the timer API.
+ */
+__always_inline static void cpu_set_timeout(unsigned long delay, t_cpu_time *cpu_time)
+{
+  cpu_time->delay_start_cycle = Get_system_register(AVR32_COUNT);
+80002106:	e1 b9 00 42 	mfsr	r9,0x108
+  cpu_time->delay_end_cycle   = cpu_time->delay_start_cycle + delay;
+8000210a:	14 38       	cp.w	r8,r10
+ *
+ * \return true if timeout occurred, otherwise false.
+ */
+__always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
+{
+  unsigned long current_cycle_count = Get_system_register(AVR32_COUNT);
+8000210c:	e0 88 00 05 	brls	80002116 <main+0x46>
+  // Test if the timeout as already occurred.
+  else if (cpu_time->timer_state == CPU_TIMER_STATE_REACHED)
+    return true;
+
+  // If the ending cycle count of this timeout is wrapped, ...
+  else if (cpu_time->delay_start_cycle > cpu_time->delay_end_cycle)
+80002110:	10 39       	cp.w	r9,r8
+80002112:	cf a2       	brcc	80002106 <main+0x36>
+80002114:	c0 38       	rjmp	8000211a <main+0x4a>
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle && current_cycle_count > cpu_time->delay_end_cycle)
+80002116:	10 39       	cp.w	r9,r8
+80002118:	c0 43       	brcs	80002120 <main+0x50>
+8000211a:	14 39       	cp.w	r9,r10
+    }
+    return false;
+  }
+  else
+  {
+    if (current_cycle_count < cpu_time->delay_start_cycle || current_cycle_count > cpu_time->delay_end_cycle)
+8000211c:	fe 98 ff f5 	brls	80002106 <main+0x36>
+80002120:	fe cc f4 a4 	sub	r12,pc,-2908
+80002124:	c3 8d       	rcall	80002394 <print_dbg>
+
+	while (true) {
+		delay_ms(250);
+		print_dbg(".");
+80002126:	32 0c       	mov	r12,32
+80002128:	c4 5c       	rcall	800021b2 <gpio_tgl_gpio_pin>
+8000212a:	ce ab       	rjmp	800020fe <main+0x2e>
+
+8000212c <gpio_enable_module_pin>:
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_module_pin(uint32_t pin, uint32_t function)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+8000212c:	f8 08 16 05 	lsr	r8,r12,0x5
+80002130:	a9 68       	lsl	r8,0x8
+80002132:	e0 28 f0 00 	sub	r8,61440
+
+	/* Enable the correct function. */
+	switch (function) {
+80002136:	58 1b       	cp.w	r11,1
+80002138:	c0 d0       	breq	80002152 <gpio_enable_module_pin+0x26>
+8000213a:	c0 63       	brcs	80002146 <gpio_enable_module_pin+0x1a>
+8000213c:	58 2b       	cp.w	r11,2
+8000213e:	c0 f0       	breq	8000215c <gpio_enable_module_pin+0x30>
+80002140:	58 3b       	cp.w	r11,3
+80002142:	c1 20       	breq	80002166 <gpio_enable_module_pin+0x3a>
+80002144:	5e ff       	retal	1
+	case 0: /* A function. */
+		gpio_port->pmr0c = 1 << (pin & 0x1F);
+80002146:	30 19       	mov	r9,1
+80002148:	f2 0c 09 49 	lsl	r9,r9,r12
+8000214c:	91 69       	st.w	r8[0x18],r9
+		gpio_port->pmr1c = 1 << (pin & 0x1F);
+8000214e:	91 a9       	st.w	r8[0x28],r9
+#if (AVR32_GPIO_H_VERSION >= 210)
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
+80002150:	c1 08       	rjmp	80002170 <gpio_enable_module_pin+0x44>
+
+	case 1: /* B function. */
+		gpio_port->pmr0s = 1 << (pin & 0x1F);
+80002152:	f6 0c 09 4b 	lsl	r11,r11,r12
+80002156:	91 5b       	st.w	r8[0x14],r11
+		gpio_port->pmr1c = 1 << (pin & 0x1F);
+80002158:	91 ab       	st.w	r8[0x28],r11
+#if (AVR32_GPIO_H_VERSION >= 210)
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
+8000215a:	c0 b8       	rjmp	80002170 <gpio_enable_module_pin+0x44>
+
+	case 2: /* C function. */
+		gpio_port->pmr0c = 1 << (pin & 0x1F);
+8000215c:	30 19       	mov	r9,1
+8000215e:	f2 0c 09 49 	lsl	r9,r9,r12
+80002162:	91 69       	st.w	r8[0x18],r9
+80002164:	c0 58       	rjmp	8000216e <gpio_enable_module_pin+0x42>
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
+
+	case 3: /* D function. */
+		gpio_port->pmr0s = 1 << (pin & 0x1F);
+80002166:	30 19       	mov	r9,1
+80002168:	f2 0c 09 49 	lsl	r9,r9,r12
+8000216c:	91 59       	st.w	r8[0x14],r9
+		gpio_port->pmr1s = 1 << (pin & 0x1F);
+8000216e:	91 99       	st.w	r8[0x24],r9
+	default:
+		return GPIO_INVALID_ARGUMENT;
+	}
+
+	/* Disable GPIO control. */
+	gpio_port->gperc = 1 << (pin & 0x1F);
+80002170:	30 19       	mov	r9,1
+80002172:	f2 0c 09 4c 	lsl	r12,r9,r12
+80002176:	91 2c       	st.w	r8[0x8],r12
+80002178:	5e fd       	retal	0
+8000217a:	d7 03       	nop
+
+8000217c <gpio_enable_module>:
+ * \param size The number of pins in \a gpiomap.
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
+8000217c:	d4 21       	pushm	r4-r7,lr
+8000217e:	30 07       	mov	r7,0
+80002180:	18 96       	mov	r6,r12
+80002182:	16 94       	mov	r4,r11
+80002184:	0e 95       	mov	r5,r7
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
+80002186:	c0 78       	rjmp	80002194 <gpio_enable_module+0x18>
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+80002188:	6c 1b       	ld.w	r11,r6[0x4]
+8000218a:	6c 0c       	ld.w	r12,r6[0x0]
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
+8000218c:	2f f7       	sub	r7,-1
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+		gpiomap++;
+8000218e:	2f 86       	sub	r6,-8
+{
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+80002190:	cc ef       	rcall	8000212c <gpio_enable_module_pin>
+80002192:	18 45       	or	r5,r12
+80002194:	08 37       	cp.w	r7,r4
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
+80002196:	cf 93       	brcs	80002188 <gpio_enable_module+0xc>
+80002198:	0a 9c       	mov	r12,r5
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+		gpiomap++;
+	}
+
+	return status;
+}
+8000219a:	d8 22       	popm	r4-r7,pc
+
+8000219c <gpio_enable_gpio_pin>:
+8000219c:	30 18       	mov	r8,1
+8000219e:	f0 0c 09 48 	lsl	r8,r8,r12
+800021a2:	a5 9c       	lsr	r12,0x5
+ *            AVR32_PWM_3_PIN for PWM channel 3 can also be used to release
+ *            module pins for GPIO.
+ */
+void gpio_enable_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+800021a4:	a9 6c       	lsl	r12,0x8
+800021a6:	e0 2c f0 00 	sub	r12,61440
+	
+	gpio_port->oderc = 1 << (pin & 0x1F);
+800021aa:	f9 48 00 48 	st.w	r12[72],r8
+	gpio_port->gpers = 1 << (pin & 0x1F);
+800021ae:	99 18       	st.w	r12[0x4],r8
+}
+800021b0:	5e fc       	retal	r12
+
+800021b2 <gpio_tgl_gpio_pin>:
+void gpio_tgl_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+	
+	/* Toggle the I/O line. */
+	gpio_port->ovrt  = 1 << (pin & 0x1F);
+800021b2:	30 18       	mov	r8,1
+800021b4:	f0 0c 09 48 	lsl	r8,r8,r12
+ *
+ * \param pin The pin number.
+ */
+void gpio_tgl_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+800021b8:	a5 9c       	lsr	r12,0x5
+800021ba:	a9 6c       	lsl	r12,0x8
+800021bc:	e0 2c f0 00 	sub	r12,61440
+	
+	/* Toggle the I/O line. */
+	gpio_port->ovrt  = 1 << (pin & 0x1F);
+800021c0:	f9 48 00 5c 	st.w	r12[92],r8
+	/* The GPIO output driver is enabled for that pin. */
+	gpio_port->oders = 1 << (pin & 0x1F);
+800021c4:	f9 48 00 44 	st.w	r12[68],r8
+	/* The GPIO module controls that pin. */
+	gpio_port->gpers = 1 << (pin & 0x1F);
+800021c8:	99 18       	st.w	r12[0x4],r8
+}
+800021ca:	5e fc       	retal	r12
+
+800021cc <pm_switch_to_osc0>:
+}
+
+
+void pm_enable_osc0_crystal(volatile avr32_pm_t *pm, unsigned int fosc0)
+{
+  pm_set_osc0_mode(pm, (fosc0 <  900000) ? AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G0 :
+800021cc:	ec 5b bb 9f 	cp.w	r11,899999
+800021d0:	e0 8b 00 04 	brhi	800021d8 <pm_switch_to_osc0+0xc>
+800021d4:	30 4b       	mov	r11,4
+800021d6:	c1 38       	rjmp	800021fc <pm_switch_to_osc0+0x30>
+800021d8:	e0 68 c6 bf 	mov	r8,50879
+800021dc:	ea 18 00 2d 	orh	r8,0x2d
+800021e0:	10 3b       	cp.w	r11,r8
+800021e2:	e0 8b 00 04 	brhi	800021ea <pm_switch_to_osc0+0x1e>
+800021e6:	30 5b       	mov	r11,5
+800021e8:	c0 a8       	rjmp	800021fc <pm_switch_to_osc0+0x30>
+800021ea:	e0 68 12 00 	mov	r8,4608
+800021ee:	ea 18 00 7a 	orh	r8,0x7a
+800021f2:	10 3b       	cp.w	r11,r8
+800021f4:	f9 bb 03 06 	movlo	r11,6
+800021f8:	f9 bb 02 07 	movhs	r11,7
+ * \param mode Oscillator 0 mode (i.e. AVR32_PM_OSCCTRL0_MODE_x).
+ */
+static void pm_set_osc0_mode(volatile avr32_pm_t *pm, unsigned int mode)
+{
+  // Read
+  u_avr32_pm_oscctrl0_t u_avr32_pm_oscctrl0 = {pm->oscctrl0};
+800021fc:	78 a8       	ld.w	r8,r12[0x28]
+  // Modify
+  u_avr32_pm_oscctrl0.OSCCTRL0.mode = mode;
+800021fe:	f1 db d0 03 	bfins	r8,r11,0x0,0x3
+  // Write
+  pm->oscctrl0 = u_avr32_pm_oscctrl0.oscctrl0;
+80002202:	99 a8       	st.w	r12[0x28],r8
+
+
+void pm_enable_clk0_no_wait(volatile avr32_pm_t *pm, unsigned int startup)
+{
+  // Read register
+  u_avr32_pm_oscctrl0_t u_avr32_pm_oscctrl0 = {pm->oscctrl0};
+80002204:	78 a8       	ld.w	r8,r12[0x28]
+  // Modify
+  u_avr32_pm_oscctrl0.OSCCTRL0.startup = startup;
+80002206:	f1 da d1 03 	bfins	r8,r10,0x8,0x3
+  // Write back
+  pm->oscctrl0 = u_avr32_pm_oscctrl0.oscctrl0;
+8000220a:	99 a8       	st.w	r12[0x28],r8
+
+  pm->mcctrl |= AVR32_PM_MCCTRL_OSC0EN_MASK;
+8000220c:	78 08       	ld.w	r8,r12[0x0]
+8000220e:	a3 a8       	sbr	r8,0x2
+80002210:	99 08       	st.w	r12[0x0],r8
+}
+
+
+void pm_wait_for_clk0_ready(volatile avr32_pm_t *pm)
+{
+  while (!(pm->poscsr & AVR32_PM_POSCSR_OSC0RDY_MASK));
+80002212:	79 58       	ld.w	r8,r12[0x54]
+80002214:	ed b8 00 07 	bld	r8,0x7
+80002218:	cf d1       	brne	80002212 <pm_switch_to_osc0+0x46>
+
+
+void pm_switch_to_clock(volatile avr32_pm_t *pm, unsigned long clock)
+{
+  // Read
+  u_avr32_pm_mcctrl_t u_avr32_pm_mcctrl = {pm->mcctrl};
+8000221a:	78 08       	ld.w	r8,r12[0x0]
+  // Modify
+  u_avr32_pm_mcctrl.MCCTRL.mcsel = clock;
+8000221c:	30 19       	mov	r9,1
+8000221e:	f1 d9 d0 02 	bfins	r8,r9,0x0,0x2
+  // Write back
+  pm->mcctrl = u_avr32_pm_mcctrl.mcctrl;
+80002222:	99 08       	st.w	r12[0x0],r8
+void pm_switch_to_osc0(volatile avr32_pm_t *pm, unsigned int fosc0, unsigned int startup)
+{
+  pm_enable_osc0_crystal(pm, fosc0);            // Enable the Osc0 in crystal mode
+  pm_enable_clk0(pm, startup);                  // Crystal startup time - This parameter is critical and depends on the characteristics of the crystal
+  pm_switch_to_clock(pm, AVR32_PM_MCSEL_OSC0);  // Then switch main clock to Osc0
+}
+80002224:	5e fc       	retal	r12
+
+80002226 <usart_set_async_baudrate>:
+ *
+ * \retval USART_SUCCESS        Baud rate successfully initialized.
+ * \retval USART_INVALID_INPUT  Baud rate set point is out of range for the given input clock frequency.
+ */
+static int usart_set_async_baudrate(volatile avr32_usart_t *usart, unsigned int baudrate, unsigned long pba_hz)
+{
+80002226:	d4 01       	pushm	lr
+  unsigned int over = (pba_hz >= 16 * baudrate) ? 16 : 8;
+80002228:	f6 0e 15 04 	lsl	lr,r11,0x4
+8000222c:	1c 3a       	cp.w	r10,lr
+8000222e:	f9 be 02 10 	movhs	lr,16
+80002232:	f9 be 03 08 	movlo	lr,8
+  unsigned int cd_fp = ((1 << AVR32_USART_BRGR_FP_SIZE) * pba_hz + (over * baudrate) / 2) / (over * baudrate);
+80002236:	fc 0b 02 4b 	mul	r11,lr,r11
+8000223a:	f6 08 16 01 	lsr	r8,r11,0x1
+8000223e:	f0 0a 00 3a 	add	r10,r8,r10<<0x3
+80002242:	f4 0b 0d 0a 	divu	r10,r10,r11
+  unsigned int cd = cd_fp >> AVR32_USART_BRGR_FP_SIZE;
+80002246:	f4 09 16 03 	lsr	r9,r10,0x3
+  unsigned int fp = cd_fp & ((1 << AVR32_USART_BRGR_FP_SIZE) - 1);
+
+  if (cd < 1 || cd > (1 << AVR32_USART_BRGR_CD_SIZE) - 1)
+8000224a:	f2 c8 00 01 	sub	r8,r9,1
+8000224e:	e0 48 ff fe 	cp.w	r8,65534
+80002252:	e0 88 00 03 	brls	80002258 <usart_set_async_baudrate+0x32>
+80002256:	da 0a       	popm	pc,r12=1
+    return USART_INVALID_INPUT;
+
+  usart->mr = (usart->mr & ~(AVR32_USART_MR_USCLKS_MASK |
+                             AVR32_USART_MR_SYNC_MASK |
+                             AVR32_USART_MR_OVER_MASK)) |
+              AVR32_USART_MR_USCLKS_MCK << AVR32_USART_MR_USCLKS_OFFSET |
+80002258:	78 18       	ld.w	r8,r12[0x4]
+  unsigned int fp = cd_fp & ((1 << AVR32_USART_BRGR_FP_SIZE) - 1);
+
+  if (cd < 1 || cd > (1 << AVR32_USART_BRGR_CD_SIZE) - 1)
+    return USART_INVALID_INPUT;
+
+  usart->mr = (usart->mr & ~(AVR32_USART_MR_USCLKS_MASK |
+8000225a:	e8 6b 00 00 	mov	r11,524288
+8000225e:	e4 18 ff f7 	andh	r8,0xfff7
+80002262:	e0 18 fe cf 	andl	r8,0xfecf
+80002266:	59 0e       	cp.w	lr,16
+80002268:	f6 0e 17 10 	movne	lr,r11
+8000226c:	f9 be 00 00 	moveq	lr,0
+80002270:	fd e8 10 08 	or	r8,lr,r8
+80002274:	99 18       	st.w	r12[0x4],r8
+                             AVR32_USART_MR_SYNC_MASK |
+                             AVR32_USART_MR_OVER_MASK)) |
+              AVR32_USART_MR_USCLKS_MCK << AVR32_USART_MR_USCLKS_OFFSET |
+              ((over == 16) ? AVR32_USART_MR_OVER_X16 : AVR32_USART_MR_OVER_X8) << AVR32_USART_MR_OVER_OFFSET;
+
+  usart->brgr = cd << AVR32_USART_BRGR_CD_OFFSET |
+80002276:	f5 da c0 03 	bfextu	r10,r10,0x0,0x3
+8000227a:	f3 ea 11 09 	or	r9,r9,r10<<0x10
+8000227e:	99 89       	st.w	r12[0x20],r9
+80002280:	d8 0a       	popm	pc,r12=0
+
+80002282 <usart_write_line>:
+}
+
+
+void usart_write_line(volatile avr32_usart_t *usart, const char *string)
+{
+  while (*string != '\0')
+80002282:	c0 e8       	rjmp	8000229e <usart_write_line+0x1c>
+80002284:	e0 68 27 10 	mov	r8,10000
+{
+  int timeout = USART_DEFAULT_TIMEOUT;
+
+  do
+  {
+    if (!timeout--) return USART_FAILURE;
+80002288:	20 18       	sub	r8,1
+8000228a:	5b f8       	cp.w	r8,-1
+8000228c:	c0 80       	breq	8000229c <usart_write_line+0x1a>
+ *
+ * \return \c 1 if the USART Transmit Holding Register is free, otherwise \c 0.
+ */
+__always_inline static int usart_tx_ready(volatile avr32_usart_t *usart)
+{
+  return (usart->csr & AVR32_USART_CSR_TXRDY_MASK) != 0;
+8000228e:	78 59       	ld.w	r9,r12[0x14]
+}
+
+
+int usart_write_char(volatile avr32_usart_t *usart, int c)
+{
+  if (usart_tx_ready(usart))
+80002290:	ed b9 00 01 	bld	r9,0x1
+80002294:	cf a1       	brne	80002288 <usart_write_line+0x6>
+  {
+    usart->thr = (c << AVR32_USART_THR_TXCHR_OFFSET) & AVR32_USART_THR_TXCHR_MASK;
+80002296:	f5 da c0 09 	bfextu	r10,r10,0x0,0x9
+8000229a:	99 7a       	st.w	r12[0x1c],r10
+
+
+void usart_write_line(volatile avr32_usart_t *usart, const char *string)
+{
+  while (*string != '\0')
+    usart_putchar(usart, *string++);
+8000229c:	2f fb       	sub	r11,-1
+}
+
+
+void usart_write_line(volatile avr32_usart_t *usart, const char *string)
+{
+  while (*string != '\0')
+8000229e:	17 8a       	ld.ub	r10,r11[0x0]
+800022a0:	58 0a       	cp.w	r10,0
+800022a2:	cf 11       	brne	80002284 <usart_write_line+0x2>
+    usart_putchar(usart, *string++);
+}
+800022a4:	5e fc       	retal	r12
+
+800022a6 <usart_reset>:
+//! @{
+
+
+void usart_reset(volatile avr32_usart_t *usart)
+{
+  bool global_interrupt_enabled = cpu_irq_is_enabled();
+800022a6:	e1 b8 00 00 	mfsr	r8,0x0
+	return flags;
+}
+
+static inline bool cpu_irq_is_enabled_flags(irqflags_t flags)
+{
+	return !(flags & AVR32_SR_GM_MASK);
+800022aa:	ee 18 00 01 	eorh	r8,0x1
+800022ae:	f1 d8 c2 01 	bfextu	r8,r8,0x10,0x1
+
+  // Disable all USART interrupts.
+  // Interrupts needed should be set explicitly on every reset.
+  if (global_interrupt_enabled) cpu_irq_disable();
+800022b2:	c0 20       	breq	800022b6 <usart_reset+0x10>
+800022b4:	d3 03       	ssrf	0x10
+  usart->idr = 0xFFFFFFFF;
+800022b6:	3f f9       	mov	r9,-1
+800022b8:	99 39       	st.w	r12[0xc],r9
+  usart->csr;
+800022ba:	78 59       	ld.w	r9,r12[0x14]
+  if (global_interrupt_enabled) cpu_irq_enable();
+800022bc:	58 08       	cp.w	r8,0
+800022be:	c0 20       	breq	800022c2 <usart_reset+0x1c>
+800022c0:	d5 03       	csrf	0x10
+
+  // Reset mode and other registers that could cause unpredictable behavior after reset.
+  usart->mr = 0;
+800022c2:	30 08       	mov	r8,0
+800022c4:	99 18       	st.w	r12[0x4],r8
+  usart->rtor = 0;
+800022c6:	99 98       	st.w	r12[0x24],r8
+  usart->ttgr = 0;
+800022c8:	99 a8       	st.w	r12[0x28],r8
+
+  // Shutdown TX and RX (will be re-enabled when setup has successfully completed),
+  // reset status bits and turn off DTR and RTS.
+  usart->cr = AVR32_USART_CR_RSTRX_MASK   |
+800022ca:	ea 68 61 0c 	mov	r8,680204
+800022ce:	99 08       	st.w	r12[0x0],r8
+#ifndef AVR32_USART_440_H_INCLUDED
+// Note: Modem Signal Management DTR-DSR-DCD-RI are not included in USART rev.440.
+              AVR32_USART_CR_DTRDIS_MASK  |
+#endif
+              AVR32_USART_CR_RTSDIS_MASK;
+}
+800022d0:	5e fc       	retal	r12
+800022d2:	d7 03       	nop
+
+800022d4 <usart_init_rs232>:
+
+
+int usart_init_rs232(volatile avr32_usart_t *usart, const usart_options_t *opt, long pba_hz)
+{
+800022d4:	d4 21       	pushm	r4-r7,lr
+800022d6:	20 1d       	sub	sp,4
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
+800022d8:	50 0a       	stdsp	sp[0x0],r10
+              AVR32_USART_CR_RTSDIS_MASK;
+}
+
+
+int usart_init_rs232(volatile avr32_usart_t *usart, const usart_options_t *opt, long pba_hz)
+{
+800022da:	16 96       	mov	r6,r11
+800022dc:	18 97       	mov	r7,r12
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
+800022de:	ce 4f       	rcall	800022a6 <usart_reset>
+800022e0:	40 0a       	lddsp	r10,sp[0x0]
+
+  // Check input values.
+  if (!opt || // Null pointer.
+800022e2:	58 06       	cp.w	r6,0
+800022e4:	c5 40       	breq	8000238c <usart_init_rs232+0xb8>
+800022e6:	0d c8       	ld.ub	r8,r6[0x4]
+      opt->charlength < 5 || opt->charlength > 9 ||
+800022e8:	30 49       	mov	r9,4
+{
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
+
+  // Check input values.
+  if (!opt || // Null pointer.
+800022ea:	f2 08 18 00 	cp.b	r8,r9
+800022ee:	e0 88 00 4f 	brls	8000238c <usart_init_rs232+0xb8>
+800022f2:	30 95       	mov	r5,9
+800022f4:	ea 08 18 00 	cp.b	r8,r5
+800022f8:	e0 8b 00 4a 	brhi	8000238c <usart_init_rs232+0xb8>
+800022fc:	0d d9       	ld.ub	r9,r6[0x5]
+      opt->charlength < 5 || opt->charlength > 9 ||
+      opt->paritytype > 7 ||
+800022fe:	30 78       	mov	r8,7
+80002300:	f0 09 18 00 	cp.b	r9,r8
+80002304:	e0 8b 00 44 	brhi	8000238c <usart_init_rs232+0xb8>
+80002308:	8c 39       	ld.sh	r9,r6[0x6]
+      opt->stopbits > 2 + 255 ||
+8000230a:	e0 68 01 01 	mov	r8,257
+8000230e:	f0 09 19 00 	cp.h	r9,r8
+80002312:	e0 8b 00 3d 	brhi	8000238c <usart_init_rs232+0xb8>
+80002316:	ed 39 00 08 	ld.ub	r9,r6[8]
+      opt->channelmode > 3 ||
+8000231a:	30 38       	mov	r8,3
+8000231c:	f0 09 18 00 	cp.b	r9,r8
+80002320:	e0 8b 00 36 	brhi	8000238c <usart_init_rs232+0xb8>
+80002324:	6c 0b       	ld.w	r11,r6[0x0]
+      usart_set_async_baudrate(usart, opt->baudrate, pba_hz) == USART_INVALID_INPUT)
+80002326:	0e 9c       	mov	r12,r7
+80002328:	c7 ff       	rcall	80002226 <usart_set_async_baudrate>
+8000232a:	58 1c       	cp.w	r12,1
+8000232c:	c3 00       	breq	8000238c <usart_init_rs232+0xb8>
+{
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
+
+  // Check input values.
+  if (!opt || // Null pointer.
+8000232e:	0d c8       	ld.ub	r8,r6[0x4]
+80002330:	ea 08 18 00 	cp.b	r8,r5
+      opt->stopbits > 2 + 255 ||
+      opt->channelmode > 3 ||
+      usart_set_async_baudrate(usart, opt->baudrate, pba_hz) == USART_INVALID_INPUT)
+    return USART_INVALID_INPUT;
+
+  if (opt->charlength == 9)
+80002334:	c0 41       	brne	8000233c <usart_init_rs232+0x68>
+80002336:	6e 18       	ld.w	r8,r7[0x4]
+80002338:	b1 b8       	sbr	r8,0x11
+  {
+    // Character length set to 9 bits. MODE9 dominates CHRL.
+    usart->mr |= AVR32_USART_MR_MODE9_MASK;
+8000233a:	c0 58       	rjmp	80002344 <usart_init_rs232+0x70>
+8000233c:	20 58       	sub	r8,5
+8000233e:	6e 19       	ld.w	r9,r7[0x4]
+  }
+  else
+  {
+    // CHRL gives the character length (- 5) when MODE9 = 0.
+    usart->mr |= (opt->charlength - 5) << AVR32_USART_MR_CHRL_OFFSET;
+80002340:	f3 e8 10 68 	or	r8,r9,r8<<0x6
+80002344:	8f 18       	st.w	r7[0x4],r8
+80002346:	6e 19       	ld.w	r9,r7[0x4]
+80002348:	ed 3a 00 08 	ld.ub	r10,r6[8]
+  }
+
+  usart->mr |= opt->paritytype << AVR32_USART_MR_PAR_OFFSET |
+8000234c:	0d d8       	ld.ub	r8,r6[0x5]
+8000234e:	a9 78       	lsl	r8,0x9
+80002350:	f1 ea 10 e8 	or	r8,r8,r10<<0xe
+80002354:	12 48       	or	r8,r9
+80002356:	8f 18       	st.w	r7[0x4],r8
+80002358:	30 29       	mov	r9,2
+8000235a:	8c 38       	ld.sh	r8,r6[0x6]
+               opt->channelmode << AVR32_USART_MR_CHMODE_OFFSET;
+
+  if (opt->stopbits > USART_2_STOPBITS)
+8000235c:	f2 08 19 00 	cp.h	r8,r9
+80002360:	e0 88 00 09 	brls	80002372 <usart_init_rs232+0x9e>
+80002364:	6e 18       	ld.w	r8,r7[0x4]
+80002366:	ad b8       	sbr	r8,0xd
+  {
+    // Set two stop bits
+    usart->mr |= AVR32_USART_MR_NBSTOP_2 << AVR32_USART_MR_NBSTOP_OFFSET;
+80002368:	8f 18       	st.w	r7[0x4],r8
+8000236a:	8c b8       	ld.uh	r8,r6[0x6]
+8000236c:	20 28       	sub	r8,2
+    // and a timeguard period gives the rest.
+    usart->ttgr = opt->stopbits - USART_2_STOPBITS;
+8000236e:	8f a8       	st.w	r7[0x28],r8
+80002370:	c0 68       	rjmp	8000237c <usart_init_rs232+0xa8>
+80002372:	6e 19       	ld.w	r9,r7[0x4]
+80002374:	5c 78       	castu.h	r8
+  }
+  else
+    // Insert 1, 1.5 or 2 stop bits.
+    usart->mr |= opt->stopbits << AVR32_USART_MR_NBSTOP_OFFSET;
+80002376:	f3 e8 10 c8 	or	r8,r9,r8<<0xc
+8000237a:	8f 18       	st.w	r7[0x4],r8
+8000237c:	6e 18       	ld.w	r8,r7[0x4]
+8000237e:	e0 18 ff f0 	andl	r8,0xfff0
+
+  // Set normal mode.
+  usart->mr = (usart->mr & ~AVR32_USART_MR_MODE_MASK) |
+80002382:	8f 18       	st.w	r7[0x4],r8
+80002384:	30 0c       	mov	r12,0
+80002386:	35 08       	mov	r8,80
+              AVR32_USART_MR_MODE_NORMAL << AVR32_USART_MR_MODE_OFFSET;
+
+  // Setup complete; enable communication.
+  // Enable input and output.
+  usart->cr = AVR32_USART_CR_RXEN_MASK |
+80002388:	8f 08       	st.w	r7[0x0],r8
+8000238a:	c0 28       	rjmp	8000238e <usart_init_rs232+0xba>
+8000238c:	30 1c       	mov	r12,1
+              AVR32_USART_CR_TXEN_MASK;
+
+  return USART_SUCCESS;
+8000238e:	2f fd       	sub	sp,-4
+80002390:	d8 22       	popm	r4-r7,pc
+}
+80002392:	d7 03       	nop
+
+80002394 <print_dbg>:
+  usart_init_rs232(DBG_USART, &dbg_usart_options, pba_hz);
+}
+
+
+void print_dbg(const char *str)
+{
+80002394:	d4 01       	pushm	lr
+
+
+void print(volatile avr32_usart_t *usart, const char *str)
+{
+  // Invoke the USART driver to transmit the input string with the given USART.
+  usart_write_line(usart, str);
+80002396:	18 9b       	mov	r11,r12
+80002398:	fe 7c 18 00 	mov	r12,-59392
+8000239c:	c7 3f       	rcall	80002282 <usart_write_line>
+8000239e:	d8 02       	popm	pc
+
+800023a0 <init_dbg_rs232_ex>:
+
+void print_dbg(const char *str)
+{
+  // Redirection to the debug USART.
+  print(DBG_USART, str);
+}
+800023a0:	d4 21       	pushm	r4-r7,lr
+800023a2:	20 3d       	sub	sp,12
+800023a4:	30 08       	mov	r8,0
+800023a6:	fb 68 00 08 	st.b	sp[8],r8
+    .baudrate = baudrate,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
+800023aa:	ba 38       	st.h	sp[0x6],r8
+800023ac:	30 88       	mov	r8,8
+800023ae:	ba c8       	st.b	sp[0x4],r8
+800023b0:	30 48       	mov	r8,4
+  init_dbg_rs232_ex(DBG_USART_BAUDRATE, pba_hz);
+}
+
+
+void init_dbg_rs232_ex(unsigned long baudrate, long pba_hz)
+{
+800023b2:	16 97       	mov	r7,r11
+    .baudrate = baudrate,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
+800023b4:	50 0c       	stdsp	sp[0x0],r12
+
+  // Setup GPIO for debug USART.
+  gpio_enable_module(DBG_USART_GPIO_MAP,
+800023b6:	30 2b       	mov	r11,2
+    .baudrate = baudrate,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
+800023b8:	ba d8       	st.b	sp[0x5],r8
+
+  // Setup GPIO for debug USART.
+  gpio_enable_module(DBG_USART_GPIO_MAP,
+800023ba:	fe cc f7 3a 	sub	r12,pc,-2246
+800023be:	cd fe       	rcall	8000217c <gpio_enable_module>
+                     sizeof(DBG_USART_GPIO_MAP) / sizeof(DBG_USART_GPIO_MAP[0]));
+
+  // Initialize it in RS232 mode.
+  usart_init_rs232(DBG_USART, &dbg_usart_options, pba_hz);
+800023c0:	0e 9a       	mov	r10,r7
+800023c2:	1a 9b       	mov	r11,sp
+800023c4:	fe 7c 18 00 	mov	r12,-59392
+800023c8:	c8 6f       	rcall	800022d4 <usart_init_rs232>
+800023ca:	2f dd       	sub	sp,-12
+}
+800023cc:	d8 22       	popm	r4-r7,pc
+800023ce:	d7 03       	nop
+
+800023d0 <init_dbg_rs232>:
+800023d0:	d4 01       	pushm	lr
+800023d2:	18 9b       	mov	r11,r12
+800023d4:	e0 6c e1 00 	mov	r12,57600
+800023d8:	ce 4f       	rcall	800023a0 <init_dbg_rs232_ex>
+800023da:	d8 02       	popm	pc
+
+800023dc <atexit>:
+
+int
+_DEFUN (atexit,
+	(fn),
+	_VOID _EXFUN ((*fn), (_VOID)))
+{
+800023dc:	d4 01       	pushm	lr
+  return __register_exitproc (__et_atexit, fn, NULL, NULL);
+800023de:	30 09       	mov	r9,0
+800023e0:	18 9b       	mov	r11,r12
+800023e2:	12 9a       	mov	r10,r9
+800023e4:	12 9c       	mov	r12,r9
+800023e6:	c3 9c       	rcall	80002458 <__register_exitproc>
+800023e8:	d8 02       	popm	pc
+}
+800023ea:	d7 03       	nop
+
+800023ec <exit>:
+ */
+
+void 
+_DEFUN (exit, (code),
+	int code)
+{
+800023ec:	d4 21       	pushm	r4-r7,lr
+  __call_exitprocs (code, NULL);
+800023ee:	30 0b       	mov	r11,0
+ */
+
+void 
+_DEFUN (exit, (code),
+	int code)
+{
+800023f0:	18 97       	mov	r7,r12
+  __call_exitprocs (code, NULL);
+800023f2:	c8 3c       	rcall	800024f8 <__call_exitprocs>
+800023f4:	fe c8 f7 60 	sub	r8,pc,-2208
+
+  if (_GLOBAL_REENT->__cleanup)
+800023f8:	70 0c       	ld.w	r12,r8[0x0]
+800023fa:	78 a8       	ld.w	r8,r12[0x28]
+800023fc:	58 08       	cp.w	r8,0
+800023fe:	c0 20       	breq	80002402 <exit+0x16>
+    (*_GLOBAL_REENT->__cleanup) (_GLOBAL_REENT);
+80002400:	5d 18       	icall	r8
+  _exit (code);
+80002402:	0e 9c       	mov	r12,r7
+80002404:	c0 8c       	rcall	80002414 <_exit>
+80002406:	d7 03       	nop
+
+80002408 <_init_startup>:
+
+int  __attribute__((weak))
+     _init_startup ()
+{
+  return 0;
+}
+80002408:	5e fd       	retal	0
+
+8000240a <_init_argv>:
+}
+  
+void __attribute__((weak,naked))
+     _init_argv (void *arg_mem_top)
+{
+  T2H_SYSCALL(T2H_SYSCALL_INIT_ARGV);
+8000240a:	30 e8       	mov	r8,14
+8000240c:	d6 73       	breakpoint
+8000240e:	3f fc       	mov	r12,-1
+80002410:	35 8b       	mov	r11,88
+  T2H_SYSCALL_RETURN();
+80002412:	5e fc       	retal	r12
+
+80002414 <_exit>:
+}
+
+void __attribute__((weak,naked))
+     _exit( int code )
+{
+  T2H_SYSCALL(T2H_SYSCALL_EXIT);
+80002414:	30 d8       	mov	r8,13
+80002416:	d6 73       	breakpoint
+80002418:	3f fc       	mov	r12,-1
+8000241a:	35 8b       	mov	r11,88
+8000241c:	c0 08       	rjmp	8000241c <_exit+0x8>
+8000241e:	d7 03       	nop
+
+80002420 <_sbrk>:
+ 
+extern void __heap_start__, __heap_end__;
+
+void * __attribute__((weak))
+     _sbrk(int increment)
+{
+80002420:	d4 01       	pushm	lr
+  static void *cur_heap_pos = 0;
+
+  //Initialize cur_heap_pos
+  if ( cur_heap_pos == 0 )
+80002422:	e0 68 05 28 	mov	r8,1320
+80002426:	70 09       	ld.w	r9,r8[0x0]
+80002428:	58 09       	cp.w	r9,0
+    cur_heap_pos = &__heap_start__;
+8000242a:	c0 41       	brne	80002432 <_sbrk+0x12>
+8000242c:	e0 69 05 68 	mov	r9,1384
+  
+  if ( (cur_heap_pos + increment) <= &__heap_end__ ){
+80002430:	91 09       	st.w	r8[0x0],r9
+80002432:	e0 69 05 28 	mov	r9,1320
+80002436:	e0 6a 70 00 	mov	r10,28672
+8000243a:	72 08       	ld.w	r8,r9[0x0]
+8000243c:	f0 0c 00 0c 	add	r12,r8,r12
+    void *heap_pos = cur_heap_pos;
+    cur_heap_pos += increment;
+    return heap_pos;
+80002440:	14 3c       	cp.w	r12,r10
+    fprintf(stderr, "\tHeap start address\t= 0x%x\n", &__heap_start__);
+    fprintf(stderr, "\tHeap end address\t= 0x%x\n", &__heap_end__);
+    fprintf(stderr, "\tCurrent heap address\t= 0x%x\n", cur_heap_pos);
+    fflush(stderr);
+#endif
+    errno = ENOMEM;
+80002442:	e0 8b 00 04 	brhi	8000244a <_sbrk+0x2a>
+80002446:	93 0c       	st.w	r9[0x0],r12
+80002448:	c0 58       	rjmp	80002452 <_sbrk+0x32>
+8000244a:	cb bc       	rcall	800025c0 <__errno>
+    return (void *)-1;
+  }  
+  return (void *)-1;
+}
+8000244c:	30 c8       	mov	r8,12
+8000244e:	99 08       	st.w	r12[0x0],r8
+80002450:	3f f8       	mov	r8,-1
+80002452:	10 9c       	mov	r12,r8
+80002454:	d8 02       	popm	pc
+80002456:	d7 03       	nop
+
+80002458 <__register_exitproc>:
+	(type, fn, arg, d),
+	int type _AND
+	void (*fn) (void) _AND
+	void *arg _AND
+	void *d)
+{
+80002458:	d4 31       	pushm	r0-r7,lr
+  __LOCK_INIT(static, lock);
+
+  __lock_acquire(lock);
+#endif
+
+  p = _GLOBAL_REENT->_atexit;
+8000245a:	fe c8 f7 c6 	sub	r8,pc,-2106
+8000245e:	18 97       	mov	r7,r12
+	(type, fn, arg, d),
+	int type _AND
+	void (*fn) (void) _AND
+	void *arg _AND
+	void *d)
+{
+80002460:	70 03       	ld.w	r3,r8[0x0]
+80002462:	16 96       	mov	r6,r11
+80002464:	14 95       	mov	r5,r10
+  __LOCK_INIT(static, lock);
+
+  __lock_acquire(lock);
+#endif
+
+  p = _GLOBAL_REENT->_atexit;
+80002466:	12 92       	mov	r2,r9
+  if (p == NULL)
+80002468:	67 24       	ld.w	r4,r3[0x48]
+8000246a:	58 04       	cp.w	r4,0
+    _GLOBAL_REENT->_atexit = p = &_GLOBAL_REENT->_atexit0;
+8000246c:	c0 51       	brne	80002476 <__register_exitproc+0x1e>
+8000246e:	e6 c4 ff b4 	sub	r4,r3,-76
+80002472:	e7 44 00 48 	st.w	r3[72],r4
+  if (p->_ind >= _ATEXIT_SIZE)
+80002476:	68 18       	ld.w	r8,r4[0x4]
+80002478:	59 f8       	cp.w	r8,31
+8000247a:	e0 8a 00 0d 	brle	80002494 <__register_exitproc+0x3c>
+    {
+#ifndef _ATEXIT_DYNAMIC_ALLOC
+      return -1;
+#else
+      p = (struct _atexit *) malloc (sizeof *p);
+8000247e:	e0 6c 00 8c 	mov	r12,140
+80002482:	ca dc       	rcall	800025dc <malloc>
+80002484:	18 94       	mov	r4,r12
+      if (p == NULL)
+80002486:	c3 80       	breq	800024f6 <__register_exitproc+0x9e>
+	  __lock_release(lock);
+#endif
+	  return -1;
+	}
+      p->_ind = 0;
+      p->_next = _GLOBAL_REENT->_atexit;
+80002488:	67 28       	ld.w	r8,r3[0x48]
+8000248a:	99 08       	st.w	r12[0x0],r8
+      _GLOBAL_REENT->_atexit = p;
+8000248c:	e7 4c 00 48 	st.w	r3[72],r12
+#ifndef __SINGLE_THREAD__
+	  __lock_release(lock);
+#endif
+	  return -1;
+	}
+      p->_ind = 0;
+80002490:	30 08       	mov	r8,0
+80002492:	99 18       	st.w	r12[0x4],r8
+      p->_on_exit_args._is_cxa = 0;
+#endif
+#endif
+    }
+
+  if (type != __et_atexit)
+80002494:	58 07       	cp.w	r7,0
+80002496:	c2 70       	breq	800024e4 <__register_exitproc+0x8c>
+    {
+#ifdef _REENT_SMALL
+      args = p->_on_exit_args_ptr;
+80002498:	e8 fc 00 88 	ld.w	r12,r4[136]
+      if (args == NULL)
+8000249c:	58 0c       	cp.w	r12,0
+8000249e:	c0 c1       	brne	800024b6 <__register_exitproc+0x5e>
+	{
+	  args = malloc (sizeof * p->_on_exit_args_ptr);
+800024a0:	e0 6c 01 08 	mov	r12,264
+800024a4:	c9 cc       	rcall	800025dc <malloc>
+800024a6:	c2 80       	breq	800024f6 <__register_exitproc+0x9e>
+	  if (args == NULL)
+800024a8:	30 08       	mov	r8,0
+#ifndef __SINGLE_THREAD__
+	      __lock_release(lock);
+#endif
+	      return -1;
+	    }
+	  args->_fntypes = 0;
+800024aa:	e9 4c 00 88 	st.w	r4[136],r12
+	  args->_is_cxa = 0;
+	  p->_on_exit_args_ptr = args;
+800024ae:	f9 48 01 04 	st.w	r12[260],r8
+	      __lock_release(lock);
+#endif
+	      return -1;
+	    }
+	  args->_fntypes = 0;
+	  args->_is_cxa = 0;
+800024b2:	f9 48 01 00 	st.w	r12[256],r8
+#ifndef __SINGLE_THREAD__
+	      __lock_release(lock);
+#endif
+	      return -1;
+	    }
+	  args->_fntypes = 0;
+800024b6:	68 18       	ld.w	r8,r4[0x4]
+	  p->_on_exit_args_ptr = args;
+	}
+#else
+      args = &p->_on_exit_args;
+#endif
+      args->_fnargs[p->_ind] = arg;
+800024b8:	f0 c9 ff e0 	sub	r9,r8,-32
+      args->_fntypes |= (1 << p->_ind);
+      args->_dso_handle[p->_ind] = d;
+800024bc:	f8 08 09 25 	st.w	r12[r8<<0x2],r5
+	  p->_on_exit_args_ptr = args;
+	}
+#else
+      args = &p->_on_exit_args;
+#endif
+      args->_fnargs[p->_ind] = arg;
+800024c0:	f8 09 09 22 	st.w	r12[r9<<0x2],r2
+      args->_fntypes |= (1 << p->_ind);
+      args->_dso_handle[p->_ind] = d;
+800024c4:	30 1a       	mov	r10,1
+	}
+#else
+      args = &p->_on_exit_args;
+#endif
+      args->_fnargs[p->_ind] = arg;
+      args->_fntypes |= (1 << p->_ind);
+800024c6:	f8 f9 01 00 	ld.w	r9,r12[256]
+800024ca:	f4 08 09 48 	lsl	r8,r10,r8
+800024ce:	10 49       	or	r9,r8
+800024d0:	f9 49 01 00 	st.w	r12[256],r9
+800024d4:	58 27       	cp.w	r7,2
+      args->_dso_handle[p->_ind] = d;
+      if (type == __et_cxa)
+800024d6:	c0 71       	brne	800024e4 <__register_exitproc+0x8c>
+800024d8:	f8 f9 01 04 	ld.w	r9,r12[260]
+	args->_is_cxa |= (1 << p->_ind);
+800024dc:	f3 e8 10 08 	or	r8,r9,r8
+800024e0:	f9 48 01 04 	st.w	r12[260],r8
+800024e4:	68 18       	ld.w	r8,r4[0x4]
+    }
+  p->_fns[p->_ind++] = fn;
+800024e6:	30 0c       	mov	r12,0
+800024e8:	f0 c9 ff ff 	sub	r9,r8,-1
+800024ec:	2f e8       	sub	r8,-2
+800024ee:	89 19       	st.w	r4[0x4],r9
+800024f0:	e8 08 09 26 	st.w	r4[r8<<0x2],r6
+800024f4:	d8 32       	popm	r0-r7,pc
+#ifndef __SINGLE_THREAD__
+  __lock_release(lock);
+#endif
+  return 0;
+800024f6:	dc 3a       	popm	r0-r7,pc,r12=-1
+
+800024f8 <__call_exitprocs>:
+ */
+
+void 
+_DEFUN (__call_exitprocs, (code, d),
+	int code _AND _PTR d)
+{
+800024f8:	d4 31       	pushm	r0-r7,lr
+800024fa:	20 3d       	sub	sp,12
+  int i;
+  void (*fn) (void);
+
+ restart:
+
+  p = _GLOBAL_REENT->_atexit;
+800024fc:	fe c8 f8 68 	sub	r8,pc,-1944
+80002500:	50 2c       	stdsp	sp[0x8],r12
+ */
+
+void 
+_DEFUN (__call_exitprocs, (code, d),
+	int code _AND _PTR d)
+{
+80002502:	70 08       	ld.w	r8,r8[0x0]
+  int i;
+  void (*fn) (void);
+
+ restart:
+
+  p = _GLOBAL_REENT->_atexit;
+80002504:	16 91       	mov	r1,r11
+  lastp = &_GLOBAL_REENT->_atexit;
+80002506:	50 08       	stdsp	sp[0x0],r8
+80002508:	2b 88       	sub	r8,-72
+  int i;
+  void (*fn) (void);
+
+ restart:
+
+  p = _GLOBAL_REENT->_atexit;
+8000250a:	50 18       	stdsp	sp[0x4],r8
+8000250c:	40 0a       	lddsp	r10,sp[0x0]
+8000250e:	40 14       	lddsp	r4,sp[0x4]
+  lastp = &_GLOBAL_REENT->_atexit;
+  while (p)
+80002510:	75 27       	ld.w	r7,r10[0x48]
+#ifdef _REENT_SMALL
+      args = p->_on_exit_args_ptr;
+#else
+      args = &p->_on_exit_args;
+#endif
+      for (n = p->_ind - 1; n >= 0; n--)
+80002512:	c5 28       	rjmp	800025b6 <__call_exitprocs+0xbe>
+  p = _GLOBAL_REENT->_atexit;
+  lastp = &_GLOBAL_REENT->_atexit;
+  while (p)
+    {
+#ifdef _REENT_SMALL
+      args = p->_on_exit_args_ptr;
+80002514:	6e 15       	ld.w	r5,r7[0x4]
+80002516:	ee f6 00 88 	ld.w	r6,r7[136]
+#else
+      args = &p->_on_exit_args;
+#endif
+      for (n = p->_ind - 1; n >= 0; n--)
+8000251a:	ea c2 ff ff 	sub	r2,r5,-1
+8000251e:	20 15       	sub	r5,1
+80002520:	ee 02 00 22 	add	r2,r7,r2<<0x2
+80002524:	ec 05 00 23 	add	r3,r6,r5<<0x2
+	  int ind;
+
+	  i = 1 << n;
+
+	  /* Skip functions not from this dso.  */
+	  if (d && (!args || args->_dso_handle[n] != d))
+80002528:	c3 48       	rjmp	80002590 <__call_exitprocs+0x98>
+8000252a:	58 01       	cp.w	r1,0
+8000252c:	c0 70       	breq	8000253a <__call_exitprocs+0x42>
+8000252e:	58 06       	cp.w	r6,0
+80002530:	c2 d0       	breq	8000258a <__call_exitprocs+0x92>
+80002532:	e6 f8 00 80 	ld.w	r8,r3[128]
+80002536:	02 38       	cp.w	r8,r1
+	    continue;
+
+	  /* Remove the function now to protect against the
+	     function calling exit recursively.  */
+	  fn = p->_fns[n];
+	  if (n == p->_ind - 1)
+80002538:	c2 91       	brne	8000258a <__call_exitprocs+0x92>
+	  if (d && (!args || args->_dso_handle[n] != d))
+	    continue;
+
+	  /* Remove the function now to protect against the
+	     function calling exit recursively.  */
+	  fn = p->_fns[n];
+8000253a:	6e 19       	ld.w	r9,r7[0x4]
+	  if (n == p->_ind - 1)
+8000253c:	64 08       	ld.w	r8,r2[0x0]
+8000253e:	20 19       	sub	r9,1
+80002540:	12 35       	cp.w	r5,r9
+	    p->_ind--;
+80002542:	c0 31       	brne	80002548 <__call_exitprocs+0x50>
+80002544:	8f 15       	st.w	r7[0x4],r5
+	  else
+	    p->_fns[n] = NULL;
+80002546:	c0 38       	rjmp	8000254c <__call_exitprocs+0x54>
+80002548:	30 09       	mov	r9,0
+
+	  /* Skip functions that have already been called.  */
+	  if (!fn)
+8000254a:	85 09       	st.w	r2[0x0],r9
+8000254c:	58 08       	cp.w	r8,0
+	    continue;
+
+	  ind = p->_ind;
+8000254e:	c1 e0       	breq	8000258a <__call_exitprocs+0x92>
+
+	  /* Call the function.  */
+	  if (!args || (args->_fntypes & i) == 0)
+80002550:	6e 10       	ld.w	r0,r7[0x4]
+80002552:	58 06       	cp.w	r6,0
+80002554:	c0 90       	breq	80002566 <__call_exitprocs+0x6e>
+80002556:	30 1a       	mov	r10,1
+80002558:	f4 05 09 49 	lsl	r9,r10,r5
+8000255c:	ec fa 01 00 	ld.w	r10,r6[256]
+80002560:	f3 ea 00 0a 	and	r10,r9,r10
+	    fn ();
+80002564:	c0 31       	brne	8000256a <__call_exitprocs+0x72>
+	    continue;
+
+	  ind = p->_ind;
+
+	  /* Call the function.  */
+	  if (!args || (args->_fntypes & i) == 0)
+80002566:	5d 18       	icall	r8
+	    fn ();
+	  else if ((args->_is_cxa & i) == 0)
+80002568:	c0 b8       	rjmp	8000257e <__call_exitprocs+0x86>
+8000256a:	ec fa 01 04 	ld.w	r10,r6[260]
+8000256e:	66 0b       	ld.w	r11,r3[0x0]
+80002570:	14 69       	and	r9,r10
+	    (*((void (*)(int, _PTR)) fn))(code, args->_fnargs[n]);
+80002572:	c0 41       	brne	8000257a <__call_exitprocs+0x82>
+80002574:	40 2c       	lddsp	r12,sp[0x8]
+80002576:	5d 18       	icall	r8
+	  else
+	    (*((void (*)(_PTR)) fn))(args->_fnargs[n]);
+80002578:	c0 38       	rjmp	8000257e <__call_exitprocs+0x86>
+8000257a:	16 9c       	mov	r12,r11
+
+	  /* The function we called call atexit and registered another
+	     function (or functions).  Call these new functions before
+	     continuing with the already registered functions.  */
+	  if (ind != p->_ind || *lastp != p)
+8000257c:	5d 18       	icall	r8
+8000257e:	6e 18       	ld.w	r8,r7[0x4]
+80002580:	10 30       	cp.w	r0,r8
+80002582:	cc 51       	brne	8000250c <__call_exitprocs+0x14>
+80002584:	68 08       	ld.w	r8,r4[0x0]
+80002586:	0e 38       	cp.w	r8,r7
+#ifdef _REENT_SMALL
+      args = p->_on_exit_args_ptr;
+#else
+      args = &p->_on_exit_args;
+#endif
+      for (n = p->_ind - 1; n >= 0; n--)
+80002588:	cc 21       	brne	8000250c <__call_exitprocs+0x14>
+8000258a:	20 15       	sub	r5,1
+8000258c:	20 43       	sub	r3,4
+8000258e:	20 42       	sub	r2,4
+80002590:	58 05       	cp.w	r5,0
+#ifndef _ATEXIT_DYNAMIC_ALLOC
+      break;
+#else
+      /* Move to the next block.  Free empty blocks except the last one,
+	 which is part of _GLOBAL_REENT.  */
+      if (p->_ind == 0 && p->_next)
+80002592:	cc c4       	brge	8000252a <__call_exitprocs+0x32>
+80002594:	6e 18       	ld.w	r8,r7[0x4]
+80002596:	58 08       	cp.w	r8,0
+80002598:	c0 d1       	brne	800025b2 <__call_exitprocs+0xba>
+8000259a:	6e 08       	ld.w	r8,r7[0x0]
+8000259c:	58 08       	cp.w	r8,0
+	{
+	  /* Remove empty block from the list.  */
+	  *lastp = p->_next;
+8000259e:	c0 a0       	breq	800025b2 <__call_exitprocs+0xba>
+#ifdef _REENT_SMALL
+	  if (args)
+800025a0:	89 08       	st.w	r4[0x0],r8
+800025a2:	58 06       	cp.w	r6,0
+	    free (args);
+800025a4:	c0 30       	breq	800025aa <__call_exitprocs+0xb2>
+800025a6:	0c 9c       	mov	r12,r6
+800025a8:	c1 2c       	rcall	800025cc <free>
+#endif
+	  free (p);
+800025aa:	0e 9c       	mov	r12,r7
+800025ac:	c1 0c       	rcall	800025cc <free>
+800025ae:	68 07       	ld.w	r7,r4[0x0]
+	  p = *lastp;
+800025b0:	c0 38       	rjmp	800025b6 <__call_exitprocs+0xbe>
+#ifndef _ATEXIT_DYNAMIC_ALLOC
+      break;
+#else
+      /* Move to the next block.  Free empty blocks except the last one,
+	 which is part of _GLOBAL_REENT.  */
+      if (p->_ind == 0 && p->_next)
+800025b2:	0e 94       	mov	r4,r7
+	  free (p);
+	  p = *lastp;
+	}
+      else
+	{
+	  lastp = &p->_next;
+800025b4:	6e 07       	ld.w	r7,r7[0x0]
+	  p = p->_next;
+800025b6:	58 07       	cp.w	r7,0
+
+ restart:
+
+  p = _GLOBAL_REENT->_atexit;
+  lastp = &_GLOBAL_REENT->_atexit;
+  while (p)
+800025b8:	ca e1       	brne	80002514 <__call_exitprocs+0x1c>
+800025ba:	2f dd       	sub	sp,-12
+	  lastp = &p->_next;
+	  p = p->_next;
+	}
+#endif
+    }
+}
+800025bc:	d8 32       	popm	r0-r7,pc
+800025be:	d7 03       	nop
+
+800025c0 <__errno>:
+
+#ifndef _REENT_ONLY
+
+int *
+__errno ()
+{
+800025c0:	e0 68 01 0c 	mov	r8,268
+  return &_REENT->_errno;
+}
+800025c4:	70 0c       	ld.w	r12,r8[0x0]
+800025c6:	2f 4c       	sub	r12,-12
+800025c8:	5e fc       	retal	r12
+800025ca:	d7 03       	nop
+
+800025cc <free>:
+}
+
+void
+_DEFUN (free, (aptr),
+	_PTR aptr)
+{
+800025cc:	d4 01       	pushm	lr
+  _free_r (_REENT, aptr);
+800025ce:	e0 68 01 0c 	mov	r8,268
+800025d2:	18 9b       	mov	r11,r12
+800025d4:	70 0c       	ld.w	r12,r8[0x0]
+800025d6:	e0 a0 02 77 	rcall	80002ac4 <_free_r>
+}
+800025da:	d8 02       	popm	pc
+
+800025dc <malloc>:
+800025dc:	d4 01       	pushm	lr
+800025de:	e0 68 01 0c 	mov	r8,268
+800025e2:	18 9b       	mov	r11,r12
+
+_PTR
+_DEFUN (malloc, (nbytes),
+	size_t nbytes)		/* get a block */
+{
+  return _malloc_r (_REENT, nbytes);
+800025e4:	70 0c       	ld.w	r12,r8[0x0]
+800025e6:	c0 3c       	rcall	800025ec <_malloc_r>
+}
+800025e8:	d8 02       	popm	pc
+800025ea:	d7 03       	nop
+
+800025ec <_malloc_r>:
+#if __STD_C
+Void_t* mALLOc(RARG size_t bytes)
+#else
+Void_t* mALLOc(RARG bytes) RDECL size_t bytes;
+#endif
+{
+800025ec:	d4 31       	pushm	r0-r7,lr
+  int       startidx;                /* first bin of a traversed block */
+  mchunkptr fwd;                     /* misc temp for linking */
+  mchunkptr bck;                     /* misc temp for linking */
+  mbinptr q;                         /* misc temp */
+
+  INTERNAL_SIZE_T nb  = request2size(bytes);  /* padded request size; */
+800025ee:	f6 c8 ff f5 	sub	r8,r11,-11
+#if __STD_C
+Void_t* mALLOc(RARG size_t bytes)
+#else
+Void_t* mALLOc(RARG bytes) RDECL size_t bytes;
+#endif
+{
+800025f2:	18 95       	mov	r5,r12
+  int       startidx;                /* first bin of a traversed block */
+  mchunkptr fwd;                     /* misc temp for linking */
+  mchunkptr bck;                     /* misc temp for linking */
+  mbinptr q;                         /* misc temp */
+
+  INTERNAL_SIZE_T nb  = request2size(bytes);  /* padded request size; */
+800025f4:	10 97       	mov	r7,r8
+800025f6:	e0 17 ff f8 	andl	r7,0xfff8
+800025fa:	59 68       	cp.w	r8,22
+800025fc:	f9 b7 08 10 	movls	r7,16
+
+  /* Check for overflow and just fail, if so. */
+  if (nb > INT_MAX || nb < bytes)
+80002600:	16 37       	cp.w	r7,r11
+80002602:	5f 38       	srlo	r8
+80002604:	f1 e7 13 f8 	or	r8,r8,r7>>0x1f
+80002608:	c0 50       	breq	80002612 <_malloc_r+0x26>
+  {
+    RERRNO = ENOMEM;
+8000260a:	30 c8       	mov	r8,12
+8000260c:	99 38       	st.w	r12[0xc],r8
+8000260e:	e0 8f 01 f3 	bral	800029f4 <_malloc_r+0x408>
+    return 0;
+  }
+
+  MALLOC_LOCK;
+80002612:	e0 a0 02 01 	rcall	80002a14 <__malloc_lock>
+
+  /* Check for exact match in a bin */
+
+  if (is_small_request(nb))  /* Faster version for small requests */
+80002616:	e0 47 01 f7 	cp.w	r7,503
+8000261a:	e0 8b 00 1d 	brhi	80002654 <_malloc_r+0x68>
+  {
+    idx = smallbin_index(nb); 
+8000261e:	ee 03 16 03 	lsr	r3,r7,0x3
+
+    /* No traversal or size check necessary for small bins.  */
+
+    q = bin_at(idx);
+80002622:	e0 68 01 10 	mov	r8,272
+80002626:	f0 03 00 38 	add	r8,r8,r3<<0x3
+    victim = last(q);
+
+#if MALLOC_ALIGN != 16
+    /* Also scan the next one, since it would have a remainder < MINSIZE */
+    if (victim == q)
+8000262a:	70 36       	ld.w	r6,r8[0xc]
+8000262c:	10 36       	cp.w	r6,r8
+    {
+      q = next_bin(q);
+8000262e:	c0 61       	brne	8000263a <_malloc_r+0x4e>
+80002630:	ec c8 ff f8 	sub	r8,r6,-8
+      victim = last(q);
+    }
+#endif
+    if (victim != q)
+80002634:	70 36       	ld.w	r6,r8[0xc]
+80002636:	10 36       	cp.w	r6,r8
+    {
+      victim_size = chunksize(victim);
+80002638:	c0 c0       	breq	80002650 <_malloc_r+0x64>
+8000263a:	6c 18       	ld.w	r8,r6[0x4]
+8000263c:	e0 18 ff fc 	andl	r8,0xfffc
+      unlink(victim, bck, fwd);
+      set_inuse_bit_at_offset(victim, victim_size);
+80002640:	6c 3a       	ld.w	r10,r6[0xc]
+80002642:	ec 08 00 09 	add	r9,r6,r8
+    }
+#endif
+    if (victim != q)
+    {
+      victim_size = chunksize(victim);
+      unlink(victim, bck, fwd);
+80002646:	0a 9c       	mov	r12,r5
+80002648:	6c 28       	ld.w	r8,r6[0x8]
+8000264a:	95 28       	st.w	r10[0x8],r8
+8000264c:	91 3a       	st.w	r8[0xc],r10
+      check_malloced_chunk(victim, nb);
+      MALLOC_UNLOCK;
+      return chunk2mem(victim);
+    }
+
+    idx += 2; /* Set for bin scan below. We've already scanned 2 bins. */
+8000264e:	c4 78       	rjmp	800026dc <_malloc_r+0xf0>
+80002650:	2f e3       	sub	r3,-2
+
+  }
+  else
+  {
+    idx = bin_index(nb);
+80002652:	c4 d8       	rjmp	800026ec <_malloc_r+0x100>
+80002654:	ee 03 16 09 	lsr	r3,r7,0x9
+80002658:	c0 41       	brne	80002660 <_malloc_r+0x74>
+8000265a:	ee 03 16 03 	lsr	r3,r7,0x3
+8000265e:	c2 68       	rjmp	800026aa <_malloc_r+0xbe>
+80002660:	58 43       	cp.w	r3,4
+80002662:	e0 8b 00 06 	brhi	8000266e <_malloc_r+0x82>
+80002666:	ee 03 16 06 	lsr	r3,r7,0x6
+8000266a:	2c 83       	sub	r3,-56
+8000266c:	c1 f8       	rjmp	800026aa <_malloc_r+0xbe>
+8000266e:	59 43       	cp.w	r3,20
+80002670:	e0 8b 00 04 	brhi	80002678 <_malloc_r+0x8c>
+80002674:	2a 53       	sub	r3,-91
+80002676:	c1 a8       	rjmp	800026aa <_malloc_r+0xbe>
+80002678:	e0 43 00 54 	cp.w	r3,84
+8000267c:	e0 8b 00 06 	brhi	80002688 <_malloc_r+0x9c>
+80002680:	ee 03 16 0c 	lsr	r3,r7,0xc
+80002684:	29 23       	sub	r3,-110
+80002686:	c1 28       	rjmp	800026aa <_malloc_r+0xbe>
+80002688:	e0 43 01 54 	cp.w	r3,340
+8000268c:	e0 8b 00 06 	brhi	80002698 <_malloc_r+0xac>
+80002690:	ee 03 16 0f 	lsr	r3,r7,0xf
+80002694:	28 93       	sub	r3,-119
+80002696:	c0 a8       	rjmp	800026aa <_malloc_r+0xbe>
+80002698:	e0 43 05 54 	cp.w	r3,1364
+8000269c:	e0 88 00 04 	brls	800026a4 <_malloc_r+0xb8>
+800026a0:	37 e3       	mov	r3,126
+800026a2:	c0 48       	rjmp	800026aa <_malloc_r+0xbe>
+800026a4:	ee 03 16 12 	lsr	r3,r7,0x12
+    bin = bin_at(idx);
+800026a8:	28 43       	sub	r3,-124
+800026aa:	e0 6a 01 10 	mov	r10,272
+
+    for (victim = last(bin); victim != bin; victim = victim->bk)
+800026ae:	f4 03 00 3a 	add	r10,r10,r3<<0x3
+    {
+      victim_size = chunksize(victim);
+800026b2:	74 36       	ld.w	r6,r10[0xc]
+800026b4:	c1 98       	rjmp	800026e6 <_malloc_r+0xfa>
+800026b6:	6c 19       	ld.w	r9,r6[0x4]
+      remainder_size = long_sub_size_t(victim_size, nb);
+800026b8:	e0 19 ff fc 	andl	r9,0xfffc
+      
+      if (remainder_size >= (long)MINSIZE) /* too big */
+800026bc:	f2 07 01 0b 	sub	r11,r9,r7
+800026c0:	58 fb       	cp.w	r11,15
+      {
+        --idx; /* adjust to rescan below after checking last remainder */
+800026c2:	e0 8a 00 04 	brle	800026ca <_malloc_r+0xde>
+        break;   
+800026c6:	20 13       	sub	r3,1
+      }
+
+      else if (remainder_size >= 0) /* exact fit */
+800026c8:	c1 18       	rjmp	800026ea <_malloc_r+0xfe>
+800026ca:	6c 38       	ld.w	r8,r6[0xc]
+      {
+        unlink(victim, bck, fwd);
+800026cc:	58 0b       	cp.w	r11,0
+        set_inuse_bit_at_offset(victim, victim_size);
+800026ce:	c0 b5       	brlt	800026e4 <_malloc_r+0xf8>
+800026d0:	6c 2a       	ld.w	r10,r6[0x8]
+        check_malloced_chunk(victim, nb);
+	MALLOC_UNLOCK;
+800026d2:	ec 09 00 09 	add	r9,r6,r9
+        break;   
+      }
+
+      else if (remainder_size >= 0) /* exact fit */
+      {
+        unlink(victim, bck, fwd);
+800026d6:	0a 9c       	mov	r12,r5
+        set_inuse_bit_at_offset(victim, victim_size);
+800026d8:	91 2a       	st.w	r8[0x8],r10
+800026da:	95 38       	st.w	r10[0xc],r8
+800026dc:	72 18       	ld.w	r8,r9[0x4]
+800026de:	a1 a8       	sbr	r8,0x0
+  else
+  {
+    idx = bin_index(nb);
+    bin = bin_at(idx);
+
+    for (victim = last(bin); victim != bin; victim = victim->bk)
+800026e0:	93 18       	st.w	r9[0x4],r8
+800026e2:	cb c8       	rjmp	8000285a <_malloc_r+0x26e>
+800026e4:	10 96       	mov	r6,r8
+	MALLOC_UNLOCK;
+        return chunk2mem(victim);
+      }
+    }
+
+    ++idx; 
+800026e6:	14 36       	cp.w	r6,r10
+
+  }
+
+  /* Try to use the last split-off remainder */
+
+  if ( (victim = last_remainder->fd) != last_remainder)
+800026e8:	ce 71       	brne	800026b6 <_malloc_r+0xca>
+800026ea:	2f f3       	sub	r3,-1
+800026ec:	e0 6a 01 10 	mov	r10,272
+800026f0:	f4 cc ff f8 	sub	r12,r10,-8
+  {
+    victim_size = chunksize(victim);
+800026f4:	78 26       	ld.w	r6,r12[0x8]
+800026f6:	18 36       	cp.w	r6,r12
+800026f8:	c6 c0       	breq	800027d0 <_malloc_r+0x1e4>
+    remainder_size = long_sub_size_t(victim_size, nb);
+800026fa:	6c 19       	ld.w	r9,r6[0x4]
+800026fc:	e0 19 ff fc 	andl	r9,0xfffc
+
+    if (remainder_size >= (long)MINSIZE) /* re-split */
+80002700:	f2 07 01 08 	sub	r8,r9,r7
+      check_malloced_chunk(victim, nb);
+      MALLOC_UNLOCK;
+      return chunk2mem(victim);
+    }
+
+    clear_last_remainder;
+80002704:	58 f8       	cp.w	r8,15
+80002706:	e0 89 00 8f 	brgt	80002824 <_malloc_r+0x238>
+
+    if (remainder_size >= 0)  /* exhaust */
+8000270a:	99 3c       	st.w	r12[0xc],r12
+    {
+      set_inuse_bit_at_offset(victim, victim_size);
+8000270c:	99 2c       	st.w	r12[0x8],r12
+8000270e:	58 08       	cp.w	r8,0
+      check_malloced_chunk(victim, nb);
+      MALLOC_UNLOCK;
+80002710:	c0 55       	brlt	8000271a <_malloc_r+0x12e>
+80002712:	ec 09 00 09 	add	r9,r6,r9
+      return chunk2mem(victim);
+    }
+
+    /* Else place in bin */
+
+    frontlink(victim, victim_size, remainder_index, bck, fwd);
+80002716:	0a 9c       	mov	r12,r5
+80002718:	ce 2b       	rjmp	800026dc <_malloc_r+0xf0>
+8000271a:	e0 49 01 ff 	cp.w	r9,511
+8000271e:	e0 8b 00 13 	brhi	80002744 <_malloc_r+0x158>
+80002722:	a3 99       	lsr	r9,0x3
+80002724:	f4 09 00 38 	add	r8,r10,r9<<0x3
+80002728:	70 2b       	ld.w	r11,r8[0x8]
+8000272a:	8d 38       	st.w	r6[0xc],r8
+8000272c:	8d 2b       	st.w	r6[0x8],r11
+8000272e:	97 36       	st.w	r11[0xc],r6
+80002730:	91 26       	st.w	r8[0x8],r6
+80002732:	a3 49       	asr	r9,0x2
+80002734:	74 18       	ld.w	r8,r10[0x4]
+80002736:	30 1b       	mov	r11,1
+80002738:	f6 09 09 49 	lsl	r9,r11,r9
+8000273c:	f1 e9 10 09 	or	r9,r8,r9
+80002740:	95 19       	st.w	r10[0x4],r9
+80002742:	c4 78       	rjmp	800027d0 <_malloc_r+0x1e4>
+80002744:	f2 0a 16 09 	lsr	r10,r9,0x9
+80002748:	58 4a       	cp.w	r10,4
+8000274a:	e0 8b 00 07 	brhi	80002758 <_malloc_r+0x16c>
+8000274e:	f2 0a 16 06 	lsr	r10,r9,0x6
+80002752:	2c 8a       	sub	r10,-56
+80002754:	c2 08       	rjmp	80002794 <_malloc_r+0x1a8>
+80002756:	d7 03       	nop
+80002758:	59 4a       	cp.w	r10,20
+8000275a:	e0 8b 00 04 	brhi	80002762 <_malloc_r+0x176>
+8000275e:	2a 5a       	sub	r10,-91
+80002760:	c1 a8       	rjmp	80002794 <_malloc_r+0x1a8>
+80002762:	e0 4a 00 54 	cp.w	r10,84
+80002766:	e0 8b 00 06 	brhi	80002772 <_malloc_r+0x186>
+8000276a:	f2 0a 16 0c 	lsr	r10,r9,0xc
+8000276e:	29 2a       	sub	r10,-110
+80002770:	c1 28       	rjmp	80002794 <_malloc_r+0x1a8>
+80002772:	e0 4a 01 54 	cp.w	r10,340
+80002776:	e0 8b 00 06 	brhi	80002782 <_malloc_r+0x196>
+8000277a:	f2 0a 16 0f 	lsr	r10,r9,0xf
+8000277e:	28 9a       	sub	r10,-119
+80002780:	c0 a8       	rjmp	80002794 <_malloc_r+0x1a8>
+80002782:	e0 4a 05 54 	cp.w	r10,1364
+80002786:	e0 88 00 04 	brls	8000278e <_malloc_r+0x1a2>
+8000278a:	37 ea       	mov	r10,126
+8000278c:	c0 48       	rjmp	80002794 <_malloc_r+0x1a8>
+8000278e:	f2 0a 16 12 	lsr	r10,r9,0x12
+80002792:	28 4a       	sub	r10,-124
+80002794:	e0 6b 01 10 	mov	r11,272
+80002798:	f6 0a 00 34 	add	r4,r11,r10<<0x3
+8000279c:	68 28       	ld.w	r8,r4[0x8]
+8000279e:	08 38       	cp.w	r8,r4
+800027a0:	c0 e1       	brne	800027bc <_malloc_r+0x1d0>
+800027a2:	76 19       	ld.w	r9,r11[0x4]
+800027a4:	a3 4a       	asr	r10,0x2
+800027a6:	30 1e       	mov	lr,1
+800027a8:	fc 0a 09 4a 	lsl	r10,lr,r10
+800027ac:	f3 ea 10 0a 	or	r10,r9,r10
+800027b0:	10 99       	mov	r9,r8
+800027b2:	97 1a       	st.w	r11[0x4],r10
+800027b4:	c0 a8       	rjmp	800027c8 <_malloc_r+0x1dc>
+800027b6:	70 28       	ld.w	r8,r8[0x8]
+800027b8:	08 38       	cp.w	r8,r4
+800027ba:	c0 60       	breq	800027c6 <_malloc_r+0x1da>
+800027bc:	70 1a       	ld.w	r10,r8[0x4]
+800027be:	e0 1a ff fc 	andl	r10,0xfffc
+800027c2:	14 39       	cp.w	r9,r10
+800027c4:	cf 93       	brcs	800027b6 <_malloc_r+0x1ca>
+800027c6:	70 39       	ld.w	r9,r8[0xc]
+800027c8:	8d 39       	st.w	r6[0xc],r9
+800027ca:	8d 28       	st.w	r6[0x8],r8
+800027cc:	91 36       	st.w	r8[0xc],r6
+  /* 
+     If there are any possibly nonempty big-enough blocks, 
+     search for best fitting chunk by scanning bins in blockwidth units.
+  */
+
+  if ( (block = idx2binblock(idx)) <= binblocks)  
+800027ce:	93 26       	st.w	r9[0x8],r6
+800027d0:	e6 08 14 02 	asr	r8,r3,0x2
+800027d4:	30 1b       	mov	r11,1
+800027d6:	e0 64 01 10 	mov	r4,272
+800027da:	f6 08 09 4b 	lsl	r11,r11,r8
+800027de:	68 18       	ld.w	r8,r4[0x4]
+800027e0:	10 3b       	cp.w	r11,r8
+  {
+
+    /* Get to the first marked block */
+
+    if ( (block & binblocks) == 0) 
+800027e2:	e0 8b 00 69 	brhi	800028b4 <_malloc_r+0x2c8>
+800027e6:	f7 e8 00 09 	and	r9,r11,r8
+    {
+      /* force to an even block boundary */
+      idx = (idx & ~(BINBLOCKWIDTH - 1)) + BINBLOCKWIDTH;
+800027ea:	c0 b1       	brne	80002800 <_malloc_r+0x214>
+      block <<= 1;
+800027ec:	e0 13 ff fc 	andl	r3,0xfffc
+      while ((block & binblocks) == 0)
+800027f0:	a1 7b       	lsl	r11,0x1
+      {
+        idx += BINBLOCKWIDTH;
+800027f2:	2f c3       	sub	r3,-4
+        block <<= 1;
+800027f4:	c0 38       	rjmp	800027fa <_malloc_r+0x20e>
+    if ( (block & binblocks) == 0) 
+    {
+      /* force to an even block boundary */
+      idx = (idx & ~(BINBLOCKWIDTH - 1)) + BINBLOCKWIDTH;
+      block <<= 1;
+      while ((block & binblocks) == 0)
+800027f6:	2f c3       	sub	r3,-4
+800027f8:	a1 7b       	lsl	r11,0x1
+800027fa:	f7 e8 00 09 	and	r9,r11,r8
+      
+    /* For each possibly nonempty block ... */
+    for (;;)  
+    {
+      startidx = idx;          /* (track incomplete blocks) */
+      q = bin = bin_at(idx);
+800027fe:	cf c0       	breq	800027f6 <_malloc_r+0x20a>
+80002800:	e8 03 00 3e 	add	lr,r4,r3<<0x3
+      /* For each bin in this block ... */
+      do
+      {
+        /* Find and use first big enough chunk ... */
+
+        for (victim = last(bin); victim != bin; victim = victim->bk)
+80002804:	06 92       	mov	r2,r3
+80002806:	1c 91       	mov	r1,lr
+        {
+          victim_size = chunksize(victim);
+80002808:	62 36       	ld.w	r6,r1[0xc]
+8000280a:	c2 d8       	rjmp	80002864 <_malloc_r+0x278>
+8000280c:	6c 1a       	ld.w	r10,r6[0x4]
+          remainder_size = long_sub_size_t(victim_size, nb);
+8000280e:	e0 1a ff fc 	andl	r10,0xfffc
+
+          if (remainder_size >= (long)MINSIZE) /* split */
+80002812:	f4 07 01 08 	sub	r8,r10,r7
+80002816:	58 f8       	cp.w	r8,15
+          {
+            remainder = chunk_at_offset(victim, nb);
+            set_head(victim, nb | PREV_INUSE);
+            unlink(victim, bck, fwd);
+80002818:	e0 8a 00 15 	brle	80002842 <_malloc_r+0x256>
+8000281c:	6c 3a       	ld.w	r10,r6[0xc]
+8000281e:	6c 29       	ld.w	r9,r6[0x8]
+          remainder_size = long_sub_size_t(victim_size, nb);
+
+          if (remainder_size >= (long)MINSIZE) /* split */
+          {
+            remainder = chunk_at_offset(victim, nb);
+            set_head(victim, nb | PREV_INUSE);
+80002820:	95 29       	st.w	r10[0x8],r9
+          victim_size = chunksize(victim);
+          remainder_size = long_sub_size_t(victim_size, nb);
+
+          if (remainder_size >= (long)MINSIZE) /* split */
+          {
+            remainder = chunk_at_offset(victim, nb);
+80002822:	93 3a       	st.w	r9[0xc],r10
+80002824:	0e 99       	mov	r9,r7
+            set_head(victim, nb | PREV_INUSE);
+80002826:	ec 07 00 07 	add	r7,r6,r7
+            unlink(victim, bck, fwd);
+            link_last_remainder(remainder);
+8000282a:	a1 a9       	sbr	r9,0x0
+          remainder_size = long_sub_size_t(victim_size, nb);
+
+          if (remainder_size >= (long)MINSIZE) /* split */
+          {
+            remainder = chunk_at_offset(victim, nb);
+            set_head(victim, nb | PREV_INUSE);
+8000282c:	99 37       	st.w	r12[0xc],r7
+            unlink(victim, bck, fwd);
+            link_last_remainder(remainder);
+            set_head(remainder, remainder_size | PREV_INUSE);
+            set_foot(remainder, remainder_size);
+8000282e:	99 27       	st.w	r12[0x8],r7
+80002830:	8d 19       	st.w	r6[0x4],r9
+          if (remainder_size >= (long)MINSIZE) /* split */
+          {
+            remainder = chunk_at_offset(victim, nb);
+            set_head(victim, nb | PREV_INUSE);
+            unlink(victim, bck, fwd);
+            link_last_remainder(remainder);
+80002832:	ee 08 09 08 	st.w	r7[r8],r8
+            set_head(remainder, remainder_size | PREV_INUSE);
+80002836:	8f 2c       	st.w	r7[0x8],r12
+            set_foot(remainder, remainder_size);
+            check_malloced_chunk(victim, nb);
+	    MALLOC_UNLOCK;
+80002838:	8f 3c       	st.w	r7[0xc],r12
+          {
+            remainder = chunk_at_offset(victim, nb);
+            set_head(victim, nb | PREV_INUSE);
+            unlink(victim, bck, fwd);
+            link_last_remainder(remainder);
+            set_head(remainder, remainder_size | PREV_INUSE);
+8000283a:	a1 a8       	sbr	r8,0x0
+8000283c:	0a 9c       	mov	r12,r5
+8000283e:	8f 18       	st.w	r7[0x4],r8
+            check_malloced_chunk(victim, nb);
+	    MALLOC_UNLOCK;
+            return chunk2mem(victim);
+          }
+
+          else if (remainder_size >= 0)  /* take */
+80002840:	c0 d8       	rjmp	8000285a <_malloc_r+0x26e>
+80002842:	6c 39       	ld.w	r9,r6[0xc]
+          {
+            set_inuse_bit_at_offset(victim, victim_size);
+80002844:	58 08       	cp.w	r8,0
+80002846:	c0 e5       	brlt	80002862 <_malloc_r+0x276>
+80002848:	ec 0a 00 0a 	add	r10,r6,r10
+            unlink(victim, bck, fwd);
+            check_malloced_chunk(victim, nb);
+	    MALLOC_UNLOCK;
+8000284c:	74 18       	ld.w	r8,r10[0x4]
+            return chunk2mem(victim);
+          }
+
+          else if (remainder_size >= 0)  /* take */
+          {
+            set_inuse_bit_at_offset(victim, victim_size);
+8000284e:	a1 a8       	sbr	r8,0x0
+            unlink(victim, bck, fwd);
+80002850:	0a 9c       	mov	r12,r5
+80002852:	95 18       	st.w	r10[0x4],r8
+80002854:	6c 28       	ld.w	r8,r6[0x8]
+            check_malloced_chunk(victim, nb);
+	    MALLOC_UNLOCK;
+80002856:	93 28       	st.w	r9[0x8],r8
+80002858:	91 39       	st.w	r8[0xc],r9
+            return chunk2mem(victim);
+8000285a:	cd ec       	rcall	80002a16 <__malloc_unlock>
+8000285c:	ec cc ff f8 	sub	r12,r6,-8
+      /* For each bin in this block ... */
+      do
+      {
+        /* Find and use first big enough chunk ... */
+
+        for (victim = last(bin); victim != bin; victim = victim->bk)
+80002860:	d8 32       	popm	r0-r7,pc
+80002862:	12 96       	mov	r6,r9
+80002864:	02 36       	cp.w	r6,r1
+         {
+           bin = next_bin(bin);
+           ++idx;
+         }
+#endif
+      } while ((++idx & (BINBLOCKWIDTH - 1)) != 0);
+80002866:	cd 31       	brne	8000280c <_malloc_r+0x220>
+80002868:	2f f2       	sub	r2,-1
+8000286a:	f1 d2 c0 02 	bfextu	r8,r2,0x0,0x2
+            return chunk2mem(victim);
+          }
+
+        }
+
+       bin = next_bin(bin);
+8000286e:	c0 30       	breq	80002874 <_malloc_r+0x288>
+80002870:	2f 81       	sub	r1,-8
+80002872:	cc bb       	rjmp	80002808 <_malloc_r+0x21c>
+
+      /* Clear out the block bit. */
+
+      do   /* Possibly backtrack to try to clear a partial block */
+      {
+        if ((startidx & (BINBLOCKWIDTH - 1)) == 0)
+80002874:	1c 98       	mov	r8,lr
+80002876:	f3 d3 c0 02 	bfextu	r9,r3,0x0,0x2
+        {
+          binblocks &= ~block;
+8000287a:	c0 81       	brne	8000288a <_malloc_r+0x29e>
+8000287c:	68 19       	ld.w	r9,r4[0x4]
+8000287e:	f6 08 11 ff 	rsub	r8,r11,-1
+80002882:	f3 e8 00 08 	and	r8,r9,r8
+          break;
+80002886:	89 18       	st.w	r4[0x4],r8
+        }
+        --startidx;
+       q = prev_bin(q);
+80002888:	c0 78       	rjmp	80002896 <_malloc_r+0x2aa>
+8000288a:	f0 c9 00 08 	sub	r9,r8,8
+      } while (first(q) == q);
+8000288e:	20 13       	sub	r3,1
+80002890:	70 08       	ld.w	r8,r8[0x0]
+80002892:	12 38       	cp.w	r8,r9
+
+      /* Get to the next possibly nonempty block */
+
+      if ( (block <<= 1) <= binblocks && (block != 0) ) 
+80002894:	cf 10       	breq	80002876 <_malloc_r+0x28a>
+80002896:	a1 7b       	lsl	r11,0x1
+80002898:	68 18       	ld.w	r8,r4[0x4]
+8000289a:	10 3b       	cp.w	r11,r8
+8000289c:	e0 8b 00 0c 	brhi	800028b4 <_malloc_r+0x2c8>
+800028a0:	58 0b       	cp.w	r11,0
+800028a2:	c0 90       	breq	800028b4 <_malloc_r+0x2c8>
+800028a4:	04 93       	mov	r3,r2
+      {
+        while ((block & binblocks) == 0)
+        {
+          idx += BINBLOCKWIDTH;
+800028a6:	c0 38       	rjmp	800028ac <_malloc_r+0x2c0>
+          block <<= 1;
+800028a8:	2f c3       	sub	r3,-4
+
+      /* Get to the next possibly nonempty block */
+
+      if ( (block <<= 1) <= binblocks && (block != 0) ) 
+      {
+        while ((block & binblocks) == 0)
+800028aa:	a1 7b       	lsl	r11,0x1
+800028ac:	f7 e8 00 09 	and	r9,r11,r8
+800028b0:	ca 81       	brne	80002800 <_malloc_r+0x214>
+800028b2:	cf bb       	rjmp	800028a8 <_malloc_r+0x2bc>
+800028b4:	68 23       	ld.w	r3,r4[0x8]
+800028b6:	66 12       	ld.w	r2,r3[0x4]
+800028b8:	e0 12 ff fc 	andl	r2,0xfffc
+
+
+  /* Try to use top chunk */
+
+  /* Require that there be a remainder, ensuring top always exists  */
+  remainder_size = long_sub_size_t(chunksize(top), nb);
+800028bc:	0e 32       	cp.w	r2,r7
+800028be:	5f 39       	srlo	r9
+800028c0:	e4 07 01 08 	sub	r8,r2,r7
+  if (chunksize(top) < nb || remainder_size < (long)MINSIZE)
+800028c4:	58 f8       	cp.w	r8,15
+800028c6:	5f aa       	srle	r10
+
+
+  /* Try to use top chunk */
+
+  /* Require that there be a remainder, ensuring top always exists  */
+  remainder_size = long_sub_size_t(chunksize(top), nb);
+800028c8:	f5 e9 10 09 	or	r9,r10,r9
+  if (chunksize(top) < nb || remainder_size < (long)MINSIZE)
+800028cc:	e0 80 00 96 	breq	800029f8 <_malloc_r+0x40c>
+800028d0:	e0 68 05 34 	mov	r8,1332
+800028d4:	70 01       	ld.w	r1,r8[0x0]
+800028d6:	e0 68 05 1c 	mov	r8,1308
+  INTERNAL_SIZE_T old_top_size = chunksize(old_top);
+  char*     old_end      = (char*)(chunk_at_offset(old_top, old_top_size));
+
+  /* Pad request with top_pad plus minimal overhead */
+  
+  INTERNAL_SIZE_T    sbrk_size     = nb + top_pad + MINSIZE;
+800028da:	2f 01       	sub	r1,-16
+
+  /* If not the first time through, round to preserve page boundary */
+  /* Otherwise, we need to correct to a page size below anyway. */
+  /* (We also correct below if an intervening foreign sbrk call.) */
+
+  if (sbrk_base != (char*)(-1))
+800028dc:	70 08       	ld.w	r8,r8[0x0]
+  INTERNAL_SIZE_T old_top_size = chunksize(old_top);
+  char*     old_end      = (char*)(chunk_at_offset(old_top, old_top_size));
+
+  /* Pad request with top_pad plus minimal overhead */
+  
+  INTERNAL_SIZE_T    sbrk_size     = nb + top_pad + MINSIZE;
+800028de:	0e 01       	add	r1,r7
+
+  /* If not the first time through, round to preserve page boundary */
+  /* Otherwise, we need to correct to a page size below anyway. */
+  /* (We also correct below if an intervening foreign sbrk call.) */
+
+  if (sbrk_base != (char*)(-1))
+800028e0:	5b f8       	cp.w	r8,-1
+  INTERNAL_SIZE_T old_top_size = chunksize(old_top);
+  char*     old_end      = (char*)(chunk_at_offset(old_top, old_top_size));
+
+  /* Pad request with top_pad plus minimal overhead */
+  
+  INTERNAL_SIZE_T    sbrk_size     = nb + top_pad + MINSIZE;
+800028e2:	c0 40       	breq	800028ea <_malloc_r+0x2fe>
+
+  /* If not the first time through, round to preserve page boundary */
+  /* Otherwise, we need to correct to a page size below anyway. */
+  /* (We also correct below if an intervening foreign sbrk call.) */
+
+  if (sbrk_base != (char*)(-1))
+800028e4:	28 11       	sub	r1,-127
+800028e6:	e0 11 ff 80 	andl	r1,0xff80
+    sbrk_size = (sbrk_size + (pagesz - 1)) & ~(pagesz - 1);
+800028ea:	02 9b       	mov	r11,r1
+800028ec:	0a 9c       	mov	r12,r5
+
+  brk = (char*)(MORECORE (sbrk_size));
+800028ee:	c9 5c       	rcall	80002a18 <_sbrk_r>
+800028f0:	18 96       	mov	r6,r12
+800028f2:	5b fc       	cp.w	r12,-1
+800028f4:	c7 20       	breq	800029d8 <_malloc_r+0x3ec>
+800028f6:	e6 02 00 08 	add	r8,r3,r2
+
+  /* Fail if sbrk failed or if a foreign sbrk call killed our space */
+  if (brk == (char*)(MORECORE_FAILURE) || 
+800028fa:	10 3c       	cp.w	r12,r8
+  char*     new_brk;              /* return of 2nd sbrk call */
+  INTERNAL_SIZE_T top_size;       /* new size of top chunk */
+
+  mchunkptr old_top     = top;  /* Record state of old top */
+  INTERNAL_SIZE_T old_top_size = chunksize(old_top);
+  char*     old_end      = (char*)(chunk_at_offset(old_top, old_top_size));
+800028fc:	c0 32       	brcc	80002902 <_malloc_r+0x316>
+800028fe:	08 33       	cp.w	r3,r4
+    sbrk_size = (sbrk_size + (pagesz - 1)) & ~(pagesz - 1);
+
+  brk = (char*)(MORECORE (sbrk_size));
+
+  /* Fail if sbrk failed or if a foreign sbrk call killed our space */
+  if (brk == (char*)(MORECORE_FAILURE) || 
+80002900:	c6 c1       	brne	800029d8 <_malloc_r+0x3ec>
+80002902:	e0 6a 05 38 	mov	r10,1336
+80002906:	74 09       	ld.w	r9,r10[0x0]
+      (brk < old_end && old_top != initial_top))
+    return;
+
+  sbrked_mem += sbrk_size;
+80002908:	e2 09 00 09 	add	r9,r1,r9
+8000290c:	95 09       	st.w	r10[0x0],r9
+8000290e:	10 36       	cp.w	r6,r8
+80002910:	c0 a1       	brne	80002924 <_malloc_r+0x338>
+
+  if (brk == old_end /* can just add bytes to current top, unless
+80002912:	f5 d6 c0 07 	bfextu	r10,r6,0x0,0x7
+80002916:	c0 71       	brne	80002924 <_malloc_r+0x338>
+80002918:	e2 02 00 02 	add	r2,r1,r2
+			previous correction failed */
+      && ((POINTER_UINT)old_end & (pagesz - 1)) == 0)
+  {
+    top_size = sbrk_size + old_top_size;
+    set_head(top, top_size | PREV_INUSE);
+8000291c:	68 28       	ld.w	r8,r4[0x8]
+8000291e:	a1 a2       	sbr	r2,0x0
+80002920:	91 12       	st.w	r8[0x4],r2
+80002922:	c4 a8       	rjmp	800029b6 <_malloc_r+0x3ca>
+80002924:	e0 6a 05 1c 	mov	r10,1308
+  }
+  else
+  {
+    if (sbrk_base == (char*)(-1))  /* First time through. Record base */
+80002928:	74 0b       	ld.w	r11,r10[0x0]
+8000292a:	5b fb       	cp.w	r11,-1
+8000292c:	c0 31       	brne	80002932 <_malloc_r+0x346>
+8000292e:	95 06       	st.w	r10[0x0],r6
+      sbrk_base = brk;
+80002930:	c0 78       	rjmp	8000293e <_malloc_r+0x352>
+80002932:	ec 09 00 09 	add	r9,r6,r9
+    else  /* Someone else called sbrk().  Count those bytes as sbrked_mem. */
+      sbrked_mem += brk - (char*)old_end;
+80002936:	e0 6a 05 38 	mov	r10,1336
+8000293a:	10 19       	sub	r9,r8
+8000293c:	95 09       	st.w	r10[0x0],r9
+
+    /* Guarantee alignment of first new chunk made from this space */
+    front_misalign = (POINTER_UINT)chunk2mem(brk) & MALLOC_ALIGN_MASK;
+8000293e:	f1 d6 c0 03 	bfextu	r8,r6,0x0,0x3
+    if (front_misalign > 0) 
+80002942:	c0 40       	breq	8000294a <_malloc_r+0x35e>
+    {
+      correction = (MALLOC_ALIGNMENT) - front_misalign;
+80002944:	f0 08 11 08 	rsub	r8,r8,8
+      brk += correction;
+80002948:	10 06       	add	r6,r8
+    }
+    else
+      correction = 0;
+
+    /* Guarantee the next brk will be at a page boundary */
+    correction += pagesz - ((POINTER_UINT)(brk + sbrk_size) & (pagesz - 1));
+8000294a:	28 08       	sub	r8,-128
+8000294c:	ec 01 00 01 	add	r1,r6,r1
+
+    /* Allocate correction */
+    new_brk = (char*)(MORECORE (correction));
+80002950:	0a 9c       	mov	r12,r5
+    }
+    else
+      correction = 0;
+
+    /* Guarantee the next brk will be at a page boundary */
+    correction += pagesz - ((POINTER_UINT)(brk + sbrk_size) & (pagesz - 1));
+80002952:	e3 d1 c0 07 	bfextu	r1,r1,0x0,0x7
+80002956:	f0 01 01 01 	sub	r1,r8,r1
+
+    /* Allocate correction */
+    new_brk = (char*)(MORECORE (correction));
+8000295a:	02 9b       	mov	r11,r1
+8000295c:	c5 ec       	rcall	80002a18 <_sbrk_r>
+8000295e:	30 08       	mov	r8,0
+    if (new_brk == (char*)(MORECORE_FAILURE))
+80002960:	5b fc       	cp.w	r12,-1
+80002962:	c0 31       	brne	80002968 <_malloc_r+0x37c>
+80002964:	0c 9c       	mov	r12,r6
+80002966:	10 91       	mov	r1,r8
+80002968:	e0 68 05 38 	mov	r8,1336
+
+    sbrked_mem += correction;
+
+    top = (mchunkptr)brk;
+    top_size = new_brk - brk + correction;
+    set_head(top, top_size | PREV_INUSE);
+8000296c:	0c 1c       	sub	r12,r6
+	correction = 0;
+	correction_failed = 1;
+	new_brk = brk;
+      }
+
+    sbrked_mem += correction;
+8000296e:	70 09       	ld.w	r9,r8[0x0]
+
+    top = (mchunkptr)brk;
+    top_size = new_brk - brk + correction;
+    set_head(top, top_size | PREV_INUSE);
+80002970:	02 0c       	add	r12,r1
+	new_brk = brk;
+      }
+
+    sbrked_mem += correction;
+
+    top = (mchunkptr)brk;
+80002972:	89 26       	st.w	r4[0x8],r6
+    top_size = new_brk - brk + correction;
+    set_head(top, top_size | PREV_INUSE);
+80002974:	a1 ac       	sbr	r12,0x0
+	correction = 0;
+	correction_failed = 1;
+	new_brk = brk;
+      }
+
+    sbrked_mem += correction;
+80002976:	12 01       	add	r1,r9
+
+    top = (mchunkptr)brk;
+    top_size = new_brk - brk + correction;
+    set_head(top, top_size | PREV_INUSE);
+80002978:	8d 1c       	st.w	r6[0x4],r12
+	correction = 0;
+	correction_failed = 1;
+	new_brk = brk;
+      }
+
+    sbrked_mem += correction;
+8000297a:	91 01       	st.w	r8[0x0],r1
+
+    top = (mchunkptr)brk;
+    top_size = new_brk - brk + correction;
+    set_head(top, top_size | PREV_INUSE);
+
+    if (old_top != initial_top)
+8000297c:	08 33       	cp.w	r3,r4
+8000297e:	c1 c0       	breq	800029b6 <_malloc_r+0x3ca>
+
+      /* There must have been an intervening foreign sbrk call. */
+      /* A double fencepost is necessary to prevent consolidation */
+
+      /* If not enough space to do this, then user did something very wrong */
+      if (old_top_size < MINSIZE) 
+80002980:	58 f2       	cp.w	r2,15
+80002982:	e0 8b 00 05 	brhi	8000298c <_malloc_r+0x3a0>
+      {
+        set_head(top, PREV_INUSE); /* will force null return from malloc */
+80002986:	30 18       	mov	r8,1
+80002988:	8d 18       	st.w	r6[0x4],r8
+8000298a:	c2 78       	rjmp	800029d8 <_malloc_r+0x3ec>
+        return;
+      }
+
+      /* Also keep size a multiple of MALLOC_ALIGNMENT */
+      old_top_size = (old_top_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
+      chunk_at_offset(old_top, old_top_size          )->size =
+8000298c:	30 59       	mov	r9,5
+        set_head(top, PREV_INUSE); /* will force null return from malloc */
+        return;
+      }
+
+      /* Also keep size a multiple of MALLOC_ALIGNMENT */
+      old_top_size = (old_top_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
+8000298e:	20 c2       	sub	r2,12
+80002990:	e0 12 ff f8 	andl	r2,0xfff8
+      chunk_at_offset(old_top, old_top_size          )->size =
+80002994:	e6 02 00 08 	add	r8,r3,r2
+        SIZE_SZ|PREV_INUSE;
+      chunk_at_offset(old_top, old_top_size + SIZE_SZ)->size =
+80002998:	91 29       	st.w	r8[0x8],r9
+        return;
+      }
+
+      /* Also keep size a multiple of MALLOC_ALIGNMENT */
+      old_top_size = (old_top_size - 3*SIZE_SZ) & ~MALLOC_ALIGN_MASK;
+      chunk_at_offset(old_top, old_top_size          )->size =
+8000299a:	91 19       	st.w	r8[0x4],r9
+        SIZE_SZ|PREV_INUSE;
+      chunk_at_offset(old_top, old_top_size + SIZE_SZ)->size =
+        SIZE_SZ|PREV_INUSE;
+      set_head_size(old_top, old_top_size);
+8000299c:	66 18       	ld.w	r8,r3[0x4]
+8000299e:	f1 d8 c0 01 	bfextu	r8,r8,0x0,0x1
+800029a2:	e5 e8 10 08 	or	r8,r2,r8
+800029a6:	87 18       	st.w	r3[0x4],r8
+      /* If possible, release the rest. */
+      if (old_top_size >= MINSIZE) 
+800029a8:	58 f2       	cp.w	r2,15
+800029aa:	e0 88 00 06 	brls	800029b6 <_malloc_r+0x3ca>
+        fREe(RCALL chunk2mem(old_top));
+800029ae:	e6 cb ff f8 	sub	r11,r3,-8
+800029b2:	0a 9c       	mov	r12,r5
+800029b4:	c8 8c       	rcall	80002ac4 <_free_r>
+800029b6:	e0 68 05 38 	mov	r8,1336
+    }
+  }
+
+  if ((unsigned long)sbrked_mem > (unsigned long)max_sbrked_mem) 
+800029ba:	e0 69 05 30 	mov	r9,1328
+800029be:	70 08       	ld.w	r8,r8[0x0]
+800029c0:	72 0a       	ld.w	r10,r9[0x0]
+800029c2:	14 38       	cp.w	r8,r10
+800029c4:	e0 88 00 03 	brls	800029ca <_malloc_r+0x3de>
+    max_sbrked_mem = sbrked_mem;
+#if HAVE_MMAP
+  if ((unsigned long)(mmapped_mem + sbrked_mem) > (unsigned long)max_total_mem) 
+    max_total_mem = mmapped_mem + sbrked_mem;
+#else
+  if ((unsigned long)(sbrked_mem) > (unsigned long)max_total_mem) 
+800029c8:	93 08       	st.w	r9[0x0],r8
+800029ca:	e0 69 05 2c 	mov	r9,1324
+800029ce:	72 0a       	ld.w	r10,r9[0x0]
+800029d0:	14 38       	cp.w	r8,r10
+    max_total_mem = sbrked_mem;
+800029d2:	e0 88 00 03 	brls	800029d8 <_malloc_r+0x3ec>
+    }
+#endif
+
+    /* Try to extend */
+    malloc_extend_top(RCALL nb);
+    remainder_size = long_sub_size_t(chunksize(top), nb);
+800029d6:	93 08       	st.w	r9[0x0],r8
+800029d8:	68 28       	ld.w	r8,r4[0x8]
+800029da:	70 18       	ld.w	r8,r8[0x4]
+    if (chunksize(top) < nb || remainder_size < (long)MINSIZE)
+800029dc:	e0 18 ff fc 	andl	r8,0xfffc
+    }
+#endif
+
+    /* Try to extend */
+    malloc_extend_top(RCALL nb);
+    remainder_size = long_sub_size_t(chunksize(top), nb);
+800029e0:	0e 38       	cp.w	r8,r7
+    if (chunksize(top) < nb || remainder_size < (long)MINSIZE)
+800029e2:	5f 39       	srlo	r9
+800029e4:	0e 18       	sub	r8,r7
+800029e6:	58 f8       	cp.w	r8,15
+800029e8:	5f aa       	srle	r10
+800029ea:	f5 e9 10 09 	or	r9,r10,r9
+    {
+      MALLOC_UNLOCK;
+800029ee:	c0 50       	breq	800029f8 <_malloc_r+0x40c>
+800029f0:	0a 9c       	mov	r12,r5
+800029f2:	c1 2c       	rcall	80002a16 <__malloc_unlock>
+800029f4:	d8 3a       	popm	r0-r7,pc,r12=0
+800029f6:	d7 03       	nop
+800029f8:	68 26       	ld.w	r6,r4[0x8]
+800029fa:	a1 a8       	sbr	r8,0x0
+800029fc:	0e 99       	mov	r9,r7
+800029fe:	a1 a9       	sbr	r9,0x0
+80002a00:	8d 19       	st.w	r6[0x4],r9
+80002a02:	ec 07 00 07 	add	r7,r6,r7
+80002a06:	0a 9c       	mov	r12,r5
+80002a08:	89 27       	st.w	r4[0x8],r7
+80002a0a:	8f 18       	st.w	r7[0x4],r8
+80002a0c:	c0 5c       	rcall	80002a16 <__malloc_unlock>
+80002a0e:	ec cc ff f8 	sub	r12,r6,-8
+80002a12:	d8 32       	popm	r0-r7,pc
+
+80002a14 <__malloc_lock>:
+     struct _reent *ptr;
+{
+#ifndef __SINGLE_THREAD__
+  __lock_acquire_recursive (__malloc_lock_object);
+#endif
+}
+80002a14:	5e fc       	retal	r12
+
+80002a16 <__malloc_unlock>:
+     struct _reent *ptr;
+{
+#ifndef __SINGLE_THREAD__
+  __lock_release_recursive (__malloc_lock_object);
+#endif
+}
+80002a16:	5e fc       	retal	r12
+
+80002a18 <_sbrk_r>:
+
+void *
+_DEFUN (_sbrk_r, (ptr, incr),
+     struct _reent *ptr _AND
+     ptrdiff_t incr)
+{
+80002a18:	d4 21       	pushm	r4-r7,lr
+  char *ret;
+  void *_sbrk(ptrdiff_t);
+
+  errno = 0;
+80002a1a:	30 08       	mov	r8,0
+
+void *
+_DEFUN (_sbrk_r, (ptr, incr),
+     struct _reent *ptr _AND
+     ptrdiff_t incr)
+{
+80002a1c:	18 97       	mov	r7,r12
+  char *ret;
+  void *_sbrk(ptrdiff_t);
+
+  errno = 0;
+80002a1e:	e0 66 05 60 	mov	r6,1376
+80002a22:	16 9c       	mov	r12,r11
+  if ((ret = (char *)(_sbrk (incr))) == (void *) -1 && errno != 0)
+80002a24:	8d 08       	st.w	r6[0x0],r8
+80002a26:	fe b0 fc fd 	rcall	80002420 <_sbrk>
+80002a2a:	5b fc       	cp.w	r12,-1
+80002a2c:	c0 51       	brne	80002a36 <_sbrk_r+0x1e>
+80002a2e:	6c 08       	ld.w	r8,r6[0x0]
+80002a30:	58 08       	cp.w	r8,0
+    ptr->_errno = errno;
+80002a32:	c0 20       	breq	80002a36 <_sbrk_r+0x1e>
+  return ret;
+}
+80002a34:	8f 38       	st.w	r7[0xc],r8
+80002a36:	d8 22       	popm	r4-r7,pc
+
+80002a38 <_malloc_trim_r>:
+#if __STD_C
+int malloc_trim(RARG size_t pad)
+#else
+int malloc_trim(RARG pad) RDECL size_t pad;
+#endif
+{
+80002a38:	d4 21       	pushm	r4-r7,lr
+80002a3a:	16 95       	mov	r5,r11
+80002a3c:	18 97       	mov	r7,r12
+  char* current_brk;     /* address returned by pre-check sbrk call */
+  char* new_brk;         /* address returned by negative sbrk call */
+
+  unsigned long pagesz = malloc_getpagesize;
+
+  MALLOC_LOCK;
+80002a3e:	ce bf       	rcall	80002a14 <__malloc_lock>
+80002a40:	e0 64 01 10 	mov	r4,272
+
+  top_size = chunksize(top);
+80002a44:	68 28       	ld.w	r8,r4[0x8]
+80002a46:	70 16       	ld.w	r6,r8[0x4]
+80002a48:	e0 16 ff fc 	andl	r6,0xfffc
+  extra = ((top_size - pad - MINSIZE + (pagesz-1)) / pagesz - 1) * pagesz;
+80002a4c:	ec c8 ff 91 	sub	r8,r6,-111
+80002a50:	f0 05 01 05 	sub	r5,r8,r5
+80002a54:	e0 15 ff 80 	andl	r5,0xff80
+80002a58:	ea c5 00 80 	sub	r5,r5,128
+
+  if (extra < (long)pagesz)  /* Not enough memory to release */
+80002a5c:	e0 45 00 7f 	cp.w	r5,127
+80002a60:	e0 8a 00 22 	brle	80002aa4 <_malloc_trim_r+0x6c>
+  }
+
+  else
+  {
+    /* Test to make sure no one else called sbrk */
+    current_brk = (char*)(MORECORE (0));
+80002a64:	30 0b       	mov	r11,0
+80002a66:	0e 9c       	mov	r12,r7
+80002a68:	cd 8f       	rcall	80002a18 <_sbrk_r>
+80002a6a:	68 28       	ld.w	r8,r4[0x8]
+    if (current_brk != (char*)(top) + top_size)
+80002a6c:	0c 08       	add	r8,r6
+80002a6e:	10 3c       	cp.w	r12,r8
+80002a70:	c1 a1       	brne	80002aa4 <_malloc_trim_r+0x6c>
+80002a72:	ea 0b 11 00 	rsub	r11,r5,0
+      return 0;     /* Apparently we don't own memory; must fail */
+    }
+
+    else
+    {
+      new_brk = (char*)(MORECORE (-extra));
+80002a76:	0e 9c       	mov	r12,r7
+80002a78:	cd 0f       	rcall	80002a18 <_sbrk_r>
+80002a7a:	5b fc       	cp.w	r12,-1
+80002a7c:	c1 71       	brne	80002aaa <_malloc_trim_r+0x72>
+      
+      if (new_brk == (char*)(MORECORE_FAILURE)) /* sbrk failed? */
+80002a7e:	30 0b       	mov	r11,0
+80002a80:	0e 9c       	mov	r12,r7
+      {
+        /* Try to figure out what we have */
+        current_brk = (char*)(MORECORE (0));
+80002a82:	cc bf       	rcall	80002a18 <_sbrk_r>
+80002a84:	68 28       	ld.w	r8,r4[0x8]
+80002a86:	f8 08 01 09 	sub	r9,r12,r8
+        top_size = current_brk - (char*)top;
+80002a8a:	58 f9       	cp.w	r9,15
+80002a8c:	e0 8a 00 0c 	brle	80002aa4 <_malloc_trim_r+0x6c>
+        if (top_size >= (long)MINSIZE) /* if not, we are very very dead! */
+80002a90:	a1 a9       	sbr	r9,0x0
+80002a92:	91 19       	st.w	r8[0x4],r9
+80002a94:	e0 68 05 1c 	mov	r8,1308
+        {
+          sbrked_mem = current_brk - sbrk_base;
+          set_head(top, top_size | PREV_INUSE);
+80002a98:	70 09       	ld.w	r9,r8[0x0]
+        /* Try to figure out what we have */
+        current_brk = (char*)(MORECORE (0));
+        top_size = current_brk - (char*)top;
+        if (top_size >= (long)MINSIZE) /* if not, we are very very dead! */
+        {
+          sbrked_mem = current_brk - sbrk_base;
+80002a9a:	e0 68 05 38 	mov	r8,1336
+80002a9e:	f8 09 01 09 	sub	r9,r12,r9
+80002aa2:	91 09       	st.w	r8[0x0],r9
+80002aa4:	0e 9c       	mov	r12,r7
+          set_head(top, top_size | PREV_INUSE);
+        }
+        check_chunk(top);
+	MALLOC_UNLOCK;
+80002aa6:	cb 8f       	rcall	80002a16 <__malloc_unlock>
+80002aa8:	d8 2a       	popm	r4-r7,pc,r12=0
+80002aaa:	68 28       	ld.w	r8,r4[0x8]
+80002aac:	0a 16       	sub	r6,r5
+      }
+
+      else
+      {
+        /* Success. Adjust top accordingly. */
+        set_head(top, (top_size - extra) | PREV_INUSE);
+80002aae:	a1 a6       	sbr	r6,0x0
+80002ab0:	91 16       	st.w	r8[0x4],r6
+80002ab2:	e0 68 05 38 	mov	r8,1336
+        sbrked_mem -= extra;
+80002ab6:	70 09       	ld.w	r9,r8[0x0]
+80002ab8:	0a 19       	sub	r9,r5
+80002aba:	0e 9c       	mov	r12,r7
+        check_chunk(top);
+	MALLOC_UNLOCK;
+80002abc:	91 09       	st.w	r8[0x0],r9
+
+      else
+      {
+        /* Success. Adjust top accordingly. */
+        set_head(top, (top_size - extra) | PREV_INUSE);
+        sbrked_mem -= extra;
+80002abe:	ca cf       	rcall	80002a16 <__malloc_unlock>
+        check_chunk(top);
+	MALLOC_UNLOCK;
+80002ac0:	da 2a       	popm	r4-r7,pc,r12=1
+80002ac2:	d7 03       	nop
+
+80002ac4 <_free_r>:
+80002ac4:	d4 21       	pushm	r4-r7,lr
+80002ac6:	16 96       	mov	r6,r11
+80002ac8:	18 97       	mov	r7,r12
+80002aca:	58 0b       	cp.w	r11,0
+80002acc:	e0 80 00 bb 	breq	80002c42 <_free_r+0x17e>
+80002ad0:	ca 2f       	rcall	80002a14 <__malloc_lock>
+80002ad2:	20 86       	sub	r6,8
+80002ad4:	e0 6a 01 10 	mov	r10,272
+80002ad8:	6c 18       	ld.w	r8,r6[0x4]
+80002ada:	74 2e       	ld.w	lr,r10[0x8]
+80002adc:	f9 d8 c0 01 	bfextu	r12,r8,0x0,0x1
+  }
+#endif
+  
+  check_inuse_chunk(p);
+  
+  sz = hd & ~PREV_INUSE;
+80002ae0:	a1 c8       	cbr	r8,0x0
+  next = chunk_at_offset(p, sz);
+80002ae2:	ec 08 00 09 	add	r9,r6,r8
+  nextsz = chunksize(next);
+80002ae6:	72 1b       	ld.w	r11,r9[0x4]
+80002ae8:	e0 1b ff fc 	andl	r11,0xfffc
+  
+  if (next == top)                            /* merge with top */
+80002aec:	1c 39       	cp.w	r9,lr
+80002aee:	c1 d1       	brne	80002b28 <_free_r+0x64>
+  {
+    sz += nextsz;
+80002af0:	f6 08 00 08 	add	r8,r11,r8
+
+    if (!(hd & PREV_INUSE))                    /* consolidate backward */
+80002af4:	58 0c       	cp.w	r12,0
+80002af6:	c0 81       	brne	80002b06 <_free_r+0x42>
+    {
+      prevsz = p->prev_size;
+80002af8:	6c 09       	ld.w	r9,r6[0x0]
+      p = chunk_at_offset(p, -prevsz);
+80002afa:	12 16       	sub	r6,r9
+      sz += prevsz;
+80002afc:	12 08       	add	r8,r9
+      unlink(p, bck, fwd);
+80002afe:	6c 3b       	ld.w	r11,r6[0xc]
+80002b00:	6c 29       	ld.w	r9,r6[0x8]
+80002b02:	97 29       	st.w	r11[0x8],r9
+80002b04:	93 3b       	st.w	r9[0xc],r11
+    }
+
+    set_head(p, sz | PREV_INUSE);
+80002b06:	10 99       	mov	r9,r8
+    top = p;
+80002b08:	95 26       	st.w	r10[0x8],r6
+      p = chunk_at_offset(p, -prevsz);
+      sz += prevsz;
+      unlink(p, bck, fwd);
+    }
+
+    set_head(p, sz | PREV_INUSE);
+80002b0a:	a1 a9       	sbr	r9,0x0
+80002b0c:	8d 19       	st.w	r6[0x4],r9
+    top = p;
+    if ((unsigned long)(sz) >= (unsigned long)trim_threshold) 
+80002b0e:	e0 69 05 18 	mov	r9,1304
+80002b12:	72 09       	ld.w	r9,r9[0x0]
+80002b14:	12 38       	cp.w	r8,r9
+      malloc_trim(RCALL top_pad); 
+80002b16:	c0 63       	brcs	80002b22 <_free_r+0x5e>
+80002b18:	e0 68 05 34 	mov	r8,1332
+80002b1c:	0e 9c       	mov	r12,r7
+80002b1e:	70 0b       	ld.w	r11,r8[0x0]
+    MALLOC_UNLOCK;
+80002b20:	c8 cf       	rcall	80002a38 <_malloc_trim_r>
+80002b22:	0e 9c       	mov	r12,r7
+80002b24:	c7 9f       	rcall	80002a16 <__malloc_unlock>
+    return;
+80002b26:	d8 22       	popm	r4-r7,pc
+  }
+
+  set_head(next, nextsz);                    /* clear inuse bit */
+80002b28:	93 1b       	st.w	r9[0x4],r11
+
+  islr = 0;
+
+  if (!(hd & PREV_INUSE))                    /* consolidate backward */
+80002b2a:	58 0c       	cp.w	r12,0
+80002b2c:	c0 30       	breq	80002b32 <_free_r+0x6e>
+80002b2e:	30 0c       	mov	r12,0
+80002b30:	c0 e8       	rjmp	80002b4c <_free_r+0x88>
+  {
+    prevsz = p->prev_size;
+80002b32:	6c 0e       	ld.w	lr,r6[0x0]
+    p = chunk_at_offset(p, -prevsz);
+    sz += prevsz;
+    
+    if (p->fd == last_remainder)             /* keep as last_remainder */
+80002b34:	f4 c5 ff f8 	sub	r5,r10,-8
+
+  if (!(hd & PREV_INUSE))                    /* consolidate backward */
+  {
+    prevsz = p->prev_size;
+    p = chunk_at_offset(p, -prevsz);
+    sz += prevsz;
+80002b38:	1c 08       	add	r8,lr
+  islr = 0;
+
+  if (!(hd & PREV_INUSE))                    /* consolidate backward */
+  {
+    prevsz = p->prev_size;
+    p = chunk_at_offset(p, -prevsz);
+80002b3a:	1c 16       	sub	r6,lr
+    sz += prevsz;
+    
+    if (p->fd == last_remainder)             /* keep as last_remainder */
+80002b3c:	6c 2e       	ld.w	lr,r6[0x8]
+80002b3e:	0a 3e       	cp.w	lr,r5
+80002b40:	c0 31       	brne	80002b46 <_free_r+0x82>
+80002b42:	30 1c       	mov	r12,1
+80002b44:	c0 48       	rjmp	80002b4c <_free_r+0x88>
+      islr = 1;
+    else
+      unlink(p, bck, fwd);
+80002b46:	6c 35       	ld.w	r5,r6[0xc]
+80002b48:	8b 2e       	st.w	r5[0x8],lr
+80002b4a:	9d 35       	st.w	lr[0xc],r5
+  }
+  
+  if (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
+80002b4c:	f2 0b 00 0e 	add	lr,r9,r11
+80002b50:	7c 1e       	ld.w	lr,lr[0x4]
+80002b52:	ed be 00 00 	bld	lr,0x0
+80002b56:	c1 40       	breq	80002b7e <_free_r+0xba>
+  {
+    sz += nextsz;
+80002b58:	16 08       	add	r8,r11
+    
+    if (!islr && next->fd == last_remainder)  /* re-insert last_remainder */
+80002b5a:	58 0c       	cp.w	r12,0
+80002b5c:	c0 d1       	brne	80002b76 <_free_r+0xb2>
+80002b5e:	e0 6e 01 10 	mov	lr,272
+80002b62:	72 2b       	ld.w	r11,r9[0x8]
+80002b64:	2f 8e       	sub	lr,-8
+80002b66:	1c 3b       	cp.w	r11,lr
+    {
+      islr = 1;
+      link_last_remainder(p);   
+80002b68:	c0 71       	brne	80002b76 <_free_r+0xb2>
+80002b6a:	97 36       	st.w	r11[0xc],r6
+80002b6c:	97 26       	st.w	r11[0x8],r6
+80002b6e:	8d 2b       	st.w	r6[0x8],r11
+80002b70:	8d 3b       	st.w	r6[0xc],r11
+  
+  if (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
+  {
+    sz += nextsz;
+    
+    if (!islr && next->fd == last_remainder)  /* re-insert last_remainder */
+80002b72:	30 1c       	mov	r12,1
+    {
+      islr = 1;
+      link_last_remainder(p);   
+    }
+    else
+      unlink(next, bck, fwd);
+80002b74:	c0 58       	rjmp	80002b7e <_free_r+0xba>
+80002b76:	72 2b       	ld.w	r11,r9[0x8]
+80002b78:	72 39       	ld.w	r9,r9[0xc]
+80002b7a:	93 2b       	st.w	r9[0x8],r11
+  }
+
+
+  set_head(p, sz | PREV_INUSE);
+80002b7c:	97 39       	st.w	r11[0xc],r9
+  set_foot(p, sz);
+80002b7e:	10 99       	mov	r9,r8
+80002b80:	ec 08 09 08 	st.w	r6[r8],r8
+    else
+      unlink(next, bck, fwd);
+  }
+
+
+  set_head(p, sz | PREV_INUSE);
+80002b84:	a1 a9       	sbr	r9,0x0
+  set_foot(p, sz);
+  if (!islr)
+80002b86:	8d 19       	st.w	r6[0x4],r9
+80002b88:	58 0c       	cp.w	r12,0
+    frontlink(p, sz, idx, bck, fwd);  
+80002b8a:	c5 a1       	brne	80002c3e <_free_r+0x17a>
+80002b8c:	e0 48 01 ff 	cp.w	r8,511
+80002b90:	e0 8b 00 13 	brhi	80002bb6 <_free_r+0xf2>
+80002b94:	a3 98       	lsr	r8,0x3
+80002b96:	f4 08 00 39 	add	r9,r10,r8<<0x3
+80002b9a:	72 2b       	ld.w	r11,r9[0x8]
+80002b9c:	8d 39       	st.w	r6[0xc],r9
+80002b9e:	8d 2b       	st.w	r6[0x8],r11
+80002ba0:	97 36       	st.w	r11[0xc],r6
+80002ba2:	93 26       	st.w	r9[0x8],r6
+80002ba4:	a3 48       	asr	r8,0x2
+80002ba6:	74 19       	ld.w	r9,r10[0x4]
+80002ba8:	30 1b       	mov	r11,1
+80002baa:	f6 08 09 48 	lsl	r8,r11,r8
+80002bae:	f3 e8 10 08 	or	r8,r9,r8
+80002bb2:	95 18       	st.w	r10[0x4],r8
+80002bb4:	c4 58       	rjmp	80002c3e <_free_r+0x17a>
+80002bb6:	f0 0b 16 09 	lsr	r11,r8,0x9
+80002bba:	58 4b       	cp.w	r11,4
+80002bbc:	e0 8b 00 06 	brhi	80002bc8 <_free_r+0x104>
+80002bc0:	f0 0b 16 06 	lsr	r11,r8,0x6
+80002bc4:	2c 8b       	sub	r11,-56
+80002bc6:	c2 08       	rjmp	80002c06 <_free_r+0x142>
+80002bc8:	59 4b       	cp.w	r11,20
+80002bca:	e0 8b 00 04 	brhi	80002bd2 <_free_r+0x10e>
+80002bce:	2a 5b       	sub	r11,-91
+80002bd0:	c1 b8       	rjmp	80002c06 <_free_r+0x142>
+80002bd2:	e0 4b 00 54 	cp.w	r11,84
+80002bd6:	e0 8b 00 06 	brhi	80002be2 <_free_r+0x11e>
+80002bda:	f0 0b 16 0c 	lsr	r11,r8,0xc
+80002bde:	29 2b       	sub	r11,-110
+80002be0:	c1 38       	rjmp	80002c06 <_free_r+0x142>
+80002be2:	e0 4b 01 54 	cp.w	r11,340
+80002be6:	e0 8b 00 06 	brhi	80002bf2 <_free_r+0x12e>
+80002bea:	f0 0b 16 0f 	lsr	r11,r8,0xf
+80002bee:	28 9b       	sub	r11,-119
+80002bf0:	c0 b8       	rjmp	80002c06 <_free_r+0x142>
+80002bf2:	e0 4b 05 54 	cp.w	r11,1364
+80002bf6:	e0 88 00 05 	brls	80002c00 <_free_r+0x13c>
+80002bfa:	37 eb       	mov	r11,126
+80002bfc:	c0 58       	rjmp	80002c06 <_free_r+0x142>
+80002bfe:	d7 03       	nop
+80002c00:	f0 0b 16 12 	lsr	r11,r8,0x12
+80002c04:	28 4b       	sub	r11,-124
+80002c06:	f4 0b 00 3c 	add	r12,r10,r11<<0x3
+80002c0a:	78 29       	ld.w	r9,r12[0x8]
+80002c0c:	18 39       	cp.w	r9,r12
+80002c0e:	c0 e1       	brne	80002c2a <_free_r+0x166>
+80002c10:	74 18       	ld.w	r8,r10[0x4]
+80002c12:	a3 4b       	asr	r11,0x2
+80002c14:	30 1c       	mov	r12,1
+80002c16:	f8 0b 09 4b 	lsl	r11,r12,r11
+80002c1a:	f1 eb 10 0b 	or	r11,r8,r11
+80002c1e:	12 98       	mov	r8,r9
+80002c20:	95 1b       	st.w	r10[0x4],r11
+80002c22:	c0 a8       	rjmp	80002c36 <_free_r+0x172>
+80002c24:	72 29       	ld.w	r9,r9[0x8]
+80002c26:	18 39       	cp.w	r9,r12
+80002c28:	c0 60       	breq	80002c34 <_free_r+0x170>
+80002c2a:	72 1a       	ld.w	r10,r9[0x4]
+80002c2c:	e0 1a ff fc 	andl	r10,0xfffc
+80002c30:	14 38       	cp.w	r8,r10
+80002c32:	cf 93       	brcs	80002c24 <_free_r+0x160>
+80002c34:	72 38       	ld.w	r8,r9[0xc]
+80002c36:	8d 38       	st.w	r6[0xc],r8
+80002c38:	8d 29       	st.w	r6[0x8],r9
+80002c3a:	93 36       	st.w	r9[0xc],r6
+80002c3c:	91 26       	st.w	r8[0x8],r6
+80002c3e:	0e 9c       	mov	r12,r7
+80002c40:	ce be       	rcall	80002a16 <__malloc_unlock>
+80002c42:	d8 22       	popm	r4-r7,pc
+
+80002c44 <__do_global_ctors_aux>:
+80002c44:	d4 21       	pushm	r4-r7,lr
+80002c46:	30 c7       	mov	r7,12
+80002c48:	c0 28       	rjmp	80002c4c <__do_global_ctors_aux+0x8>
+80002c4a:	5d 18       	icall	r8
+80002c4c:	20 47       	sub	r7,4
+80002c4e:	6e 08       	ld.w	r8,r7[0x0]
+80002c50:	5b f8       	cp.w	r8,-1
+
+  MALLOC_UNLOCK;
+80002c52:	cf c1       	brne	80002c4a <__do_global_ctors_aux+0x6>
+80002c54:	d8 22       	popm	r4-r7,pc
+80002c56:	d7 03       	nop
+
+Disassembly of section .fini:
+
+80002c58 <_fini>:
+80002c58:	eb cd 40 40 	pushm	r6,lr
+80002c5c:	48 26       	lddpc	r6,80002c64 <_fini+0xc>
+80002c5e:	1e 26       	rsub	r6,pc
+80002c60:	c0 48       	rjmp	80002c68 <_fini+0x10>
+80002c62:	d7 03       	nop
+80002c64:	80 00       	ld.sh	r0,r0[0x0]
+80002c66:	2c 42       	sub	r2,-60
+80002c68:	fe b0 fa 0a 	rcall	8000207c <__do_global_dtors_aux>
+80002c6c:	e3 cd 80 40 	ldm	sp++,r6,pc
