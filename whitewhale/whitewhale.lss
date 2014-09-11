@@ -49,17 +49,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  22 .debug_frame  00002ba0  00000000  00000000  0004ea2c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 23 .debug_str    00008bd7  00000000  00000000  000515cc  2**0
+ 23 .debug_str    00008baa  00000000  00000000  000515cc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 24 .debug_loc    00006fae  00000000  00000000  0005a1a3  2**0
+ 24 .debug_loc    00006fae  00000000  00000000  0005a176  2**0
                   CONTENTS, READONLY, DEBUGGING
- 25 .debug_macinfo 010f7953  00000000  00000000  00061151  2**0
+ 25 .debug_macinfo 010f7953  00000000  00000000  00061124  2**0
                   CONTENTS, READONLY, DEBUGGING
  26 .stack        00001000  00007000  00007000  00000000  2**0
                   ALLOC
  27 .flash_nvram  00007a6c  80030000  80009f5c  0000a800  2**2
                   ALLOC
- 28 .debug_ranges 00001638  00000000  00000000  01158aa4  2**0
+ 28 .debug_ranges 00001638  00000000  00000000  01158a77  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .reset:
@@ -10381,6 +10381,11 @@ void usb_sof(void) {
 80005b42:	d7 03       	nop
 
 80005b44 <rnd>:
+#include "types.h"
+#include "util.h"
+
+u32 rnd(void) {
+  x1 = x1 * c1 + a1;
 80005b44:	33 49       	mov	r9,52
 80005b46:	e0 6b f3 5f 	mov	r11,62303
 80005b4a:	ea 1b 3c 6e 	orh	r11,0x3c6e
@@ -10390,13 +10395,16 @@ void usb_sof(void) {
 80005b58:	b7 38       	mul	r8,r11
 80005b5a:	14 08       	add	r8,r10
 80005b5c:	93 08       	st.w	r9[0x0],r8
+  x2 = x2 * c2 + a2;
 80005b5e:	33 88       	mov	r8,56
 80005b60:	70 0c       	ld.w	r12,r8[0x0]
 80005b62:	f8 0b 03 4a 	mac	r10,r12,r11
 80005b66:	91 0a       	st.w	r8[0x0],r10
+  return (x1>>16) | (x2>>16);
 80005b68:	72 09       	ld.w	r9,r9[0x0]
 80005b6a:	70 0c       	ld.w	r12,r8[0x0]
 80005b6c:	f2 08 16 10 	lsr	r8,r9,0x10
+}
 80005b70:	f1 ec 13 0c 	or	r12,r8,r12>>0x10
 80005b74:	5e fc       	retal	r12
 80005b76:	d7 03       	nop
@@ -11219,53 +11227,161 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80005f2e:	d8 32       	popm	r0-r7,pc
 
 80005f30 <flashc_set_bus_freq>:
+}
+
+
+void flashc_set_bus_freq(unsigned int cpu_f_hz)
+{
+	if (cpu_f_hz >= AVR32_FLASHC_FWS_0_MAX_FREQ) {
 80005f30:	e0 68 8a 3f 	mov	r8,35391
 80005f34:	ea 18 01 f7 	orh	r8,0x1f7
 80005f38:	10 3c       	cp.w	r12,r8
 80005f3a:	e0 88 00 07 	brls	80005f48 <flashc_set_bus_freq+0x18>
+}
+
+
+void flashc_set_wait_state(unsigned int wait_state)
+{
+	u_avr32_flashc_fcr_t u_avr32_flashc_fcr = {AVR32_FLASHC.fcr};
 80005f3e:	fe 68 14 00 	mov	r8,-125952
+	u_avr32_flashc_fcr.FCR.fws = wait_state;
 80005f42:	30 1a       	mov	r10,1
+}
+
+
+void flashc_set_wait_state(unsigned int wait_state)
+{
+	u_avr32_flashc_fcr_t u_avr32_flashc_fcr = {AVR32_FLASHC.fcr};
 80005f44:	70 09       	ld.w	r9,r8[0x0]
 80005f46:	c0 58       	rjmp	80005f50 <flashc_set_bus_freq+0x20>
 80005f48:	fe 68 14 00 	mov	r8,-125952
+	u_avr32_flashc_fcr.FCR.fws = wait_state;
 80005f4c:	30 0a       	mov	r10,0
+}
+
+
+void flashc_set_wait_state(unsigned int wait_state)
+{
+	u_avr32_flashc_fcr_t u_avr32_flashc_fcr = {AVR32_FLASHC.fcr};
 80005f4e:	70 09       	ld.w	r9,r8[0x0]
+	u_avr32_flashc_fcr.FCR.fws = wait_state;
 80005f50:	f3 da d0 c1 	bfins	r9,r10,0x6,0x1
+	AVR32_FLASHC.fcr = u_avr32_flashc_fcr.fcr;
 80005f54:	91 09       	st.w	r8[0x0],r9
 80005f56:	5e fc       	retal	r12
 
 80005f58 <flashc_default_wait_until_ready>:
+//! @{
+
+
+bool flashc_is_ready(void)
+{
+	return ((AVR32_FLASHC.fsr & AVR32_FLASHC_FSR_FRDY_MASK) != 0);
 80005f58:	fe 69 14 00 	mov	r9,-125952
+}
+
+
+void flashc_default_wait_until_ready(void)
+{
+	while (!flashc_is_ready());
 80005f5c:	30 08       	mov	r8,0
+//! @{
+
+
+bool flashc_is_ready(void)
+{
+	return ((AVR32_FLASHC.fsr & AVR32_FLASHC_FSR_FRDY_MASK) != 0);
 80005f5e:	72 2a       	ld.w	r10,r9[0x8]
+}
+
+
+void flashc_default_wait_until_ready(void)
+{
+	while (!flashc_is_ready());
 80005f60:	f5 da c0 01 	bfextu	r10,r10,0x0,0x1
 80005f64:	f0 0a 18 00 	cp.b	r10,r8
 80005f68:	cf b0       	breq	80005f5e <flashc_default_wait_until_ready+0x6>
+}
 80005f6a:	5e fc       	retal	r12
 
 80005f6c <flashc_issue_command>:
+	return (AVR32_FLASHC.fcmd & AVR32_FLASHC_FCMD_PAGEN_MASK) >> AVR32_FLASHC_FCMD_PAGEN_OFFSET;
+}
+
+
+void flashc_issue_command(unsigned int command, int page_number)
+{
 80005f6c:	d4 21       	pushm	r4-r7,lr
+	u_avr32_flashc_fcmd_t u_avr32_flashc_fcmd;
+
+	flashc_wait_until_ready();
 80005f6e:	33 c8       	mov	r8,60
+	return (AVR32_FLASHC.fcmd & AVR32_FLASHC_FCMD_PAGEN_MASK) >> AVR32_FLASHC_FCMD_PAGEN_OFFSET;
+}
+
+
+void flashc_issue_command(unsigned int command, int page_number)
+{
 80005f70:	18 97       	mov	r7,r12
+	u_avr32_flashc_fcmd_t u_avr32_flashc_fcmd;
+
+	flashc_wait_until_ready();
 80005f72:	70 08       	ld.w	r8,r8[0x0]
+	return (AVR32_FLASHC.fcmd & AVR32_FLASHC_FCMD_PAGEN_MASK) >> AVR32_FLASHC_FCMD_PAGEN_OFFSET;
+}
+
+
+void flashc_issue_command(unsigned int command, int page_number)
+{
 80005f74:	16 96       	mov	r6,r11
+	u_avr32_flashc_fcmd_t u_avr32_flashc_fcmd;
+
+	flashc_wait_until_ready();
 80005f76:	5d 18       	icall	r8
+	u_avr32_flashc_fcmd.fcmd = AVR32_FLASHC.fcmd;
 80005f78:	fe 68 14 00 	mov	r8,-125952
 80005f7c:	70 18       	ld.w	r8,r8[0x4]
+	u_avr32_flashc_fcmd.FCMD.cmd = command;
 80005f7e:	f1 d7 d0 06 	bfins	r8,r7,0x0,0x6
+	if (page_number >= 0) {
 80005f82:	58 06       	cp.w	r6,0
 80005f84:	c0 35       	brlt	80005f8a <flashc_issue_command+0x1e>
+		u_avr32_flashc_fcmd.FCMD.pagen = page_number;
 80005f86:	f1 d6 d1 10 	bfins	r8,r6,0x8,0x10
+	}
+	u_avr32_flashc_fcmd.FCMD.key = AVR32_FLASHC_FCMD_KEY_KEY;
+	AVR32_FLASHC.fcmd = u_avr32_flashc_fcmd.fcmd;
 80005f8a:	fe 69 14 00 	mov	r9,-125952
+	u_avr32_flashc_fcmd.fcmd = AVR32_FLASHC.fcmd;
+	u_avr32_flashc_fcmd.FCMD.cmd = command;
+	if (page_number >= 0) {
+		u_avr32_flashc_fcmd.FCMD.pagen = page_number;
+	}
+	u_avr32_flashc_fcmd.FCMD.key = AVR32_FLASHC_FCMD_KEY_KEY;
 80005f8e:	3a 5a       	mov	r10,-91
 80005f90:	f1 da d3 08 	bfins	r8,r10,0x18,0x8
+	AVR32_FLASHC.fcmd = u_avr32_flashc_fcmd.fcmd;
 80005f94:	93 18       	st.w	r9[0x4],r8
+ *          the driver's API which instead presents \ref flashc_is_lock_error
+ *          and \ref flashc_is_programming_error.
+ */
+static unsigned int flashc_get_error_status(void)
+{
+	return AVR32_FLASHC.fsr & (AVR32_FLASHC_FSR_LOCKE_MASK |
 80005f96:	72 28       	ld.w	r8,r9[0x8]
+	if (page_number >= 0) {
+		u_avr32_flashc_fcmd.FCMD.pagen = page_number;
+	}
+	u_avr32_flashc_fcmd.FCMD.key = AVR32_FLASHC_FCMD_KEY_KEY;
+	AVR32_FLASHC.fcmd = u_avr32_flashc_fcmd.fcmd;
+	flashc_error_status = flashc_get_error_status();
 80005f98:	e0 69 08 48 	mov	r9,2120
 80005f9c:	e2 18 00 0c 	andl	r8,0xc,COH
+	flashc_wait_until_ready();
 80005fa0:	93 08       	st.w	r9[0x0],r8
 80005fa2:	33 c8       	mov	r8,60
 80005fa4:	70 08       	ld.w	r8,r8[0x0]
+}
 80005fa6:	5d 18       	icall	r8
 80005fa8:	d8 22       	popm	r4-r7,pc
 80005faa:	d7 03       	nop
@@ -11273,19 +11389,44 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80005fac <flashc_clear_page_buffer>:
 80005fac:	d4 01       	pushm	lr
 80005fae:	3f fb       	mov	r11,-1
+//! @{
+
+
+void flashc_clear_page_buffer(void)
+{
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_CPB, -1);
 80005fb0:	30 3c       	mov	r12,3
 80005fb2:	cd df       	rcall	80005f6c <flashc_issue_command>
 80005fb4:	d8 02       	popm	pc
+}
 80005fb6:	d7 03       	nop
 
 80005fb8 <flashc_quick_page_read>:
 80005fb8:	d4 01       	pushm	lr
 80005fba:	18 9b       	mov	r11,r12
+}
+
+
+bool flashc_quick_page_read(int page_number)
+{
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_QPR, page_number);
 80005fbc:	30 cc       	mov	r12,12
 80005fbe:	cd 7f       	rcall	80005f6c <flashc_issue_command>
 80005fc0:	fe 68 14 00 	mov	r8,-125952
+}
+
+
+bool flashc_is_page_erased(void)
+{
+	return ((AVR32_FLASHC.fsr & AVR32_FLASHC_FSR_QPRR_MASK) != 0);
 80005fc4:	70 2c       	ld.w	r12,r8[0x8]
 80005fc6:	f9 dc c0 a1 	bfextu	r12,r12,0x5,0x1
+
+bool flashc_quick_page_read(int page_number)
+{
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_QPR, page_number);
+	return flashc_is_page_erased();
+}
 80005fca:	d8 02       	popm	pc
 
 80005fcc <flashc_erase_page>:
@@ -11293,20 +11434,40 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80005fce:	16 97       	mov	r7,r11
 80005fd0:	18 9b       	mov	r11,r12
 80005fd2:	30 2c       	mov	r12,2
+
+bool flashc_erase_page(int page_number, bool check)
+{
+	bool page_erased = true;
+
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_EP, page_number);
 80005fd4:	cc cf       	rcall	80005f6c <flashc_issue_command>
 80005fd6:	58 07       	cp.w	r7,0
+	if (check) {
 80005fd8:	c0 21       	brne	80005fdc <flashc_erase_page+0x10>
 80005fda:	da 2a       	popm	r4-r7,pc,r12=1
 80005fdc:	e0 67 08 48 	mov	r7,2120
+		unsigned int error_status = flashc_error_status;
+		page_erased = flashc_quick_page_read(-1);
 80005fe0:	3f fc       	mov	r12,-1
+{
+	bool page_erased = true;
+
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_EP, page_number);
+	if (check) {
+		unsigned int error_status = flashc_error_status;
 80005fe2:	6e 06       	ld.w	r6,r7[0x0]
+		page_erased = flashc_quick_page_read(-1);
 80005fe4:	ce af       	rcall	80005fb8 <flashc_quick_page_read>
 80005fe6:	6e 08       	ld.w	r8,r7[0x0]
+		flashc_error_status |= error_status;
 80005fe8:	f1 e6 10 06 	or	r6,r8,r6
 80005fec:	8f 06       	st.w	r7[0x0],r6
 80005fee:	d8 22       	popm	r4-r7,pc
 
 80005ff0 <flashc_write_page>:
+	}
+	return page_erased;
+}
 80005ff0:	d4 01       	pushm	lr
 80005ff2:	18 9b       	mov	r11,r12
 80005ff4:	30 1c       	mov	r12,1
@@ -11317,11 +11478,29 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80005ffc <flashc_quick_user_page_read>:
 80005ffc:	d4 01       	pushm	lr
 80005ffe:	30 fc       	mov	r12,15
+}
+
+
+bool flashc_quick_user_page_read(void)
+{
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_QPRUP, -1);
 80006000:	3f fb       	mov	r11,-1
 80006002:	cb 5f       	rcall	80005f6c <flashc_issue_command>
 80006004:	fe 68 14 00 	mov	r8,-125952
+}
+
+
+bool flashc_is_page_erased(void)
+{
+	return ((AVR32_FLASHC.fsr & AVR32_FLASHC_FSR_QPRR_MASK) != 0);
 80006008:	70 2c       	ld.w	r12,r8[0x8]
 8000600a:	f9 dc c0 a1 	bfextu	r12,r12,0x5,0x1
+
+bool flashc_quick_user_page_read(void)
+{
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_QPRUP, -1);
+	return flashc_is_page_erased();
+}
 8000600e:	d8 02       	popm	pc
 
 80006010 <flashc_erase_user_page>:
@@ -11329,8 +11508,14 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006012:	3f fb       	mov	r11,-1
 80006014:	18 97       	mov	r7,r12
 80006016:	30 ec       	mov	r12,14
+
+
+bool flashc_erase_user_page(bool check)
+{
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_EUP, -1);
 80006018:	ca af       	rcall	80005f6c <flashc_issue_command>
 8000601a:	58 07       	cp.w	r7,0
+	return (check) ? flashc_quick_user_page_read() : true;
 8000601c:	c0 21       	brne	80006020 <flashc_erase_user_page+0x10>
 8000601e:	da 2a       	popm	r4-r7,pc,r12=1
 80006020:	ce ef       	rcall	80005ffc <flashc_quick_user_page_read>
@@ -11338,6 +11523,7 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 
 80006024 <flashc_write_user_page>:
 80006024:	d4 01       	pushm	lr
+}
 80006026:	3f fb       	mov	r11,-1
 80006028:	30 dc       	mov	r12,13
 8000602a:	ca 1f       	rcall	80005f6c <flashc_issue_command>
@@ -11345,21 +11531,66 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8000602e:	d7 03       	nop
 
 80006030 <flashc_memset64>:
+
+
+void flashc_write_user_page(void)
+{
+	flashc_issue_command(AVR32_FLASHC_FCMD_CMD_WUP, -1);
+}
 80006030:	d4 31       	pushm	r0-r7,lr
 80006032:	21 2d       	sub	sp,72
+	return flashc_memset64(dst, src | (uint64_t)src << 32, nbytes, erase);
+}
+
+
+volatile void *flashc_memset64(volatile void *dst, uint64_t src, size_t nbytes, bool erase)
+{
 80006034:	50 58       	stdsp	sp[0x14],r8
 80006036:	12 96       	mov	r6,r9
+	// Use aggregated pointers to have several alignments available for a same address.
+	UnionCVPtr flash_array_end;
+	UnionVPtr dest;
+	Union64 source = {0};
 80006038:	30 08       	mov	r8,0
 8000603a:	30 09       	mov	r9,0
+	return flashc_memset64(dst, src | (uint64_t)src << 32, nbytes, erase);
+}
+
+
+volatile void *flashc_memset64(volatile void *dst, uint64_t src, size_t nbytes, bool erase)
+{
 8000603c:	18 97       	mov	r7,r12
+	// Use aggregated pointers to have several alignments available for a same address.
+	UnionCVPtr flash_array_end;
+	UnionVPtr dest;
+	Union64 source = {0};
 8000603e:	fa e9 00 38 	st.d	sp[56],r8
+	return flashc_memset64(dst, src | (uint64_t)src << 32, nbytes, erase);
+}
+
+
+volatile void *flashc_memset64(volatile void *dst, uint64_t src, size_t nbytes, bool erase)
+{
 80006042:	14 94       	mov	r4,r10
 80006044:	16 95       	mov	r5,r11
+		256,
+		384,
+		512,
+		768,
+		1024,
+	};
 80006046:	31 0a       	mov	r10,16
 80006048:	fe cb c7 7e 	sub	r11,pc,-14466
 8000604c:	fa cc ff e0 	sub	r12,sp,-32
 80006050:	e0 a0 15 a2 	rcall	80008b94 <memcpy>
+	return ((unsigned int)FLASH_SIZE[(AVR32_FLASHC.fsr & AVR32_FLASHC_FSR_FSZ_MASK)
 80006054:	fe 68 14 00 	mov	r8,-125952
+	UnionVPtr tmp;
+	unsigned int error_status = 0;
+	unsigned int i;
+
+	// Reformat arguments.
+	flash_array_end.u8ptr = AVR32_FLASH + flashc_get_flash_size();
 80006058:	fa cb ff b8 	sub	r11,sp,-72
 8000605c:	70 28       	ld.w	r8,r8[0x8]
 8000605e:	f1 d8 c1 a3 	bfextu	r8,r8,0xd,0x3
@@ -11367,32 +11598,74 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006066:	f1 13 ff d8 	ld.uh	r3,r8[-40]
 8000606a:	30 08       	mov	r8,0
 8000606c:	ea 18 80 00 	orh	r8,0x8000
+	dest.u8ptr = dst;
 80006070:	ab 63       	lsl	r3,0xa
+	UnionVPtr tmp;
+	unsigned int error_status = 0;
+	unsigned int i;
+
+	// Reformat arguments.
+	flash_array_end.u8ptr = AVR32_FLASH + flashc_get_flash_size();
 80006072:	51 17       	stdsp	sp[0x44],r7
+	dest.u8ptr = dst;
+	for (i = (Get_align((uint32_t)dest.u8ptr, sizeof(uint64_t)) - 1) & (sizeof(uint64_t) - 1);
 80006074:	10 03       	add	r3,r8
 80006076:	ee c8 ff f9 	sub	r8,r7,-7
 8000607a:	f1 d8 c0 03 	bfextu	r8,r8,0x0,0x3
+			src; i = (i - 1) & (sizeof(uint64_t) - 1)) {
 8000607e:	c1 38       	rjmp	800060a4 <flashc_memset64+0x74>
 80006080:	f0 c9 00 01 	sub	r9,r8,1
+		source.u8[i] = src;
 80006084:	fa ca ff b8 	sub	r10,sp,-72
 80006088:	f4 08 00 08 	add	r8,r10,r8
+		src >>= 8;
 8000608c:	ea 0a 16 08 	lsr	r10,r5,0x8
+	// Reformat arguments.
+	flash_array_end.u8ptr = AVR32_FLASH + flashc_get_flash_size();
+	dest.u8ptr = dst;
+	for (i = (Get_align((uint32_t)dest.u8ptr, sizeof(uint64_t)) - 1) & (sizeof(uint64_t) - 1);
+			src; i = (i - 1) & (sizeof(uint64_t) - 1)) {
+		source.u8[i] = src;
 80006090:	f1 64 ff f0 	st.b	r8[-16],r4
+
+	// Reformat arguments.
+	flash_array_end.u8ptr = AVR32_FLASH + flashc_get_flash_size();
+	dest.u8ptr = dst;
+	for (i = (Get_align((uint32_t)dest.u8ptr, sizeof(uint64_t)) - 1) & (sizeof(uint64_t) - 1);
+			src; i = (i - 1) & (sizeof(uint64_t) - 1)) {
 80006094:	f1 d9 c0 03 	bfextu	r8,r9,0x0,0x3
+		source.u8[i] = src;
+		src >>= 8;
 80006098:	e8 09 16 08 	lsr	r9,r4,0x8
 8000609c:	f3 e5 11 89 	or	r9,r9,r5<<0x18
 800060a0:	14 95       	mov	r5,r10
+	unsigned int i;
+
+	// Reformat arguments.
+	flash_array_end.u8ptr = AVR32_FLASH + flashc_get_flash_size();
+	dest.u8ptr = dst;
+	for (i = (Get_align((uint32_t)dest.u8ptr, sizeof(uint64_t)) - 1) & (sizeof(uint64_t) - 1);
 800060a2:	12 94       	mov	r4,r9
 800060a4:	58 04       	cp.w	r4,0
 800060a6:	5c 25       	cpc	r5
+			src; i = (i - 1) & (sizeof(uint64_t) - 1)) {
+		source.u8[i] = src;
+		src >>= 8;
+	}
+	dest_end.u8ptr = dest.u8ptr + nbytes;
 800060a8:	ce c1       	brne	80006080 <flashc_memset64+0x50>
 800060aa:	ee 06 00 06 	add	r6,r7,r6
+
+	// If destination is outside flash, go to next flash page if any.
+	if (dest.u8ptr < AVR32_FLASH) {
 800060ae:	e0 69 ff ff 	mov	r9,65535
 800060b2:	ea 19 7f ff 	orh	r9,0x7fff
 800060b6:	12 37       	cp.w	r7,r9
 800060b8:	e0 8b 00 06 	brhi	800060c4 <flashc_memset64+0x94>
+		dest.u8ptr = AVR32_FLASH;
 800060bc:	30 08       	mov	r8,0
 800060be:	ea 18 80 00 	orh	r8,0x8000
+	} else if (flash_array_end.u8ptr <= dest.u8ptr && dest.u8ptr < AVR32_FLASHC_USER_PAGE) {
 800060c2:	c0 e8       	rjmp	800060de <flashc_memset64+0xae>
 800060c4:	0e 33       	cp.w	r3,r7
 800060c6:	e0 8b 00 0d 	brhi	800060e0 <flashc_memset64+0xb0>
@@ -11400,14 +11673,21 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 800060ce:	ea 18 80 7f 	orh	r8,0x807f
 800060d2:	10 37       	cp.w	r7,r8
 800060d4:	e0 8b 00 06 	brhi	800060e0 <flashc_memset64+0xb0>
+		dest.u8ptr = AVR32_FLASHC_USER_PAGE;
 800060d8:	30 08       	mov	r8,0
 800060da:	ea 18 80 80 	orh	r8,0x8080
+	}
+
+	// If end of destination is outside flash, move it to the end of the previous flash page if any.
+	if (dest_end.u8ptr > AVR32_FLASHC_USER_PAGE + AVR32_FLASHC_USER_PAGE_SIZE) {
 800060de:	51 18       	stdsp	sp[0x44],r8
 800060e0:	e0 61 02 00 	mov	r1,512
 800060e4:	ea 11 80 80 	orh	r1,0x8080
 800060e8:	02 36       	cp.w	r6,r1
 800060ea:	e0 88 00 04 	brls	800060f2 <flashc_memset64+0xc2>
 800060ee:	02 96       	mov	r6,r1
+		dest_end.u8ptr = AVR32_FLASHC_USER_PAGE + AVR32_FLASHC_USER_PAGE_SIZE;
+	} else if (AVR32_FLASHC_USER_PAGE >= dest_end.u8ptr && dest_end.u8ptr > flash_array_end.u8ptr) {
 800060f0:	c0 a8       	rjmp	80006104 <flashc_memset64+0xd4>
 800060f2:	30 00       	mov	r0,0
 800060f4:	ea 10 80 80 	orh	r0,0x8080
@@ -11415,71 +11695,245 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 800060fa:	e0 8b 00 05 	brhi	80006104 <flashc_memset64+0xd4>
 800060fe:	06 36       	cp.w	r6,r3
 80006100:	e6 06 17 b0 	movhi	r6,r3
+		// Determine if the current destination page has an incomplete end.
+		incomplete_flash_page_end = (Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE) >=
+				Align_down((uint32_t)dest_end.u8ptr, AVR32_FLASHC_PAGE_SIZE));
+
+		// Use a flash double-word buffer to manage unaligned accesses.
+		flash_dword.u64 = source.u64;
 80006104:	fa ea 00 38 	ld.d	r10,sp[56]
+			// pages that have already been written to.
+			{
+				tmp.u8ptr = (volatile uint8_t *)dest_end.u8ptr;
+
+				// If end of destination is not 64-bit aligned...
+				if (!Test_align((uint32_t)dest_end.u8ptr, sizeof(uint64_t))) {
 80006108:	e5 d6 c0 03 	bfextu	r2,r6,0x0,0x3
+					// Fill the end of the flash double-word buffer with the current flash page data.
+					for (i = Get_align((uint32_t)dest_end.u8ptr, sizeof(uint64_t)); i < sizeof(uint64_t); i++)
 8000610c:	0c 91       	mov	r1,r6
 8000610e:	ec 02 01 08 	sub	r8,r6,r2
+		// Determine if the current destination page has an incomplete end.
+		incomplete_flash_page_end = (Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE) >=
+				Align_down((uint32_t)dest_end.u8ptr, AVR32_FLASHC_PAGE_SIZE));
+
+		// Use a flash double-word buffer to manage unaligned accesses.
+		flash_dword.u64 = source.u64;
 80006112:	fa eb 00 04 	st.d	sp[4],r10
+		for (i = flash_page_source_end.u64ptr - dest.u64ptr; i; i--) {
+			*dest.u64ptr++ = source.u64;
+		}
+
+		// If the current destination page has an incomplete end...
+		if (incomplete_flash_page_end) {
 80006116:	2f 88       	sub	r8,-8
+	}
+
+	// Align each end of destination pointer with its natural boundary.
+	dest_end.u16ptr = (uint16_t *)Align_down((uint32_t)dest_end.u8ptr, sizeof(uint16_t));
+	dest_end.u32ptr = (uint32_t *)Align_down((uint32_t)dest_end.u16ptr, sizeof(uint32_t));
+	dest_end.u64ptr = (uint64_t *)Align_down((uint32_t)dest_end.u32ptr, sizeof(uint64_t));
 80006118:	0c 9a       	mov	r10,r6
 8000611a:	e0 11 ff f8 	andl	r1,0xfff8
+		for (i = flash_page_source_end.u64ptr - dest.u64ptr; i; i--) {
+			*dest.u64ptr++ = source.u64;
+		}
+
+		// If the current destination page has an incomplete end...
+		if (incomplete_flash_page_end) {
 8000611e:	e0 1a fe 00 	andl	r10,0xfe00
+		// Determine if the current destination page has an incomplete end.
+		incomplete_flash_page_end = (Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE) >=
+				Align_down((uint32_t)dest_end.u8ptr, AVR32_FLASHC_PAGE_SIZE));
+
+		// Use a flash double-word buffer to manage unaligned accesses.
+		flash_dword.u64 = source.u64;
 80006122:	50 78       	stdsp	sp[0x1c],r8
 80006124:	30 05       	mov	r5,0
+		for (i = flash_page_source_end.u64ptr - dest.u64ptr; i; i--) {
+			*dest.u64ptr++ = source.u64;
+		}
+
+		// If the current destination page has an incomplete end...
+		if (incomplete_flash_page_end) {
 80006126:	e0 64 08 48 	mov	r4,2120
+	dest_end.u64ptr = (uint64_t *)Align_down((uint32_t)dest_end.u32ptr, sizeof(uint64_t));
+
+	// While end of destination is not reached...
+	while (dest.u8ptr < dest_end.u8ptr) {
+		// Clear the page buffer in order to prepare data for a flash page write.
+		flashc_clear_page_buffer();
 8000612a:	50 6a       	stdsp	sp[0x18],r10
 8000612c:	c9 d8       	rjmp	80006266 <flashc_memset64+0x236>
+		// Determine if the current destination page has an incomplete end.
+		incomplete_flash_page_end = (Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE) >=
+				Align_down((uint32_t)dest_end.u8ptr, AVR32_FLASHC_PAGE_SIZE));
+
+		// Use a flash double-word buffer to manage unaligned accesses.
+		flash_dword.u64 = source.u64;
 8000612e:	c3 ff       	rcall	80005fac <flashc_clear_page_buffer>
 80006130:	fa e8 00 04 	ld.d	r8,sp[4]
 80006134:	fa e9 00 30 	st.d	sp[48],r8
+		flashc_clear_page_buffer();
+		error_status |= flashc_error_status;
+
+		// Determine where the source data will end in the current flash page.
+		flash_page_source_end.u64ptr =
+				(uint64_t *)min((uint32_t)dest_end.u64ptr,
 80006138:	68 08       	ld.w	r8,r4[0x0]
+
+	// While end of destination is not reached...
+	while (dest.u8ptr < dest_end.u8ptr) {
+		// Clear the page buffer in order to prepare data for a flash page write.
+		flashc_clear_page_buffer();
+		error_status |= flashc_error_status;
 8000613a:	00 99       	mov	r9,r0
+
+		// Determine where the source data will end in the current flash page.
+		flash_page_source_end.u64ptr =
+				(uint64_t *)min((uint32_t)dest_end.u64ptr,
 8000613c:	10 45       	or	r5,r8
 8000613e:	e0 19 fe 00 	andl	r9,0xfe00
+
+		// Use a flash double-word buffer to manage unaligned accesses.
+		flash_dword.u64 = source.u64;
+
+		// If destination does not point to the beginning of the current flash page...
+		if (!Test_align((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE)) {
 80006142:	f1 d0 c0 09 	bfextu	r8,r0,0x0,0x9
+		flashc_clear_page_buffer();
+		error_status |= flashc_error_status;
+
+		// Determine where the source data will end in the current flash page.
+		flash_page_source_end.u64ptr =
+				(uint64_t *)min((uint32_t)dest_end.u64ptr,
 80006146:	f2 cc fe 00 	sub	r12,r9,-512
 8000614a:	e2 0c 0d 4c 	min	r12,r1,r12
+
+		// Use a flash double-word buffer to manage unaligned accesses.
+		flash_dword.u64 = source.u64;
+
+		// If destination does not point to the beginning of the current flash page...
+		if (!Test_align((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE)) {
 8000614e:	58 08       	cp.w	r8,0
+			// Fill the beginning of the page buffer with the current flash page data.
+			// This is required by the hardware, even if page erase is not requested,
+			// in order to be able to write successfully to erased parts of flash
+			// pages that have already been written to.
+			for (tmp.u8ptr = (uint8_t *)Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE);
+					tmp.u64ptr < (uint64_t *)Align_down((uint32_t)dest.u8ptr, sizeof(uint64_t));
 80006150:	c3 20       	breq	800061b4 <flashc_memset64+0x184>
+		if (!Test_align((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE)) {
+			// Fill the beginning of the page buffer with the current flash page data.
+			// This is required by the hardware, even if page erase is not requested,
+			// in order to be able to write successfully to erased parts of flash
+			// pages that have already been written to.
+			for (tmp.u8ptr = (uint8_t *)Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE);
 80006152:	00 9a       	mov	r10,r0
 80006154:	51 09       	stdsp	sp[0x40],r9
+					tmp.u64ptr < (uint64_t *)Align_down((uint32_t)dest.u8ptr, sizeof(uint64_t));
 80006156:	12 9b       	mov	r11,r9
 80006158:	e0 1a ff f8 	andl	r10,0xfff8
 8000615c:	0c 9e       	mov	lr,r6
+		if (!Test_align((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE)) {
+			// Fill the beginning of the page buffer with the current flash page data.
+			// This is required by the hardware, even if page erase is not requested,
+			// in order to be able to write successfully to erased parts of flash
+			// pages that have already been written to.
+			for (tmp.u8ptr = (uint8_t *)Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE);
 8000615e:	50 07       	stdsp	sp[0x0],r7
+					tmp.u64ptr < (uint64_t *)Align_down((uint32_t)dest.u8ptr, sizeof(uint64_t));
+					tmp.u64ptr++) {
+				*tmp.u64ptr = *tmp.u64ptr;
 80006160:	c0 58       	rjmp	8000616a <flashc_memset64+0x13a>
 80006162:	f0 e6 00 00 	ld.d	r6,r8[0]
 80006166:	f0 e7 00 00 	st.d	r8[0],r6
+			// Fill the beginning of the page buffer with the current flash page data.
+			// This is required by the hardware, even if page erase is not requested,
+			// in order to be able to write successfully to erased parts of flash
+			// pages that have already been written to.
+			for (tmp.u8ptr = (uint8_t *)Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE);
+					tmp.u64ptr < (uint64_t *)Align_down((uint32_t)dest.u8ptr, sizeof(uint64_t));
 8000616a:	16 98       	mov	r8,r11
+		if (!Test_align((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE)) {
+			// Fill the beginning of the page buffer with the current flash page data.
+			// This is required by the hardware, even if page erase is not requested,
+			// in order to be able to write successfully to erased parts of flash
+			// pages that have already been written to.
+			for (tmp.u8ptr = (uint8_t *)Align_down((uint32_t)dest.u8ptr, AVR32_FLASHC_PAGE_SIZE);
 8000616c:	2f 8b       	sub	r11,-8
 8000616e:	14 38       	cp.w	r8,r10
 80006170:	cf 93       	brcs	80006162 <flashc_memset64+0x132>
 80006172:	51 08       	stdsp	sp[0x40],r8
 80006174:	1c 96       	mov	r6,lr
+					tmp.u64ptr++) {
+				*tmp.u64ptr = *tmp.u64ptr;
+			}
+
+			// If destination is not 64-bit aligned...
+			if (!Test_align((uint32_t)dest.u8ptr, sizeof(uint64_t))) {
 80006176:	40 07       	lddsp	r7,sp[0x0]
 80006178:	e1 d0 c0 03 	bfextu	r0,r0,0x0,0x3
 8000617c:	c1 c0       	breq	800061b4 <flashc_memset64+0x184>
 8000617e:	30 0b       	mov	r11,0
 80006180:	50 39       	stdsp	sp[0xc],r9
 80006182:	f0 0b 00 0e 	add	lr,r8,r11
+				// flash page data.
+				// This is required by the hardware, even if page erase is not
+				// requested, in order to be able to write successfully to erased parts
+				// of flash pages that have already been written to.
+				for (i = 0; i < Get_align((uint32_t)dest.u8ptr, sizeof(uint64_t)); i++) {
+					flash_dword.u8[i] = *tmp.u8ptr++;
 80006186:	fa c9 ff d0 	sub	r9,sp,-48
 8000618a:	1d 8e       	ld.ub	lr,lr[0x0]
 8000618c:	f2 0b 0b 0e 	st.b	r9[r11],lr
+				// Fill the beginning of the flash double-word buffer with the current
+				// flash page data.
+				// This is required by the hardware, even if page erase is not
+				// requested, in order to be able to write successfully to erased parts
+				// of flash pages that have already been written to.
+				for (i = 0; i < Get_align((uint32_t)dest.u8ptr, sizeof(uint64_t)); i++) {
 80006190:	2f fb       	sub	r11,-1
 80006192:	00 3b       	cp.w	r11,r0
 80006194:	cf 71       	brne	80006182 <flashc_memset64+0x152>
+					flash_dword.u8[i] = *tmp.u8ptr++;
+				}
+
+				// Align the destination pointer with its 64-bit boundary.
+				dest.u64ptr = (uint64_t *)Align_down((uint32_t)dest.u8ptr, sizeof(uint64_t));
 80006196:	16 08       	add	r8,r11
+				// Fill the beginning of the flash double-word buffer with the current
+				// flash page data.
+				// This is required by the hardware, even if page erase is not
+				// requested, in order to be able to write successfully to erased parts
+				// of flash pages that have already been written to.
+				for (i = 0; i < Get_align((uint32_t)dest.u8ptr, sizeof(uint64_t)); i++) {
 80006198:	51 1a       	stdsp	sp[0x44],r10
 8000619a:	51 08       	stdsp	sp[0x40],r8
+
+				// Align the destination pointer with its 64-bit boundary.
+				dest.u64ptr = (uint64_t *)Align_down((uint32_t)dest.u8ptr, sizeof(uint64_t));
+
+				// If the current destination double-word is not the last one...
+				if (dest.u64ptr < dest_end.u64ptr) {
 8000619c:	40 39       	lddsp	r9,sp[0xc]
 8000619e:	02 3a       	cp.w	r10,r1
+					// Write the flash double-word buffer to the page buffer and reinitialize it.
+					*dest.u64ptr++ = flash_dword.u64;
 800061a0:	c0 a2       	brcc	800061b4 <flashc_memset64+0x184>
 800061a2:	14 98       	mov	r8,r10
 800061a4:	fa ea 00 30 	ld.d	r10,sp[48]
+					flash_dword.u64 = source.u64;
 800061a8:	b1 2a       	st.d	r8++,r10
 800061aa:	fa ea 00 04 	ld.d	r10,sp[4]
 800061ae:	51 18       	stdsp	sp[0x44],r8
 800061b0:	fa eb 00 30 	st.d	sp[48],r10
+				}
+			}
+		}
+
+		// Write the source data to the page buffer with 64-bit alignment.
+		for (i = flash_page_source_end.u64ptr - dest.u64ptr; i; i--) {
 800061b4:	41 18       	lddsp	r8,sp[0x44]
 800061b6:	02 9e       	mov	lr,r1
 800061b8:	10 1c       	sub	r12,r8
@@ -11493,88 +11947,200 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 800061ca:	b7 20       	st.d	r11++,r0
 800061cc:	58 0a       	cp.w	r10,0
 800061ce:	cf b1       	brne	800061c4 <flashc_memset64+0x194>
+			*dest.u64ptr++ = source.u64;
 800061d0:	f0 0c 00 3c 	add	r12,r8,r12<<0x3
+				}
+			}
+		}
+
+		// Write the source data to the page buffer with 64-bit alignment.
+		for (i = flash_page_source_end.u64ptr - dest.u64ptr; i; i--) {
 800061d4:	51 1c       	stdsp	sp[0x44],r12
+			*dest.u64ptr++ = source.u64;
 800061d6:	1c 91       	mov	r1,lr
+				}
+			}
+		}
+
+		// Write the source data to the page buffer with 64-bit alignment.
+		for (i = flash_page_source_end.u64ptr - dest.u64ptr; i; i--) {
 800061d8:	40 60       	lddsp	r0,sp[0x18]
 800061da:	00 39       	cp.w	r9,r0
 800061dc:	c2 13       	brcs	8000621e <flashc_memset64+0x1ee>
 800061de:	51 06       	stdsp	sp[0x40],r6
 800061e0:	58 02       	cp.w	r2,0
 800061e2:	c1 10       	breq	80006204 <flashc_memset64+0x1d4>
+			*dest.u64ptr++ = source.u64;
+		}
+
+		// If the current destination page has an incomplete end...
+		if (incomplete_flash_page_end) {
 800061e4:	fa c8 ff d0 	sub	r8,sp,-48
 800061e8:	0c 99       	mov	r9,r6
+			// This is required by the hardware, even if page erase is not requested,
+			// in order to be able to write successfully to erased parts of flash
+			// pages that have already been written to.
+			{
+				tmp.u8ptr = (volatile uint8_t *)dest_end.u8ptr;
 800061ea:	04 08       	add	r8,r2
+
+				// If end of destination is not 64-bit aligned...
+				if (!Test_align((uint32_t)dest_end.u8ptr, sizeof(uint64_t))) {
 800061ec:	fa ca ff c8 	sub	r10,sp,-56
 800061f0:	13 3b       	ld.ub	r11,r9++
 800061f2:	10 cb       	st.b	r8++,r11
 800061f4:	14 38       	cp.w	r8,r10
 800061f6:	cf d1       	brne	800061f0 <flashc_memset64+0x1c0>
+{
+	return flashc_memset64(dst, src | (uint64_t)src << 32, nbytes, erase);
+}
+
+
+volatile void *flashc_memset64(volatile void *dst, uint64_t src, size_t nbytes, bool erase)
 800061f8:	40 7b       	lddsp	r11,sp[0x1c]
 800061fa:	51 0b       	stdsp	sp[0x40],r11
+
+				// If end of destination is not 64-bit aligned...
+				if (!Test_align((uint32_t)dest_end.u8ptr, sizeof(uint64_t))) {
+					// Fill the end of the flash double-word buffer with the current flash page data.
+					for (i = Get_align((uint32_t)dest_end.u8ptr, sizeof(uint64_t)); i < sizeof(uint64_t); i++)
+						flash_dword.u8[i] = *tmp.u8ptr++;
 800061fc:	fa e8 00 30 	ld.d	r8,sp[48]
+				tmp.u8ptr = (volatile uint8_t *)dest_end.u8ptr;
+
+				// If end of destination is not 64-bit aligned...
+				if (!Test_align((uint32_t)dest_end.u8ptr, sizeof(uint64_t))) {
+					// Fill the end of the flash double-word buffer with the current flash page data.
+					for (i = Get_align((uint32_t)dest_end.u8ptr, sizeof(uint64_t)); i < sizeof(uint64_t); i++)
 80006200:	b9 28       	st.d	r12++,r8
 80006202:	51 1c       	stdsp	sp[0x44],r12
 80006204:	41 08       	lddsp	r8,sp[0x40]
 80006206:	c0 58       	rjmp	80006210 <flashc_memset64+0x1e0>
+						flash_dword.u8[i] = *tmp.u8ptr++;
+
+					// Write the flash double-word buffer to the page buffer.
+					*dest.u64ptr++ = flash_dword.u64;
 80006208:	f2 ea 00 00 	ld.d	r10,r9[0]
 8000620c:	f2 eb 00 00 	st.d	r9[0],r10
 80006210:	10 99       	mov	r9,r8
 80006212:	f5 d8 c0 09 	bfextu	r10,r8,0x0,0x9
+				}
+
+				// Fill the end of the page buffer with the current flash page data.
+				for (; !Test_align((uint32_t)tmp.u64ptr, AVR32_FLASHC_PAGE_SIZE); tmp.u64ptr++) {
+					*tmp.u64ptr = *tmp.u64ptr;
 80006216:	2f 88       	sub	r8,-8
 80006218:	58 0a       	cp.w	r10,0
 8000621a:	cf 71       	brne	80006208 <flashc_memset64+0x1d8>
 8000621c:	51 09       	stdsp	sp[0x40],r9
+					// Write the flash double-word buffer to the page buffer.
+					*dest.u64ptr++ = flash_dword.u64;
+				}
+
+				// Fill the end of the page buffer with the current flash page data.
+				for (; !Test_align((uint32_t)tmp.u64ptr, AVR32_FLASHC_PAGE_SIZE); tmp.u64ptr++) {
 8000621e:	41 10       	lddsp	r0,sp[0x44]
 80006220:	30 0a       	mov	r10,0
 80006222:	ea 1a 80 80 	orh	r10,0x8080
 80006226:	14 30       	cp.w	r0,r10
 80006228:	e0 8b 00 15 	brhi	80006252 <flashc_memset64+0x222>
+				}
+			}
+		}
+
+		// If the current flash page is in the flash array...
+		if (dest.u8ptr <= AVR32_FLASHC_USER_PAGE) {
 8000622c:	40 59       	lddsp	r9,sp[0x14]
 8000622e:	58 09       	cp.w	r9,0
 80006230:	c0 60       	breq	8000623c <flashc_memset64+0x20c>
 80006232:	30 0b       	mov	r11,0
 80006234:	3f fc       	mov	r12,-1
 80006236:	cc be       	rcall	80005fcc <flashc_erase_page>
+			// Erase the current page if requested and write it from the page buffer.
+			if (erase) {
 80006238:	68 08       	ld.w	r8,r4[0x0]
 8000623a:	10 45       	or	r5,r8
 8000623c:	3f fc       	mov	r12,-1
+				flashc_erase_page(-1, false);
 8000623e:	cd 9e       	rcall	80005ff0 <flashc_write_page>
 80006240:	68 08       	ld.w	r8,r4[0x0]
 80006242:	10 45       	or	r5,r8
 80006244:	06 30       	cp.w	r0,r3
+				error_status |= flashc_error_status;
 80006246:	c1 03       	brcs	80006266 <flashc_memset64+0x236>
 80006248:	30 08       	mov	r8,0
+			}
+			flashc_write_page(-1);
 8000624a:	ea 18 80 80 	orh	r8,0x8080
 8000624e:	51 18       	stdsp	sp[0x44],r8
+			error_status |= flashc_error_status;
 80006250:	c0 b8       	rjmp	80006266 <flashc_memset64+0x236>
 80006252:	40 58       	lddsp	r8,sp[0x14]
+
+			// If the end of the flash array is reached, go to the User page.
+			if (dest.u8ptr >= flash_array_end.u8ptr) {
 80006254:	58 08       	cp.w	r8,0
 80006256:	c0 50       	breq	80006260 <flashc_memset64+0x230>
+				dest.u8ptr = AVR32_FLASHC_USER_PAGE;
 80006258:	30 0c       	mov	r12,0
 8000625a:	cd be       	rcall	80006010 <flashc_erase_user_page>
 8000625c:	68 08       	ld.w	r8,r4[0x0]
 8000625e:	10 45       	or	r5,r8
 80006260:	ce 2e       	rcall	80006024 <flashc_write_user_page>
+			}
+		} else {
+			// Erase the User page if requested and write it from the page buffer.
+			if (erase) {
 80006262:	68 08       	ld.w	r8,r4[0x0]
 80006264:	10 45       	or	r5,r8
 80006266:	41 10       	lddsp	r0,sp[0x44]
+				flashc_erase_user_page(false);
 80006268:	0c 30       	cp.w	r0,r6
 8000626a:	fe 93 ff 62 	brlo	8000612e <flashc_memset64+0xfe>
+				error_status |= flashc_error_status;
 8000626e:	e0 68 08 48 	mov	r8,2120
+			}
+			flashc_write_user_page();
 80006272:	0e 9c       	mov	r12,r7
 80006274:	91 05       	st.w	r8[0x0],r5
+			error_status |= flashc_error_status;
 80006276:	2e ed       	sub	sp,-72
 80006278:	d8 32       	popm	r0-r7,pc
+	dest_end.u16ptr = (uint16_t *)Align_down((uint32_t)dest_end.u8ptr, sizeof(uint16_t));
+	dest_end.u32ptr = (uint32_t *)Align_down((uint32_t)dest_end.u16ptr, sizeof(uint32_t));
+	dest_end.u64ptr = (uint64_t *)Align_down((uint32_t)dest_end.u32ptr, sizeof(uint64_t));
+
+	// While end of destination is not reached...
+	while (dest.u8ptr < dest_end.u8ptr) {
 8000627a:	d7 03       	nop
 
 8000627c <flashc_memset32>:
 8000627c:	d4 21       	pushm	r4-r7,lr
 8000627e:	30 0e       	mov	lr,0
 80006280:	16 96       	mov	r6,r11
+			error_status |= flashc_error_status;
+		}
+	}
+
+	// Update the FLASHC error status.
+	flashc_error_status = error_status;
 80006282:	1c 97       	mov	r7,lr
+
+	// Return the initial destination pointer as the standard memset function does.
+	return dst;
+}
 80006284:	12 98       	mov	r8,r9
+			error_status |= flashc_error_status;
+		}
+	}
+
+	// Update the FLASHC error status.
+	flashc_error_status = error_status;
 80006286:	0c 9b       	mov	r11,r6
+
+	// Return the initial destination pointer as the standard memset function does.
+	return dst;
+}
 80006288:	14 99       	mov	r9,r10
 8000628a:	0e 4b       	or	r11,r7
 8000628c:	0e 9a       	mov	r10,r7
@@ -11590,42 +12156,131 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8000629e:	d7 03       	nop
 
 800062a0 <flashc_memset8>:
+
+
+volatile void *flashc_memset16(volatile void *dst, uint16_t src, size_t nbytes, bool erase)
+{
+	return flashc_memset32(dst, src | (uint32_t)src << 16, nbytes, erase);
+}
 800062a0:	d4 01       	pushm	lr
 800062a2:	f7 eb 10 8b 	or	r11,r11,r11<<0x8
+}
+
+
+volatile void *flashc_memset8(volatile void *dst, uint8_t src, size_t nbytes, bool erase)
+{
+	return flashc_memset16(dst, src | (uint16_t)src << 8, nbytes, erase);
 800062a6:	5c 7b       	castu.h	r11
 800062a8:	cf 6f       	rcall	80006294 <flashc_memset16>
 800062aa:	d8 02       	popm	pc
 
 800062ac <flashc_memcpy>:
+}
 800062ac:	d4 31       	pushm	r0-r7,lr
 800062ae:	20 4d       	sub	sp,16
 800062b0:	e0 6e ff ff 	mov	lr,65535
+	Assert( (((uint8_t *)dst >= AVR32_FLASH)
+			&& (((uint8_t *)dst + nbytes) <= (AVR32_FLASH + flashc_get_flash_size())))
+			|| (((uint8_t *)dst >= AVR32_FLASHC_USER_PAGE)
+			&& (((uint8_t *)dst + nbytes) <= (AVR32_FLASHC_USER_PAGE + AVR32_FLASHC_USER_PAGE_SIZE))) );
+
+	b_user_page = (volatile uint8_t *)dst >= AVR32_FLASHC_USER_PAGE;
 800062b4:	ea 1e 80 7f 	orh	lr,0x807f
+
+	flash_add = (uint8_t*)((uint32_t)dest_add - ((uint32_t)dest_add % AVR32_FLASHC_PAGE_SIZE));
 800062b8:	18 94       	mov	r4,r12
+	Assert( (((uint8_t *)dst >= AVR32_FLASH)
+			&& (((uint8_t *)dst + nbytes) <= (AVR32_FLASH + flashc_get_flash_size())))
+			|| (((uint8_t *)dst >= AVR32_FLASHC_USER_PAGE)
+			&& (((uint8_t *)dst + nbytes) <= (AVR32_FLASHC_USER_PAGE + AVR32_FLASHC_USER_PAGE_SIZE))) );
+
+	b_user_page = (volatile uint8_t *)dst >= AVR32_FLASHC_USER_PAGE;
 800062ba:	1c 3c       	cp.w	r12,lr
 800062bc:	5f b5       	srhi	r5
+	return dst;
+}
+
+
+volatile void *flashc_memcpy(volatile void *dst, const void *src, size_t nbytes, bool erase)
+{
 800062be:	18 97       	mov	r7,r12
+	Union64 flash_dword;
+	uint8_t i;
+	bool b_user_page;
+	unsigned int error_status = 0;
+	uint8_t* flash_add;
+	uint8_t* dest_add=(uint8_t*)dst;
 800062c0:	18 92       	mov	r2,r12
+	return dst;
+}
+
+
+volatile void *flashc_memcpy(volatile void *dst, const void *src, size_t nbytes, bool erase)
+{
 800062c2:	14 96       	mov	r6,r10
+	// Return the initial destination pointer as the standard memset function does.
+	return dst;
+}
+
+
+volatile void *flashc_memcpy(volatile void *dst, const void *src, size_t nbytes, bool erase)
 800062c4:	fa cc ff f0 	sub	r12,sp,-16
+{
 800062c8:	50 19       	stdsp	sp[0x4],r9
+	uint8_t i;
+	bool b_user_page;
+	unsigned int error_status = 0;
+	uint8_t* flash_add;
+	uint8_t* dest_add=(uint8_t*)dst;
+	const uint8_t* src_buf=(const uint8_t*)src;
 800062ca:	16 90       	mov	r0,r11
+			|| (((uint8_t *)dst >= AVR32_FLASHC_USER_PAGE)
+			&& (((uint8_t *)dst + nbytes) <= (AVR32_FLASHC_USER_PAGE + AVR32_FLASHC_USER_PAGE_SIZE))) );
+
+	b_user_page = (volatile uint8_t *)dst >= AVR32_FLASHC_USER_PAGE;
+
+	flash_add = (uint8_t*)((uint32_t)dest_add - ((uint32_t)dest_add % AVR32_FLASHC_PAGE_SIZE));
 800062cc:	30 01       	mov	r1,0
 800062ce:	e0 14 fe 00 	andl	r4,0xfe00
 800062d2:	e0 63 08 48 	mov	r3,2120
+
+	while (nbytes) {
 800062d6:	50 0c       	stdsp	sp[0x0],r12
+		// Clear the page buffer in order to prepare data for a flash page write.
+		flashc_clear_page_buffer();
 800062d8:	c4 08       	rjmp	80006358 <flashc_memcpy+0xac>
 800062da:	c6 9e       	rcall	80005fac <flashc_clear_page_buffer>
+		error_status |= flashc_error_status;
 800062dc:	66 08       	ld.w	r8,r3[0x0]
 800062de:	e8 cb fe 00 	sub	r11,r4,-512
 800062e2:	10 41       	or	r1,r8
 800062e4:	16 9c       	mov	r12,r11
 800062e6:	08 98       	mov	r8,r4
+
+		// Loop in the page
+		for (page_pos=0; page_pos<AVR32_FLASHC_PAGE_SIZE; page_pos+=sizeof(uint64_t) ) {
+			// Read the flash double-word buffer
+			flash_dword.u64 = *(volatile uint64_t*)flash_add;
 800062e8:	f0 ea 00 00 	ld.d	r10,r8[0]
 800062ec:	fa c9 ff f8 	sub	r9,sp,-8
 800062f0:	fa eb 00 08 	st.d	sp[8],r10
+	flash_add = (uint8_t*)((uint32_t)dest_add - ((uint32_t)dest_add % AVR32_FLASHC_PAGE_SIZE));
+
+	while (nbytes) {
+		// Clear the page buffer in order to prepare data for a flash page write.
+		flashc_clear_page_buffer();
+		error_status |= flashc_error_status;
 800062f4:	10 9a       	mov	r10,r8
+
+		// Loop in the page
+		for (page_pos=0; page_pos<AVR32_FLASHC_PAGE_SIZE; page_pos+=sizeof(uint64_t) ) {
+			// Read the flash double-word buffer
+			flash_dword.u64 = *(volatile uint64_t*)flash_add;
 800062f6:	18 9b       	mov	r11,r12
+
+			// Update double-word if necessary
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				if (nbytes && (flash_add == dest_add)) {
 800062f8:	04 3a       	cp.w	r10,r2
 800062fa:	5f 0e       	sreq	lr
 800062fc:	58 06       	cp.w	r6,0
@@ -11634,24 +12289,73 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006304:	30 0e       	mov	lr,0
 80006306:	fc 0c 18 00 	cp.b	r12,lr
 8000630a:	c0 50       	breq	80006314 <flashc_memcpy+0x68>
+					// Update page with data source
+					flash_dword.u8[i] = *src_buf++;
 8000630c:	01 3c       	ld.ub	r12,r0++
+	// Return the initial destination pointer as the standard memset function does.
+	return dst;
+}
+
+
+volatile void *flashc_memcpy(volatile void *dst, const void *src, size_t nbytes, bool erase)
 8000630e:	2f f2       	sub	r2,-1
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				if (nbytes && (flash_add == dest_add)) {
+					// Update page with data source
+					flash_dword.u8[i] = *src_buf++;
+					dest_add++;
+					nbytes--;
 80006310:	20 16       	sub	r6,1
+
+			// Update double-word if necessary
+			for (i = 0; i < sizeof(uint64_t); i++) {
+				if (nbytes && (flash_add == dest_add)) {
+					// Update page with data source
+					flash_dword.u8[i] = *src_buf++;
 80006312:	b2 8c       	st.b	r9[0x0],r12
+					dest_add++;
+					nbytes--;
+				}
+				flash_add++;
 80006314:	2f fa       	sub	r10,-1
 80006316:	2f f9       	sub	r9,-1
+		for (page_pos=0; page_pos<AVR32_FLASHC_PAGE_SIZE; page_pos+=sizeof(uint64_t) ) {
+			// Read the flash double-word buffer
+			flash_dword.u64 = *(volatile uint64_t*)flash_add;
+
+			// Update double-word if necessary
+			for (i = 0; i < sizeof(uint64_t); i++) {
 80006318:	40 0c       	lddsp	r12,sp[0x0]
 8000631a:	18 39       	cp.w	r9,r12
 8000631c:	ce e1       	brne	800062f8 <flashc_memcpy+0x4c>
 8000631e:	16 9c       	mov	r12,r11
+				}
+				flash_add++;
+			}
+
+			// Write the flash double-word buffer to the page buffer.
+			*(volatile uint64_t*)((uint32_t)flash_add - sizeof(uint64_t))= flash_dword.u64;
 80006320:	fa ea 00 08 	ld.d	r10,sp[8]
 80006324:	b1 2a       	st.d	r8++,r10
+		// Clear the page buffer in order to prepare data for a flash page write.
+		flashc_clear_page_buffer();
+		error_status |= flashc_error_status;
+
+		// Loop in the page
+		for (page_pos=0; page_pos<AVR32_FLASHC_PAGE_SIZE; page_pos+=sizeof(uint64_t) ) {
 80006326:	18 38       	cp.w	r8,r12
 80006328:	ce 01       	brne	800062e8 <flashc_memcpy+0x3c>
 8000632a:	e8 c4 fe 00 	sub	r4,r4,-512
+			// Write the flash double-word buffer to the page buffer.
+			*(volatile uint64_t*)((uint32_t)flash_add - sizeof(uint64_t))= flash_dword.u64;
+		}
+
+		// Erase the current page if requested and write it from the page buffer.
+		if (erase) {
 8000632e:	40 1a       	lddsp	r10,sp[0x4]
 80006330:	58 0a       	cp.w	r10,0
 80006332:	c0 b0       	breq	80006348 <flashc_memcpy+0x9c>
+			(b_user_page)? flashc_erase_user_page(false) : flashc_erase_page(-1, false);
 80006334:	58 05       	cp.w	r5,0
 80006336:	c0 40       	breq	8000633e <flashc_memcpy+0x92>
 80006338:	30 0c       	mov	r12,0
@@ -11662,8 +12366,13 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006342:	c4 5e       	rcall	80005fcc <flashc_erase_page>
 80006344:	66 08       	ld.w	r8,r3[0x0]
 80006346:	10 41       	or	r1,r8
+			error_status |= flashc_error_status;
 80006348:	58 05       	cp.w	r5,0
 8000634a:	c0 30       	breq	80006350 <flashc_memcpy+0xa4>
+		}
+
+		// Write the page
+		(b_user_page)? flashc_write_user_page() : flashc_write_page(-1);
 8000634c:	c6 ce       	rcall	80006024 <flashc_write_user_page>
 8000634e:	c0 38       	rjmp	80006354 <flashc_memcpy+0xa8>
 80006350:	3f fc       	mov	r12,-1
@@ -11672,16 +12381,42 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006356:	10 41       	or	r1,r8
 80006358:	58 06       	cp.w	r6,0
 8000635a:	cc 01       	brne	800062da <flashc_memcpy+0x2e>
+		error_status |= flashc_error_status;
 8000635c:	e0 68 08 48 	mov	r8,2120
+
+	b_user_page = (volatile uint8_t *)dst >= AVR32_FLASHC_USER_PAGE;
+
+	flash_add = (uint8_t*)((uint32_t)dest_add - ((uint32_t)dest_add % AVR32_FLASHC_PAGE_SIZE));
+
+	while (nbytes) {
 80006360:	0e 9c       	mov	r12,r7
 80006362:	91 01       	st.w	r8[0x0],r1
+		// Write the page
+		(b_user_page)? flashc_write_user_page() : flashc_write_page(-1);
+		error_status |= flashc_error_status;
+	}
+	// Update the FLASHC error status.
+	flashc_error_status = error_status;
 80006364:	2f cd       	sub	sp,-16
+
+	// Return the initial destination pointer as the standard memcpy function does.
+	return dst;
+}
 80006366:	d8 32       	popm	r0-r7,pc
 
 80006368 <gpio_enable_module_pin>:
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_module_pin(uint32_t pin, uint32_t function)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 80006368:	f8 08 16 05 	lsr	r8,r12,0x5
 8000636c:	a9 68       	lsl	r8,0x8
 8000636e:	e0 28 f0 00 	sub	r8,61440
+
+	/* Enable the correct function. */
+	switch (function) {
 80006372:	58 1b       	cp.w	r11,1
 80006374:	c0 d0       	breq	8000638e <gpio_enable_module_pin+0x26>
 80006376:	c0 63       	brcs	80006382 <gpio_enable_module_pin+0x1a>
@@ -11690,23 +12425,54 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8000637c:	58 3b       	cp.w	r11,3
 8000637e:	c1 20       	breq	800063a2 <gpio_enable_module_pin+0x3a>
 80006380:	5e ff       	retal	1
+	case 0: /* A function. */
+		gpio_port->pmr0c = 1 << (pin & 0x1F);
 80006382:	30 19       	mov	r9,1
 80006384:	f2 0c 09 49 	lsl	r9,r9,r12
 80006388:	91 69       	st.w	r8[0x18],r9
+		gpio_port->pmr1c = 1 << (pin & 0x1F);
 8000638a:	91 a9       	st.w	r8[0x28],r9
+#if (AVR32_GPIO_H_VERSION >= 210)
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
 8000638c:	c1 08       	rjmp	800063ac <gpio_enable_module_pin+0x44>
+
+	case 1: /* B function. */
+		gpio_port->pmr0s = 1 << (pin & 0x1F);
 8000638e:	f6 0c 09 4b 	lsl	r11,r11,r12
 80006392:	91 5b       	st.w	r8[0x14],r11
+		gpio_port->pmr1c = 1 << (pin & 0x1F);
 80006394:	91 ab       	st.w	r8[0x28],r11
+#if (AVR32_GPIO_H_VERSION >= 210)
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
 80006396:	c0 b8       	rjmp	800063ac <gpio_enable_module_pin+0x44>
+
+	case 2: /* C function. */
+		gpio_port->pmr0c = 1 << (pin & 0x1F);
 80006398:	30 19       	mov	r9,1
 8000639a:	f2 0c 09 49 	lsl	r9,r9,r12
 8000639e:	91 69       	st.w	r8[0x18],r9
 800063a0:	c0 58       	rjmp	800063aa <gpio_enable_module_pin+0x42>
+		gpio_port->pmr2c = 1 << (pin & 0x1F);
+#endif
+		break;
+
+	case 3: /* D function. */
+		gpio_port->pmr0s = 1 << (pin & 0x1F);
 800063a2:	30 19       	mov	r9,1
 800063a4:	f2 0c 09 49 	lsl	r9,r9,r12
 800063a8:	91 59       	st.w	r8[0x14],r9
+		gpio_port->pmr1s = 1 << (pin & 0x1F);
 800063aa:	91 99       	st.w	r8[0x24],r9
+	default:
+		return GPIO_INVALID_ARGUMENT;
+	}
+
+	/* Disable GPIO control. */
+	gpio_port->gperc = 1 << (pin & 0x1F);
 800063ac:	30 19       	mov	r9,1
 800063ae:	f2 0c 09 4c 	lsl	r12,r9,r12
 800063b2:	91 2c       	st.w	r8[0x8],r12
@@ -11714,134 +12480,339 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 800063b6:	d7 03       	nop
 
 800063b8 <gpio_enable_module>:
+ * \param size The number of pins in \a gpiomap.
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
 800063b8:	d4 21       	pushm	r4-r7,lr
 800063ba:	30 07       	mov	r7,0
 800063bc:	18 96       	mov	r6,r12
 800063be:	16 94       	mov	r4,r11
 800063c0:	0e 95       	mov	r5,r7
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
 800063c2:	c0 78       	rjmp	800063d0 <gpio_enable_module+0x18>
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
 800063c4:	6c 1b       	ld.w	r11,r6[0x4]
 800063c6:	6c 0c       	ld.w	r12,r6[0x0]
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
 800063c8:	2f f7       	sub	r7,-1
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+		gpiomap++;
 800063ca:	2f 86       	sub	r6,-8
+{
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
 800063cc:	cc ef       	rcall	80006368 <gpio_enable_module_pin>
 800063ce:	18 45       	or	r5,r12
 800063d0:	08 37       	cp.w	r7,r4
+uint32_t gpio_enable_module(const gpio_map_t gpiomap, uint32_t size)
+{
+	uint32_t status = GPIO_SUCCESS;
+	uint32_t i;
+
+	for (i = 0; i < size; i++) {
 800063d2:	cf 93       	brcs	800063c4 <gpio_enable_module+0xc>
 800063d4:	0a 9c       	mov	r12,r5
+		status |= gpio_enable_module_pin(gpiomap->pin, gpiomap->function);
+		gpiomap++;
+	}
+
+	return status;
+}
 800063d6:	d8 22       	popm	r4-r7,pc
 
 800063d8 <gpio_enable_gpio_pin>:
 800063d8:	30 18       	mov	r8,1
 800063da:	f0 0c 09 48 	lsl	r8,r8,r12
 800063de:	a5 9c       	lsr	r12,0x5
+ *            AVR32_PWM_3_PIN for PWM channel 3 can also be used to release
+ *            module pins for GPIO.
+ */
+void gpio_enable_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 800063e0:	a9 6c       	lsl	r12,0x8
 800063e2:	e0 2c f0 00 	sub	r12,61440
+	
+	gpio_port->oderc = 1 << (pin & 0x1F);
 800063e6:	f9 48 00 48 	st.w	r12[72],r8
+	gpio_port->gpers = 1 << (pin & 0x1F);
 800063ea:	99 18       	st.w	r12[0x4],r8
+}
 800063ec:	5e fc       	retal	r12
 
 800063ee <gpio_get_pin_value>:
+ *
+ * \return The pin value.
+ */
+bool gpio_get_pin_value(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 800063ee:	f8 08 16 05 	lsr	r8,r12,0x5
 800063f2:	a9 68       	lsl	r8,0x8
 800063f4:	e0 28 f0 00 	sub	r8,61440
+	
+	return (gpio_port->pvr >> (pin & 0x1F)) & 1;
 800063f8:	71 88       	ld.w	r8,r8[0x60]
 800063fa:	f0 0c 0a 4c 	lsr	r12,r8,r12
+}
 800063fe:	f9 dc c0 01 	bfextu	r12,r12,0x0,0x1
 80006402:	5e fc       	retal	r12
 
 80006404 <gpio_set_gpio_pin>:
+void gpio_set_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+	
+	/* Value to be driven on the I/O line: 1. */
+	gpio_port->ovrs  = 1 << (pin & 0x1F);
 80006404:	30 18       	mov	r8,1
 80006406:	f0 0c 09 48 	lsl	r8,r8,r12
+ *
+ * \param pin The pin number.
+ */
+void gpio_set_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 8000640a:	a5 9c       	lsr	r12,0x5
 8000640c:	a9 6c       	lsl	r12,0x8
 8000640e:	e0 2c f0 00 	sub	r12,61440
+	
+	/* Value to be driven on the I/O line: 1. */
+	gpio_port->ovrs  = 1 << (pin & 0x1F);
 80006412:	f9 48 00 54 	st.w	r12[84],r8
+	/* The GPIO output driver is enabled for that pin. */ 
+	gpio_port->oders = 1 << (pin & 0x1F);
 80006416:	f9 48 00 44 	st.w	r12[68],r8
+	/* The GPIO module controls that pin. */
+	gpio_port->gpers = 1 << (pin & 0x1F);
 8000641a:	99 18       	st.w	r12[0x4],r8
+}
 8000641c:	5e fc       	retal	r12
 
 8000641e <gpio_clr_gpio_pin>:
+void gpio_clr_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+	
+	/* Value to be driven on the I/O line: 0. */
+	gpio_port->ovrc  = 1 << (pin & 0x1F);
 8000641e:	30 18       	mov	r8,1
 80006420:	f0 0c 09 48 	lsl	r8,r8,r12
+ *
+ * \param pin The pin number.
+ */
+void gpio_clr_gpio_pin(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 80006424:	a5 9c       	lsr	r12,0x5
 80006426:	a9 6c       	lsl	r12,0x8
 80006428:	e0 2c f0 00 	sub	r12,61440
+	
+	/* Value to be driven on the I/O line: 0. */
+	gpio_port->ovrc  = 1 << (pin & 0x1F);
 8000642c:	f9 48 00 58 	st.w	r12[88],r8
+	/* The GPIO output driver is enabled for that pin. */
+	gpio_port->oders = 1 << (pin & 0x1F);
 80006430:	f9 48 00 44 	st.w	r12[68],r8
+	/* The GPIO module controls that pin. */
+	gpio_port->gpers = 1 << (pin & 0x1F);
 80006434:	99 18       	st.w	r12[0x4],r8
+}
 80006436:	5e fc       	retal	r12
 
 80006438 <gpio_enable_pin_interrupt>:
+uint32_t gpio_enable_pin_interrupt(uint32_t pin, uint32_t mode)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+
+	/* Enable the glitch filter. */
+	gpio_port->gfers = 1 << (pin & 0x1F);
 80006438:	30 1a       	mov	r10,1
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_pin_interrupt(uint32_t pin, uint32_t mode)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 8000643a:	f8 08 16 05 	lsr	r8,r12,0x5
+
+	/* Enable the glitch filter. */
+	gpio_port->gfers = 1 << (pin & 0x1F);
 8000643e:	f4 0c 09 49 	lsl	r9,r10,r12
+ *
+ * \return \ref GPIO_SUCCESS or \ref GPIO_INVALID_ARGUMENT.
+ */
+uint32_t gpio_enable_pin_interrupt(uint32_t pin, uint32_t mode)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 80006442:	a9 68       	lsl	r8,0x8
 80006444:	e0 28 f0 00 	sub	r8,61440
+
+	/* Enable the glitch filter. */
+	gpio_port->gfers = 1 << (pin & 0x1F);
 80006448:	f1 49 00 c4 	st.w	r8[196],r9
+static uint32_t gpio_configure_edge_detector(uint32_t pin, uint32_t mode)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
+
+	/* Configure the edge detector. */
+	switch (mode) {
 8000644c:	14 3b       	cp.w	r11,r10
 8000644e:	c0 80       	breq	8000645e <gpio_enable_pin_interrupt+0x26>
 80006450:	c0 43       	brcs	80006458 <gpio_enable_pin_interrupt+0x20>
 80006452:	58 2b       	cp.w	r11,2
 80006454:	c0 f1       	brne	80006472 <gpio_enable_pin_interrupt+0x3a>
 80006456:	c0 98       	rjmp	80006468 <gpio_enable_pin_interrupt+0x30>
+	case GPIO_PIN_CHANGE:
+		gpio_port->imr0c = 1 << (pin & 0x1F);
 80006458:	f1 49 00 a8 	st.w	r8[168],r9
 8000645c:	c0 38       	rjmp	80006462 <gpio_enable_pin_interrupt+0x2a>
+		gpio_port->imr1c = 1 << (pin & 0x1F);
+		break;
+
+	case GPIO_RISING_EDGE:
+		gpio_port->imr0s = 1 << (pin & 0x1F);
 8000645e:	f1 49 00 a4 	st.w	r8[164],r9
+		gpio_port->imr1c = 1 << (pin & 0x1F);
 80006462:	f1 49 00 b8 	st.w	r8[184],r9
 80006466:	c0 78       	rjmp	80006474 <gpio_enable_pin_interrupt+0x3c>
+		break;
+
+	case GPIO_FALLING_EDGE:
+		gpio_port->imr0c = 1 << (pin & 0x1F);
 80006468:	f1 49 00 a8 	st.w	r8[168],r9
+		gpio_port->imr1s = 1 << (pin & 0x1F);
 8000646c:	f1 49 00 b4 	st.w	r8[180],r9
 80006470:	c0 28       	rjmp	80006474 <gpio_enable_pin_interrupt+0x3c>
 80006472:	5e fa       	retal	r10
+	if (GPIO_INVALID_ARGUMENT == gpio_configure_edge_detector(pin, mode)) {
+		return(GPIO_INVALID_ARGUMENT);
+	}
+
+	/* Enable interrupt. */
+	gpio_port->iers = 1 << (pin & 0x1F);
 80006474:	f1 49 00 94 	st.w	r8[148],r9
 80006478:	5e fd       	retal	0
 
 8000647a <gpio_get_pin_interrupt_flag>:
+ *
+ * \return The pin interrupt flag.
+ */
+bool gpio_get_pin_interrupt_flag(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 8000647a:	f8 08 16 05 	lsr	r8,r12,0x5
 8000647e:	a9 68       	lsl	r8,0x8
 80006480:	e0 28 f0 00 	sub	r8,61440
+	
+	return (gpio_port->ifr >> (pin & 0x1F)) & 1;
 80006484:	f0 f8 00 d0 	ld.w	r8,r8[208]
 80006488:	f0 0c 0a 4c 	lsr	r12,r8,r12
+}
 8000648c:	f9 dc c0 01 	bfextu	r12,r12,0x0,0x1
 80006490:	5e fc       	retal	r12
 
 80006492 <gpio_clear_pin_interrupt_flag>:
+	gpio_port->ifrc = 1 << (pin & 0x1F);
+
+	/* Restore interrupt enable register. */
+	gpio_port->ier = gpio_ier;
+#else
+	gpio_port->ifrc = 1 << (pin & 0x1F);
 80006492:	30 18       	mov	r8,1
 80006494:	f0 0c 09 48 	lsl	r8,r8,r12
+ *
+ * \param pin The pin number.
+ */
+void gpio_clear_pin_interrupt_flag(uint32_t pin)
+{
+	volatile avr32_gpio_port_t *gpio_port = &AVR32_GPIO.port[pin >> 5];
 80006498:	a5 9c       	lsr	r12,0x5
 8000649a:	a9 6c       	lsl	r12,0x8
 8000649c:	e0 2c f0 00 	sub	r12,61440
+	gpio_port->ifrc = 1 << (pin & 0x1F);
+
+	/* Restore interrupt enable register. */
+	gpio_port->ier = gpio_ier;
+#else
+	gpio_port->ifrc = 1 << (pin & 0x1F);
 800064a0:	f9 48 00 d8 	st.w	r12[216],r8
+#endif
+}
 800064a4:	5e fc       	retal	r12
 
 800064a6 <_unhandled_interrupt>:
+__attribute__((__interrupt__))
+#elif (defined __ICCAVR32__)
+__interrupt
+#endif
+static void _unhandled_interrupt(void)
+{
 800064a6:	c0 08       	rjmp	800064a6 <_unhandled_interrupt>
 
 800064a8 <INTC_register_interrupt>:
+
+	/* Store in _int_line_handler_table_x the pointer to the interrupt
+	handler, so that _get_interrupt_handler can retrieve it when the
+	interrupt is vectored. */
+	_int_handler_table[int_grp]
+		._int_line_handler_table[irq % AVR32_INTC_MAX_NUM_IRQS_PER_GRP]
 800064a8:	f3 db c0 05 	bfextu	r9,r11,0x0,0x5
 800064ac:	fe c8 cb d0 	sub	r8,pc,-13360
 800064b0:	a5 9b       	lsr	r11,0x5
 800064b2:	f0 0b 00 38 	add	r8,r8,r11<<0x3
+	uint32_t int_grp = irq / AVR32_INTC_MAX_NUM_IRQS_PER_GRP;
+
+	/* Store in _int_line_handler_table_x the pointer to the interrupt
+	handler, so that _get_interrupt_handler can retrieve it when the
+	interrupt is vectored. */
+	_int_handler_table[int_grp]
 800064b6:	70 18       	ld.w	r8,r8[0x4]
 800064b8:	f0 09 09 2c 	st.w	r8[r9<<0x2],r12
+	/* Program the corresponding IPRX register to set the interrupt priority
+	level and the interrupt vector offset that will be fetched by the core
+	interrupt system.
+	NOTE: The _intx functions are intermediate assembly functions between
+	the core interrupt system and the user interrupt handler. */
+	if (int_level == AVR32_INTC_INT0) {
 800064bc:	58 0a       	cp.w	r10,0
+		AVR32_INTC.ipr[int_grp] = IPR_INT0;
 800064be:	c0 c1       	brne	800064d6 <INTC_register_interrupt+0x2e>
 800064c0:	fe 78 08 00 	mov	r8,-63488
 800064c4:	fe c9 d2 c4 	sub	r9,pc,-11580
 800064c8:	fe ca d1 c4 	sub	r10,pc,-11836
 800064cc:	f4 09 01 09 	sub	r9,r10,r9
+	} else if (int_level == AVR32_INTC_INT1) {
 800064d0:	f0 0b 09 29 	st.w	r8[r11<<0x2],r9
+		AVR32_INTC.ipr[int_grp] = IPR_INT1;
 800064d4:	5e fc       	retal	r12
 800064d6:	58 1a       	cp.w	r10,1
 800064d8:	c0 91       	brne	800064ea <INTC_register_interrupt+0x42>
 800064da:	fe c8 d2 da 	sub	r8,pc,-11558
 800064de:	fe c9 d1 cc 	sub	r9,pc,-11828
+	} else if (int_level == AVR32_INTC_INT2) {
 800064e2:	f2 08 01 08 	sub	r8,r9,r8
+		AVR32_INTC.ipr[int_grp] = IPR_INT2;
 800064e6:	bf a8       	sbr	r8,0x1e
 800064e8:	c1 18       	rjmp	8000650a <INTC_register_interrupt+0x62>
 800064ea:	fe c8 d2 ea 	sub	r8,pc,-11542
 800064ee:	58 2a       	cp.w	r10,2
+	} else {
+		AVR32_INTC.ipr[int_grp] = IPR_INT3;
 800064f0:	c0 71       	brne	800064fe <INTC_register_interrupt+0x56>
 800064f2:	fe c9 d1 d2 	sub	r9,pc,-11822
 800064f6:	f2 08 01 08 	sub	r8,r9,r8
@@ -11858,21 +12829,76 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006514:	d4 21       	pushm	r4-r7,lr
 80006516:	fe c8 d3 16 	sub	r8,pc,-11498
 8000651a:	e3 b8 00 01 	mtsr	0x4,r8
+ * \brief Init EVBA address. This operation may or may not have been done by the
+ * C startup process.
+ */
+static __inline__ void INTC_init_evba(void)
+{
+  Set_system_register(AVR32_EVBA, (int32_t)&_evba );
 8000651e:	fe ce d2 1a 	sub	lr,pc,-11750
+			int_req < _int_handler_table[int_grp].num_irqs;
+			int_req++)
+		{
+			/* Assign _unhandled_interrupt as the default interrupt
+			handler. */
+			_int_handler_table[int_grp]
 80006522:	fe c9 cc 46 	sub	r9,pc,-13242
+
+		/* Set the interrupt group priority register to its default
+		value.
+		By default, all interrupt groups are linked to the interrupt
+		priority level 0 and to the interrupt vector _int0. */
+		AVR32_INTC.ipr[int_grp] = IPR_INT0;
 80006526:	10 1e       	sub	lr,r8
 80006528:	fe cc 00 82 	sub	r12,pc,130
+			int_req++)
+		{
+			/* Assign _unhandled_interrupt as the default interrupt
+			handler. */
+			_int_handler_table[int_grp]
+				._int_line_handler_table[int_req]
 8000652c:	30 08       	mov	r8,0
 8000652e:	fe 7b 08 00 	mov	r11,-63488
+	for (int_grp = 0; int_grp < AVR32_INTC_NUM_INT_GRPS; int_grp++)
+	{
+		// For all interrupt request lines of each group,
+		for (int_req = 0;
+			int_req < _int_handler_table[int_grp].num_irqs;
+			int_req++)
 80006532:	c0 e8       	rjmp	8000654e <INTC_init_interrupts+0x3a>
+		{
+			/* Assign _unhandled_interrupt as the default interrupt
+			handler. */
+			_int_handler_table[int_grp]
 80006534:	72 16       	ld.w	r6,r9[0x4]
+
+	// For all interrupt groups,
+	for (int_grp = 0; int_grp < AVR32_INTC_NUM_INT_GRPS; int_grp++)
+	{
+		// For all interrupt request lines of each group,
+		for (int_req = 0;
 80006536:	ec 0a 00 26 	add	r6,r6,r10<<0x2
+
+		/* Set the interrupt group priority register to its default
+		value.
+		By default, all interrupt groups are linked to the interrupt
+		priority level 0 and to the interrupt vector _int0. */
+		AVR32_INTC.ipr[int_grp] = IPR_INT0;
 8000653a:	2f fa       	sub	r10,-1
 8000653c:	8d 0c       	st.w	r6[0x0],r12
+	uint32_t int_grp, int_req;
+
+	INTC_init_evba();
+
+	// For all interrupt groups,
+	for (int_grp = 0; int_grp < AVR32_INTC_NUM_INT_GRPS; int_grp++)
 8000653e:	0e 3a       	cp.w	r10,r7
 80006540:	cf a3       	brcs	80006534 <INTC_init_interrupts+0x20>
 80006542:	f6 08 09 2e 	st.w	r11[r8<<0x2],lr
 80006546:	2f 89       	sub	r9,-8
+	{
+		// For all interrupt request lines of each group,
+		for (int_req = 0;
 80006548:	2f f8       	sub	r8,-1
 8000654a:	59 28       	cp.w	r8,18
 8000654c:	c0 40       	breq	80006554 <INTC_init_interrupts+0x40>
@@ -11885,58 +12911,162 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006558 <_get_interrupt_handler>:
 80006558:	e0 68 00 83 	mov	r8,131
 8000655c:	fe 79 08 00 	mov	r9,-63488
+__int_handler _get_interrupt_handler(uint32_t int_level)
+{
+	/* ICR3 is mapped first, ICR0 last.
+	Code in exception.S puts int_level in R12 which is used by the compiler
+	to pass a single argument to a function. */
+	uint32_t int_grp = AVR32_INTC.icr[AVR32_INTC_INT3 - int_level];
 80006560:	f0 0c 01 0c 	sub	r12,r8,r12
 80006564:	f2 0c 03 28 	ld.w	r8,r9[r12<<0x2]
+	uint32_t int_req = AVR32_INTC.irr[int_grp];
 80006568:	f0 ca ff c0 	sub	r10,r8,-64
 8000656c:	f2 0a 03 2c 	ld.w	r12,r9[r10<<0x2]
+	exception.S will provide the interrupt handler with a clean interrupt
+	stack frame, with nothing more pushed onto the stack. The interrupt
+	handler must manage the `rete' instruction, which can be done using
+	pure assembly, inline assembly or the `__attribute__((__interrupt__))'
+	C function attribute.*/
+	return (int_req)
 80006570:	58 0c       	cp.w	r12,0
 80006572:	5e 0c       	reteq	r12
+		? _int_handler_table[int_grp]._int_line_handler_table[32
 80006574:	fe c9 cc 98 	sub	r9,pc,-13160
 80006578:	f8 0c 12 00 	clz	r12,r12
 8000657c:	f2 08 00 38 	add	r8,r9,r8<<0x3
 80006580:	f8 0c 11 1f 	rsub	r12,r12,31
+	exception.S will provide the interrupt handler with a clean interrupt
+	stack frame, with nothing more pushed onto the stack. The interrupt
+	handler must manage the `rete' instruction, which can be done using
+	pure assembly, inline assembly or the `__attribute__((__interrupt__))'
+	C function attribute.*/
+	return (int_req)
 80006584:	70 18       	ld.w	r8,r8[0x4]
 80006586:	f0 0c 03 2c 	ld.w	r12,r8[r12<<0x2]
+		? _int_handler_table[int_grp]._int_line_handler_table[32
+			- clz(int_req) - 1]
+		: NULL;
+}
 8000658a:	5e fc       	retal	r12
 
 8000658c <getBaudDiv>:
+xSemaphoreHandle xSPIMutex;
+#endif
+
+int16_t getBaudDiv(const uint32_t baudrate, uint32_t pb_hz)
+{
+	uint32_t baudDiv = div_ceil(pb_hz, baudrate);
 8000658c:	f8 c8 00 01 	sub	r8,r12,1
 80006590:	f0 0b 00 0b 	add	r11,r8,r11
 80006594:	f6 0c 0d 0a 	divu	r10,r11,r12
 80006598:	14 9c       	mov	r12,r10
+
+	if (baudDiv <= 0 || baudDiv > 255) {
 8000659a:	f4 c8 00 01 	sub	r8,r10,1
 8000659e:	e0 48 00 fe 	cp.w	r8,254
 800065a2:	e0 88 00 03 	brls	800065a8 <getBaudDiv+0x1c>
 800065a6:	5e fe       	retal	-1
+		return -1;
+	}
+
+	return baudDiv;
 800065a8:	5c 8c       	casts.h	r12
+}
 800065aa:	5e fc       	retal	r12
 
 800065ac <spi_initMaster>:
+	return SPI_OK;
+}
+
+spi_status_t spi_initMaster(volatile avr32_spi_t *spi,
+		const spi_options_t *options)
+{
 800065ac:	d4 01       	pushm	lr
+	u_avr32_spi_mr_t u_avr32_spi_mr;
+
+	if (options->modfdis > 1) {
 800065ae:	30 18       	mov	r8,1
+	return SPI_OK;
+}
+
+spi_status_t spi_initMaster(volatile avr32_spi_t *spi,
+		const spi_options_t *options)
+{
 800065b0:	18 99       	mov	r9,r12
+	u_avr32_spi_mr_t u_avr32_spi_mr;
+
+	if (options->modfdis > 1) {
 800065b2:	f7 3a 00 0d 	ld.ub	r10,r11[13]
 800065b6:	f0 0a 18 00 	cp.b	r10,r8
 800065ba:	e0 88 00 04 	brls	800065c2 <spi_initMaster+0x16>
 800065be:	30 2c       	mov	r12,2
 800065c0:	d8 02       	popm	pc
+
+	/* Master Mode. */
+	u_avr32_spi_mr.mr = spi->mr;
+	u_avr32_spi_mr.MR.mstr = 1;
+	u_avr32_spi_mr.MR.modfdis = options->modfdis;
+	u_avr32_spi_mr.MR.llb = 0;
 800065c2:	30 0a       	mov	r10,0
+	if (options->modfdis > 1) {
+		return SPI_ERROR_ARGUMENT;
+	}
+
+	/* Reset. */
+	spi->cr = AVR32_SPI_CR_SWRST_MASK;
 800065c4:	e0 68 00 80 	mov	r8,128
 800065c8:	99 08       	st.w	r12[0x0],r8
+
+	/* Master Mode. */
+	u_avr32_spi_mr.mr = spi->mr;
+	u_avr32_spi_mr.MR.mstr = 1;
 800065ca:	30 1e       	mov	lr,1
+
+	/* Reset. */
+	spi->cr = AVR32_SPI_CR_SWRST_MASK;
+
+	/* Master Mode. */
+	u_avr32_spi_mr.mr = spi->mr;
 800065cc:	78 18       	ld.w	r8,r12[0x4]
+	u_avr32_spi_mr.MR.mstr = 1;
+	u_avr32_spi_mr.MR.modfdis = options->modfdis;
 800065ce:	f7 3b 00 0d 	ld.ub	r11,r11[13]
+	u_avr32_spi_mr.MR.llb = 0;
+	u_avr32_spi_mr.MR.pcs = (1 << AVR32_SPI_MR_PCS_SIZE) - 1;
+	spi->mr = u_avr32_spi_mr.mr;
 800065d2:	14 9c       	mov	r12,r10
+	/* Reset. */
+	spi->cr = AVR32_SPI_CR_SWRST_MASK;
+
+	/* Master Mode. */
+	u_avr32_spi_mr.mr = spi->mr;
+	u_avr32_spi_mr.MR.mstr = 1;
 800065d4:	f1 de d0 01 	bfins	r8,lr,0x0,0x1
+	u_avr32_spi_mr.MR.modfdis = options->modfdis;
 800065d8:	f1 db d0 81 	bfins	r8,r11,0x4,0x1
+	u_avr32_spi_mr.MR.llb = 0;
 800065dc:	f1 da d0 e1 	bfins	r8,r10,0x7,0x1
+	u_avr32_spi_mr.MR.pcs = (1 << AVR32_SPI_MR_PCS_SIZE) - 1;
 800065e0:	30 fa       	mov	r10,15
 800065e2:	f1 da d2 04 	bfins	r8,r10,0x10,0x4
+	spi->mr = u_avr32_spi_mr.mr;
 800065e6:	93 18       	st.w	r9[0x4],r8
+
+	return SPI_OK;
+}
 800065e8:	d8 02       	popm	pc
 
 800065ea <spi_selectionMode>:
+
+spi_status_t spi_selectionMode(volatile avr32_spi_t *spi,
+		uint8_t variable_ps,
+		uint8_t pcs_decode,
+		uint8_t delay)
+{
 800065ea:	d4 01       	pushm	lr
+	u_avr32_spi_mr_t u_avr32_spi_mr;
+
+	if (variable_ps > 1 ||
 800065ec:	30 18       	mov	r8,1
 800065ee:	f0 0b 18 00 	cp.b	r11,r8
 800065f2:	5f be       	srhi	lr
@@ -11946,24 +13076,59 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 800065fc:	c0 30       	breq	80006602 <spi_selectionMode+0x18>
 800065fe:	30 2c       	mov	r12,2
 80006600:	d8 02       	popm	pc
+			pcs_decode > 1) {
+		return SPI_ERROR_ARGUMENT;
+	}
+
+	u_avr32_spi_mr.mr = spi->mr;
 80006602:	78 18       	ld.w	r8,r12[0x4]
+	u_avr32_spi_mr.MR.ps = variable_ps;
 80006604:	f1 db d0 21 	bfins	r8,r11,0x1,0x1
+	u_avr32_spi_mr.MR.pcsdec = pcs_decode;
 80006608:	f1 da d0 41 	bfins	r8,r10,0x2,0x1
+	u_avr32_spi_mr.MR.dlybcs = delay;
 8000660c:	f1 d9 d3 08 	bfins	r8,r9,0x18,0x8
+	spi->mr = u_avr32_spi_mr.mr;
 80006610:	99 18       	st.w	r12[0x4],r8
 80006612:	d8 0a       	popm	pc,r12=0
 
 80006614 <spi_selectChip>:
+	while (pdFALSE == xSemaphoreTake(xSPIMutex, 20)) {
+	}
+#endif
+
+	/* Assert all lines; no peripheral is selected. */
+	spi->mr |= AVR32_SPI_MR_PCS_MASK;
 80006614:	78 19       	ld.w	r9,r12[0x4]
+
+	return SPI_OK;
+}
+
+spi_status_t spi_selectChip(volatile avr32_spi_t *spi, uint8_t chip)
+{
 80006616:	18 98       	mov	r8,r12
+	while (pdFALSE == xSemaphoreTake(xSPIMutex, 20)) {
+	}
+#endif
+
+	/* Assert all lines; no peripheral is selected. */
+	spi->mr |= AVR32_SPI_MR_PCS_MASK;
 80006618:	ea 19 00 0f 	orh	r9,0xf
 8000661c:	99 19       	st.w	r12[0x4],r9
+
+	if (spi->mr & AVR32_SPI_MR_PCSDEC_MASK) {
 8000661e:	78 1c       	ld.w	r12,r12[0x4]
 80006620:	e2 1c 00 04 	andl	r12,0x4,COH
 80006624:	c1 00       	breq	80006644 <spi_selectChip+0x30>
+		/* The signal is decoded; allow up to 15 chips. */
+		if (chip > 14) {
 80006626:	30 e9       	mov	r9,14
 80006628:	f2 0b 18 00 	cp.b	r11,r9
 8000662c:	e0 8b 00 1a 	brhi	80006660 <spi_selectChip+0x4c>
+			return SPI_ERROR_ARGUMENT;
+		}
+
+		spi->mr &= ~AVR32_SPI_MR_PCS_MASK |
 80006630:	70 19       	ld.w	r9,r8[0x4]
 80006632:	b1 6b       	lsl	r11,0x10
 80006634:	30 0c       	mov	r12,0
@@ -11972,9 +13137,16 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8000663e:	12 6b       	and	r11,r9
 80006640:	91 1b       	st.w	r8[0x4],r11
 80006642:	5e fc       	retal	r12
+				(chip << AVR32_SPI_MR_PCS_OFFSET);
+	} else {
+		if (chip > 3) {
 80006644:	30 39       	mov	r9,3
 80006646:	f2 0b 18 00 	cp.b	r11,r9
 8000664a:	e0 8b 00 0b 	brhi	80006660 <spi_selectChip+0x4c>
+			return SPI_ERROR_ARGUMENT;
+		}
+
+		spi->mr &= ~(1 << (AVR32_SPI_MR_PCS_OFFSET + chip));
 8000664e:	70 19       	ld.w	r9,r8[0x4]
 80006650:	2f 0b       	sub	r11,-16
 80006652:	30 1a       	mov	r10,1
@@ -11984,65 +13156,179 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8000665c:	91 1b       	st.w	r8[0x4],r11
 8000665e:	5e fc       	retal	r12
 80006660:	30 2c       	mov	r12,2
+	}
+
+	return SPI_OK;
+}
 80006662:	5e fc       	retal	r12
 
 80006664 <spi_unselectChip>:
+
+spi_status_t spi_unselectChip(volatile avr32_spi_t *spi, uint8_t chip)
+{
 80006664:	e0 68 3a 98 	mov	r8,15000
+	uint32_t timeout = SPI_TIMEOUT;
+
+	while (!(spi->sr & AVR32_SPI_SR_TXEMPTY_MASK)) {
 80006668:	c0 58       	rjmp	80006672 <spi_unselectChip+0xe>
+		if (!timeout--) {
 8000666a:	58 08       	cp.w	r8,0
 8000666c:	c0 21       	brne	80006670 <spi_unselectChip+0xc>
 8000666e:	5e ff       	retal	1
 80006670:	20 18       	sub	r8,1
+
+spi_status_t spi_unselectChip(volatile avr32_spi_t *spi, uint8_t chip)
+{
+	uint32_t timeout = SPI_TIMEOUT;
+
+	while (!(spi->sr & AVR32_SPI_SR_TXEMPTY_MASK)) {
 80006672:	78 49       	ld.w	r9,r12[0x10]
 80006674:	ed b9 00 09 	bld	r9,0x9
 80006678:	cf 91       	brne	8000666a <spi_unselectChip+0x6>
+			return SPI_ERROR_TIMEOUT;
+		}
+	}
+
+	/* Assert all lines; no peripheral is selected. */
+	spi->mr |= AVR32_SPI_MR_PCS_MASK;
 8000667a:	78 18       	ld.w	r8,r12[0x4]
 8000667c:	ea 18 00 0f 	orh	r8,0xf
 80006680:	99 18       	st.w	r12[0x4],r8
+
+	/* Last transfer, so de-assert the current NPCS if CSAAT is set. */
+	spi->cr = AVR32_SPI_CR_LASTXFER_MASK;
 80006682:	30 08       	mov	r8,0
 80006684:	ea 18 01 00 	orh	r8,0x100
 80006688:	99 08       	st.w	r12[0x0],r8
 8000668a:	5e fd       	retal	0
 
 8000668c <spi_setupChipReg>:
+}
+
+spi_status_t spi_setupChipReg(volatile avr32_spi_t *spi,
+		const spi_options_t *options,
+		uint32_t pb_hz)
+{
 8000668c:	d4 31       	pushm	r0-r7,lr
+	u_avr32_spi_csr_t u_avr32_spi_csr;
+
+	if (options->spi_mode > 3 ||
 8000668e:	30 32       	mov	r2,3
+}
+
+spi_status_t spi_setupChipReg(volatile avr32_spi_t *spi,
+		const spi_options_t *options,
+		uint32_t pb_hz)
+{
 80006690:	16 97       	mov	r7,r11
 80006692:	18 96       	mov	r6,r12
+	u_avr32_spi_csr_t u_avr32_spi_csr;
+
+	if (options->spi_mode > 3 ||
 80006694:	f7 34 00 0c 	ld.ub	r4,r11[12]
 80006698:	e4 04 18 00 	cp.b	r4,r2
 8000669c:	e0 8b 00 46 	brhi	80006728 <spi_setupChipReg+0x9c>
+			options->stay_act > 1 ||
 800066a0:	f7 31 00 0b 	ld.ub	r1,r11[11]
+		const spi_options_t *options,
+		uint32_t pb_hz)
+{
+	u_avr32_spi_csr_t u_avr32_spi_csr;
+
+	if (options->spi_mode > 3 ||
 800066a4:	30 15       	mov	r5,1
 800066a6:	ea 01 18 00 	cp.b	r1,r5
 800066aa:	e0 8b 00 3f 	brhi	80006728 <spi_setupChipReg+0x9c>
+			options->stay_act > 1 ||
+			options->bits < 8 || options->bits > 16) {
 800066ae:	f7 33 00 08 	ld.ub	r3,r11[8]
+		const spi_options_t *options,
+		uint32_t pb_hz)
+{
+	u_avr32_spi_csr_t u_avr32_spi_csr;
+
+	if (options->spi_mode > 3 ||
 800066b2:	30 78       	mov	r8,7
 800066b4:	f0 03 18 00 	cp.b	r3,r8
 800066b8:	e0 88 00 38 	brls	80006728 <spi_setupChipReg+0x9c>
 800066bc:	31 08       	mov	r8,16
 800066be:	f0 03 18 00 	cp.b	r3,r8
 800066c2:	e0 8b 00 33 	brhi	80006728 <spi_setupChipReg+0x9c>
+			options->stay_act > 1 ||
+			options->bits < 8 || options->bits > 16) {
+		return SPI_ERROR_ARGUMENT;
+	}
+
+	int baudDiv = getBaudDiv(options->baudrate, pb_hz);
 800066c6:	14 9b       	mov	r11,r10
 800066c8:	6e 1c       	ld.w	r12,r7[0x4]
 800066ca:	c6 1f       	rcall	8000658c <getBaudDiv>
 800066cc:	c2 e5       	brlt	80006728 <spi_setupChipReg+0x9c>
+
+	if (baudDiv < 0) {
 800066ce:	08 9a       	mov	r10,r4
+	}
+
+	/* Will use CSR0 offsets; these are the same for CSR0 to CSR3. */
+	u_avr32_spi_csr.csr = 0;
+	u_avr32_spi_csr.CSR.cpol   = options->spi_mode >> 1;
+	u_avr32_spi_csr.CSR.ncpha  = (options->spi_mode & 0x1) ^ 0x1;
 800066d0:	ec 1a 00 01 	eorl	r10,0x1
 800066d4:	30 08       	mov	r8,0
+	if (baudDiv < 0) {
+		return SPI_ERROR_ARGUMENT;
+	}
+
+	/* Will use CSR0 offsets; these are the same for CSR0 to CSR3. */
+	u_avr32_spi_csr.csr = 0;
 800066d6:	a1 94       	lsr	r4,0x1
+	u_avr32_spi_csr.CSR.cpol   = options->spi_mode >> 1;
 800066d8:	f1 d4 d0 01 	bfins	r8,r4,0x0,0x1
 800066dc:	f1 da d0 21 	bfins	r8,r10,0x1,0x1
+	u_avr32_spi_csr.CSR.ncpha  = (options->spi_mode & 0x1) ^ 0x1;
 800066e0:	ef 3a 00 09 	ld.ub	r10,r7[9]
+	u_avr32_spi_csr.CSR.csaat  = options->stay_act;
+	u_avr32_spi_csr.CSR.bits   = options->bits - 8;
+	u_avr32_spi_csr.CSR.scbr   = baudDiv;
+	u_avr32_spi_csr.CSR.dlybs  = options->spck_delay;
 800066e4:	20 83       	sub	r3,8
+	/* Will use CSR0 offsets; these are the same for CSR0 to CSR3. */
+	u_avr32_spi_csr.csr = 0;
+	u_avr32_spi_csr.CSR.cpol   = options->spi_mode >> 1;
+	u_avr32_spi_csr.CSR.ncpha  = (options->spi_mode & 0x1) ^ 0x1;
+	u_avr32_spi_csr.CSR.csaat  = options->stay_act;
+	u_avr32_spi_csr.CSR.bits   = options->bits - 8;
 800066e6:	f1 d1 d0 61 	bfins	r8,r1,0x3,0x1
+
+	/* Will use CSR0 offsets; these are the same for CSR0 to CSR3. */
+	u_avr32_spi_csr.csr = 0;
+	u_avr32_spi_csr.CSR.cpol   = options->spi_mode >> 1;
+	u_avr32_spi_csr.CSR.ncpha  = (options->spi_mode & 0x1) ^ 0x1;
+	u_avr32_spi_csr.CSR.csaat  = options->stay_act;
 800066ea:	0f 89       	ld.ub	r9,r7[0x0]
+	u_avr32_spi_csr.CSR.bits   = options->bits - 8;
+	u_avr32_spi_csr.CSR.scbr   = baudDiv;
+	u_avr32_spi_csr.CSR.dlybs  = options->spck_delay;
+	u_avr32_spi_csr.CSR.dlybct = options->trans_delay;
+
+	switch (options->reg) {
 800066ec:	f1 d3 d0 84 	bfins	r8,r3,0x4,0x4
+	/* Will use CSR0 offsets; these are the same for CSR0 to CSR3. */
+	u_avr32_spi_csr.csr = 0;
+	u_avr32_spi_csr.CSR.cpol   = options->spi_mode >> 1;
+	u_avr32_spi_csr.CSR.ncpha  = (options->spi_mode & 0x1) ^ 0x1;
+	u_avr32_spi_csr.CSR.csaat  = options->stay_act;
+	u_avr32_spi_csr.CSR.bits   = options->bits - 8;
 800066f0:	f1 dc d1 08 	bfins	r8,r12,0x8,0x8
+	u_avr32_spi_csr.CSR.scbr   = baudDiv;
 800066f4:	f1 da d2 08 	bfins	r8,r10,0x10,0x8
+	u_avr32_spi_csr.CSR.dlybs  = options->spck_delay;
 800066f8:	ef 3a 00 0a 	ld.ub	r10,r7[10]
+	u_avr32_spi_csr.CSR.dlybct = options->trans_delay;
 800066fc:	f1 da d3 08 	bfins	r8,r10,0x18,0x8
 80006700:	ea 09 18 00 	cp.b	r9,r5
+
+	switch (options->reg) {
 80006704:	c0 c0       	breq	8000671c <spi_setupChipReg+0x90>
 80006706:	c0 93       	brcs	80006718 <spi_setupChipReg+0x8c>
 80006708:	30 2a       	mov	r10,2
@@ -12052,57 +13338,136 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006714:	c0 a1       	brne	80006728 <spi_setupChipReg+0x9c>
 80006716:	c0 78       	rjmp	80006724 <spi_setupChipReg+0x98>
 80006718:	8d c8       	st.w	r6[0x30],r8
+	case 0:
+		spi->csr0 = u_avr32_spi_csr.csr;
 8000671a:	c0 68       	rjmp	80006726 <spi_setupChipReg+0x9a>
 8000671c:	8d d8       	st.w	r6[0x34],r8
+		break;
+
+	case 1:
+		spi->csr1 = u_avr32_spi_csr.csr;
 8000671e:	c0 48       	rjmp	80006726 <spi_setupChipReg+0x9a>
 80006720:	8d e8       	st.w	r6[0x38],r8
+		break;
+
+	case 2:
+		spi->csr2 = u_avr32_spi_csr.csr;
 80006722:	c0 28       	rjmp	80006726 <spi_setupChipReg+0x9a>
 80006724:	8d f8       	st.w	r6[0x3c],r8
+		break;
+
+	case 3:
+		spi->csr3 = u_avr32_spi_csr.csr;
 80006726:	d8 3a       	popm	r0-r7,pc,r12=0
 80006728:	30 2c       	mov	r12,2
+		break;
 8000672a:	d8 32       	popm	r0-r7,pc
 
 8000672c <spi_enable>:
+		}
+	}
+#endif
+
+	return SPI_OK;
+}
 8000672c:	30 18       	mov	r8,1
 8000672e:	99 08       	st.w	r12[0x0],r8
 80006730:	5e fc       	retal	r12
 
 80006732 <spi_write>:
 80006732:	e0 68 3a 98 	mov	r8,15000
+
+spi_status_t spi_write(volatile avr32_spi_t *spi, uint16_t data)
+{
+	uint32_t timeout = SPI_TIMEOUT;
+
+	while (!(spi->sr & AVR32_SPI_SR_TDRE_MASK)) {
 80006736:	c0 58       	rjmp	80006740 <spi_write+0xe>
+		if (!timeout--) {
 80006738:	58 08       	cp.w	r8,0
 8000673a:	c0 21       	brne	8000673e <spi_write+0xc>
 8000673c:	5e ff       	retal	1
 8000673e:	20 18       	sub	r8,1
+
+spi_status_t spi_write(volatile avr32_spi_t *spi, uint16_t data)
+{
+	uint32_t timeout = SPI_TIMEOUT;
+
+	while (!(spi->sr & AVR32_SPI_SR_TDRE_MASK)) {
 80006740:	78 49       	ld.w	r9,r12[0x10]
 80006742:	ed b9 00 01 	bld	r9,0x1
 80006746:	cf 91       	brne	80006738 <spi_write+0x6>
+		if (!timeout--) {
+			return SPI_ERROR_TIMEOUT;
+		}
+	}
+
+	spi->tdr = data << AVR32_SPI_TDR_TD_OFFSET;
 80006748:	5c 7b       	castu.h	r11
 8000674a:	99 3b       	st.w	r12[0xc],r11
 8000674c:	5e fd       	retal	0
 
 8000674e <spi_read>:
+{
+	return ((spi->sr & AVR32_SPI_SR_RDRF_MASK) != 0);
+}
+
+spi_status_t spi_read(volatile avr32_spi_t *spi, uint16_t *data)
+{
 8000674e:	e0 68 3a 98 	mov	r8,15000
+	unsigned int timeout = SPI_TIMEOUT;
+
+	while ((spi->sr &
 80006752:	c0 58       	rjmp	8000675c <spi_read+0xe>
+			(AVR32_SPI_SR_RDRF_MASK | AVR32_SPI_SR_TXEMPTY_MASK)) !=
+			(AVR32_SPI_SR_RDRF_MASK | AVR32_SPI_SR_TXEMPTY_MASK)) {
+		if (!timeout--) {
 80006754:	58 08       	cp.w	r8,0
 80006756:	c0 21       	brne	8000675a <spi_read+0xc>
 80006758:	5e ff       	retal	1
 8000675a:	20 18       	sub	r8,1
+
+spi_status_t spi_read(volatile avr32_spi_t *spi, uint16_t *data)
+{
+	unsigned int timeout = SPI_TIMEOUT;
+
+	while ((spi->sr &
 8000675c:	78 49       	ld.w	r9,r12[0x10]
 8000675e:	e2 19 02 01 	andl	r9,0x201,COH
 80006762:	e0 49 02 01 	cp.w	r9,513
 80006766:	cf 71       	brne	80006754 <spi_read+0x6>
+		if (!timeout--) {
+			return SPI_ERROR_TIMEOUT;
+		}
+	}
+
+	*data = spi->rdr >> AVR32_SPI_RDR_RD_OFFSET;
 80006768:	78 28       	ld.w	r8,r12[0x8]
 8000676a:	30 0c       	mov	r12,0
 8000676c:	b6 08       	st.h	r11[0x0],r8
+
+	return SPI_OK;
+}
 8000676e:	5e fc       	retal	r12
 
 80006770 <tc_init_waveform>:
+  return 0;
+}
+
+
+int tc_init_waveform(volatile avr32_tc_t *tc, const tc_waveform_opt_t *opt)
+{
 80006770:	d4 01       	pushm	lr
+  // Check for valid input.
+  if (opt->channel >= TC_NUMBER_OF_CHANNELS)
 80006772:	76 09       	ld.w	r9,r11[0x0]
 80006774:	58 29       	cp.w	r9,2
 80006776:	e0 88 00 03 	brls	8000677c <tc_init_waveform+0xc>
 8000677a:	dc 0a       	popm	pc,r12=-1
+    return TC_INVALID_ARGUMENT;
+
+  // GENERATE SIGNALS: Waveform operating mode.
+  tc->channel[opt->channel].cmr = opt->bswtrg << AVR32_TC_BSWTRG_OFFSET |
 8000677c:	76 18       	ld.w	r8,r11[0x4]
 8000677e:	a5 69       	lsl	r9,0x4
 80006780:	10 9e       	mov	lr,r8
@@ -12159,9 +13524,19 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8000680e:	d8 0a       	popm	pc,r12=0
 
 80006810 <tc_start>:
+
+
+int tc_start(volatile avr32_tc_t *tc, unsigned int channel)
+{
+  // Check for valid input.
+  if (channel >= TC_NUMBER_OF_CHANNELS)
 80006810:	58 2b       	cp.w	r11,2
 80006812:	e0 88 00 03 	brls	80006818 <tc_start+0x8>
 80006816:	5e fe       	retal	-1
+    return TC_INVALID_ARGUMENT;
+
+  // Enable, reset and start the selected timer/counter channel.
+  tc->channel[channel].ccr = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;
 80006818:	a7 6b       	lsl	r11,0x6
 8000681a:	16 0c       	add	r12,r11
 8000681c:	30 58       	mov	r8,5
@@ -12169,24 +13544,45 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006820:	5e fd       	retal	0
 
 80006822 <tc_read_sr>:
+
+
+int tc_read_sr(volatile avr32_tc_t *tc, unsigned int channel)
+{
+  // Check for valid input.
+  if (channel >= TC_NUMBER_OF_CHANNELS)
 80006822:	58 2b       	cp.w	r11,2
 80006824:	e0 88 00 03 	brls	8000682a <tc_read_sr+0x8>
 80006828:	5e fe       	retal	-1
+    return TC_INVALID_ARGUMENT;
+
+  return tc->channel[channel].sr;
 8000682a:	a7 6b       	lsl	r11,0x6
 8000682c:	2e 0b       	sub	r11,-32
 8000682e:	16 0c       	add	r12,r11
 80006830:	78 0c       	ld.w	r12,r12[0x0]
+}
 80006832:	5e fc       	retal	r12
 
 80006834 <tc_write_rc>:
+
+
+int tc_write_rc(volatile avr32_tc_t *tc, unsigned int channel, unsigned short value)
+{
+  // Check for valid input.
+  if (channel >= TC_NUMBER_OF_CHANNELS)
 80006834:	58 2b       	cp.w	r11,2
 80006836:	e0 88 00 03 	brls	8000683c <tc_write_rc+0x8>
 8000683a:	5e fe       	retal	-1
+    return TC_INVALID_ARGUMENT;
+
+  // This function is only available in WAVEFORM mode.
+  if (Tst_bits(tc->channel[channel].cmr, AVR32_TC_WAVE_MASK))
 8000683c:	f6 08 15 04 	lsl	r8,r11,0x4
 80006840:	2f f8       	sub	r8,-1
 80006842:	f8 08 03 28 	ld.w	r8,r12[r8<<0x2]
 80006846:	ed b8 00 0f 	bld	r8,0xf
 8000684a:	c0 c1       	brne	80006862 <tc_write_rc+0x2e>
+    Wr_bitfield(tc->channel[channel].rc, AVR32_TC_RC_MASK, value);
 8000684c:	a7 6b       	lsl	r11,0x6
 8000684e:	f3 da c0 10 	bfextu	r9,r10,0x0,0x10
 80006852:	16 0c       	add	r12,r11
@@ -12195,15 +13591,32 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006858:	e0 18 00 00 	andl	r8,0x0
 8000685c:	f3 e8 10 08 	or	r8,r9,r8
 80006860:	99 08       	st.w	r12[0x0],r8
+
+  return value;
 80006862:	f9 da c0 10 	bfextu	r12,r10,0x0,0x10
+}
 80006866:	5e fc       	retal	r12
 
 80006868 <tc_configure_interrupts>:
+  return tc->channel[channel].imr;
+}
+
+
+int tc_configure_interrupts(volatile avr32_tc_t *tc, unsigned int channel, const tc_interrupt_t *bitfield)
+{
 80006868:	d4 21       	pushm	r4-r7,lr
+  bool global_interrupt_enabled = Is_global_interrupt_enabled();
 8000686a:	e1 b9 00 00 	mfsr	r9,0x0
+
+  // Check for valid input.
+  if (channel >= TC_NUMBER_OF_CHANNELS)
 8000686e:	58 2b       	cp.w	r11,2
 80006870:	e0 88 00 03 	brls	80006876 <tc_configure_interrupts+0xe>
 80006874:	dc 2a       	popm	r4-r7,pc,r12=-1
+    return TC_INVALID_ARGUMENT;
+
+  // Enable the appropriate interrupts.
+  tc->channel[channel].ier = bitfield->etrgs << AVR32_TC_ETRGS_OFFSET |
 80006876:	74 08       	ld.w	r8,r10[0x0]
 80006878:	10 9e       	mov	lr,r8
 8000687a:	e2 1e 00 02 	andl	lr,0x2,COH
@@ -12213,10 +13626,23 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006888:	f8 0e 00 0e 	add	lr,r12,lr
 8000688c:	2d ce       	sub	lr,-36
 8000688e:	9d 08       	st.w	lr[0x0],r8
+	return flags;
+}
+
+static inline bool cpu_irq_is_enabled_flags(irqflags_t flags)
+{
+	return !(flags & AVR32_SR_GM_MASK);
 80006890:	ee 19 00 01 	eorh	r9,0x1
 80006894:	f3 d9 c2 01 	bfextu	r9,r9,0x10,0x1
+                             bitfield->cpas << AVR32_TC_CPAS_OFFSET |
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
 80006898:	c0 20       	breq	8000689c <tc_configure_interrupts+0x34>
 8000689a:	d3 03       	ssrf	0x10
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 8000689c:	74 08       	ld.w	r8,r10[0x0]
 8000689e:	e0 67 00 80 	mov	r7,128
 800068a2:	ed d8 c0 e1 	bfextu	r6,r8,0x7,0x1
@@ -12224,40 +13650,124 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 800068aa:	f5 d8 c0 01 	bfextu	r10,r8,0x0,0x1
 800068ae:	ec 1a 00 01 	eorl	r10,0x1
 800068b2:	ef ea 10 0a 	or	r10,r7,r10
+                             (~bitfield->ldrbs & 1) << AVR32_TC_LDRBS_OFFSET |
 800068b6:	ef d8 c0 c1 	bfextu	r7,r8,0x6,0x1
 800068ba:	f9 b7 00 40 	moveq	r7,64
 800068be:	f9 b7 01 00 	movne	r7,0
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 800068c2:	0e 4a       	or	r10,r7
+                             (~bitfield->ldrbs & 1) << AVR32_TC_LDRBS_OFFSET |
+                             (~bitfield->ldras & 1) << AVR32_TC_LDRAS_OFFSET |
 800068c4:	ef d8 c0 a1 	bfextu	r7,r8,0x5,0x1
 800068c8:	f9 b7 00 20 	moveq	r7,32
 800068cc:	f9 b7 01 00 	movne	r7,0
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 800068d0:	0e 4a       	or	r10,r7
+                             (~bitfield->ldrbs & 1) << AVR32_TC_LDRBS_OFFSET |
+                             (~bitfield->ldras & 1) << AVR32_TC_LDRAS_OFFSET |
+                             (~bitfield->cpcs & 1) << AVR32_TC_CPCS_OFFSET |
 800068d2:	ef d8 c0 81 	bfextu	r7,r8,0x4,0x1
 800068d6:	f9 b7 00 10 	moveq	r7,16
 800068da:	f9 b7 01 00 	movne	r7,0
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 800068de:	0e 4a       	or	r10,r7
+                             (~bitfield->ldrbs & 1) << AVR32_TC_LDRBS_OFFSET |
+                             (~bitfield->ldras & 1) << AVR32_TC_LDRAS_OFFSET |
+                             (~bitfield->cpcs & 1) << AVR32_TC_CPCS_OFFSET |
+                             (~bitfield->cpbs & 1) << AVR32_TC_CPBS_OFFSET |
 800068e0:	ef d8 c0 61 	bfextu	r7,r8,0x3,0x1
 800068e4:	f9 b7 00 08 	moveq	r7,8
 800068e8:	f9 b7 01 00 	movne	r7,0
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 800068ec:	0e 4a       	or	r10,r7
+                             (~bitfield->ldrbs & 1) << AVR32_TC_LDRBS_OFFSET |
+                             (~bitfield->ldras & 1) << AVR32_TC_LDRAS_OFFSET |
+                             (~bitfield->cpcs & 1) << AVR32_TC_CPCS_OFFSET |
+                             (~bitfield->cpbs & 1) << AVR32_TC_CPBS_OFFSET |
+                             (~bitfield->cpas & 1) << AVR32_TC_CPAS_OFFSET |
 800068ee:	ef d8 c0 41 	bfextu	r7,r8,0x2,0x1
+                             (~bitfield->lovrs & 1) << AVR32_TC_LOVRS_OFFSET |
 800068f2:	f1 d8 c0 21 	bfextu	r8,r8,0x1,0x1
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
+                             (~bitfield->ldrbs & 1) << AVR32_TC_LDRBS_OFFSET |
+                             (~bitfield->ldras & 1) << AVR32_TC_LDRAS_OFFSET |
+                             (~bitfield->cpcs & 1) << AVR32_TC_CPCS_OFFSET |
+                             (~bitfield->cpbs & 1) << AVR32_TC_CPBS_OFFSET |
+                             (~bitfield->cpas & 1) << AVR32_TC_CPAS_OFFSET |
 800068f6:	58 07       	cp.w	r7,0
 800068f8:	f9 b7 00 04 	moveq	r7,4
 800068fc:	f9 b7 01 00 	movne	r7,0
+                             (~bitfield->lovrs & 1) << AVR32_TC_LOVRS_OFFSET |
 80006900:	58 08       	cp.w	r8,0
 80006902:	f9 b8 00 02 	moveq	r8,2
 80006906:	f9 b8 01 00 	movne	r8,0
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 8000690a:	0e 4a       	or	r10,r7
 8000690c:	f5 e8 10 08 	or	r8,r10,r8
+                             (~bitfield->cpcs & 1) << AVR32_TC_CPCS_OFFSET |
+                             (~bitfield->cpbs & 1) << AVR32_TC_CPBS_OFFSET |
+                             (~bitfield->cpas & 1) << AVR32_TC_CPAS_OFFSET |
+                             (~bitfield->lovrs & 1) << AVR32_TC_LOVRS_OFFSET |
+                             (~bitfield->covfs & 1) << AVR32_TC_COVFS_OFFSET;
+  tc->channel[channel].sr;
 80006910:	f6 0e 15 06 	lsl	lr,r11,0x6
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 80006914:	a7 6b       	lsl	r11,0x6
+                             (~bitfield->cpcs & 1) << AVR32_TC_CPCS_OFFSET |
+                             (~bitfield->cpbs & 1) << AVR32_TC_CPBS_OFFSET |
+                             (~bitfield->cpas & 1) << AVR32_TC_CPAS_OFFSET |
+                             (~bitfield->lovrs & 1) << AVR32_TC_LOVRS_OFFSET |
+                             (~bitfield->covfs & 1) << AVR32_TC_COVFS_OFFSET;
+  tc->channel[channel].sr;
 80006916:	2e 0e       	sub	lr,-32
 80006918:	f8 0e 00 0e 	add	lr,r12,lr
+                             bitfield->lovrs << AVR32_TC_LOVRS_OFFSET |
+                             bitfield->covfs << AVR32_TC_COVFS_OFFSET;
+
+  // Disable the appropriate interrupts.
+  if (global_interrupt_enabled) Disable_global_interrupt();
+  tc->channel[channel].idr = (~bitfield->etrgs & 1) << AVR32_TC_ETRGS_OFFSET |
 8000691c:	16 0c       	add	r12,r11
 8000691e:	2d 8c       	sub	r12,-40
 80006920:	99 08       	st.w	r12[0x0],r8
+                             (~bitfield->cpcs & 1) << AVR32_TC_CPCS_OFFSET |
+                             (~bitfield->cpbs & 1) << AVR32_TC_CPBS_OFFSET |
+                             (~bitfield->cpas & 1) << AVR32_TC_CPAS_OFFSET |
+                             (~bitfield->lovrs & 1) << AVR32_TC_LOVRS_OFFSET |
+                             (~bitfield->covfs & 1) << AVR32_TC_COVFS_OFFSET;
+  tc->channel[channel].sr;
 80006922:	7c 08       	ld.w	r8,lr[0x0]
+  if (global_interrupt_enabled) Enable_global_interrupt();
 80006924:	58 09       	cp.w	r9,0
 80006926:	c0 31       	brne	8000692c <tc_configure_interrupts+0xc4>
 80006928:	12 9c       	mov	r12,r9
@@ -12266,21 +13776,45 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 8000692e:	d8 2a       	popm	r4-r7,pc,r12=0
 
 80006930 <usart_set_async_baudrate>:
+ *
+ * \retval USART_SUCCESS        Baud rate successfully initialized.
+ * \retval USART_INVALID_INPUT  Baud rate set point is out of range for the given input clock frequency.
+ */
+static int usart_set_async_baudrate(volatile avr32_usart_t *usart, unsigned int baudrate, unsigned long pba_hz)
+{
 80006930:	d4 01       	pushm	lr
+  unsigned int over = (pba_hz >= 16 * baudrate) ? 16 : 8;
 80006932:	f6 0e 15 04 	lsl	lr,r11,0x4
 80006936:	1c 3a       	cp.w	r10,lr
 80006938:	f9 be 02 10 	movhs	lr,16
 8000693c:	f9 be 03 08 	movlo	lr,8
+  unsigned int cd_fp = ((1 << AVR32_USART_BRGR_FP_SIZE) * pba_hz + (over * baudrate) / 2) / (over * baudrate);
 80006940:	fc 0b 02 4b 	mul	r11,lr,r11
 80006944:	f6 08 16 01 	lsr	r8,r11,0x1
 80006948:	f0 0a 00 3a 	add	r10,r8,r10<<0x3
 8000694c:	f4 0b 0d 0a 	divu	r10,r10,r11
+  unsigned int cd = cd_fp >> AVR32_USART_BRGR_FP_SIZE;
 80006950:	f4 09 16 03 	lsr	r9,r10,0x3
+  unsigned int fp = cd_fp & ((1 << AVR32_USART_BRGR_FP_SIZE) - 1);
+
+  if (cd < 1 || cd > (1 << AVR32_USART_BRGR_CD_SIZE) - 1)
 80006954:	f2 c8 00 01 	sub	r8,r9,1
 80006958:	e0 48 ff fe 	cp.w	r8,65534
 8000695c:	e0 88 00 03 	brls	80006962 <usart_set_async_baudrate+0x32>
 80006960:	da 0a       	popm	pc,r12=1
+    return USART_INVALID_INPUT;
+
+  usart->mr = (usart->mr & ~(AVR32_USART_MR_USCLKS_MASK |
+                             AVR32_USART_MR_SYNC_MASK |
+                             AVR32_USART_MR_OVER_MASK)) |
+              AVR32_USART_MR_USCLKS_MCK << AVR32_USART_MR_USCLKS_OFFSET |
 80006962:	78 18       	ld.w	r8,r12[0x4]
+  unsigned int fp = cd_fp & ((1 << AVR32_USART_BRGR_FP_SIZE) - 1);
+
+  if (cd < 1 || cd > (1 << AVR32_USART_BRGR_CD_SIZE) - 1)
+    return USART_INVALID_INPUT;
+
+  usart->mr = (usart->mr & ~(AVR32_USART_MR_USCLKS_MASK |
 80006964:	e8 6b 00 00 	mov	r11,524288
 80006968:	e4 18 ff f7 	andh	r8,0xfff7
 8000696c:	e0 18 fe cf 	andl	r8,0xfecf
@@ -12289,94 +13823,220 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006976:	f9 be 00 00 	moveq	lr,0
 8000697a:	fd e8 10 08 	or	r8,lr,r8
 8000697e:	99 18       	st.w	r12[0x4],r8
+                             AVR32_USART_MR_SYNC_MASK |
+                             AVR32_USART_MR_OVER_MASK)) |
+              AVR32_USART_MR_USCLKS_MCK << AVR32_USART_MR_USCLKS_OFFSET |
+              ((over == 16) ? AVR32_USART_MR_OVER_X16 : AVR32_USART_MR_OVER_X8) << AVR32_USART_MR_OVER_OFFSET;
+
+  usart->brgr = cd << AVR32_USART_BRGR_CD_OFFSET |
 80006980:	f5 da c0 03 	bfextu	r10,r10,0x0,0x3
 80006984:	f3 ea 11 09 	or	r9,r9,r10<<0x10
 80006988:	99 89       	st.w	r12[0x20],r9
 8000698a:	d8 0a       	popm	pc,r12=0
 
 8000698c <usart_write_line>:
+}
+
+
+void usart_write_line(volatile avr32_usart_t *usart, const char *string)
+{
+  while (*string != '\0')
 8000698c:	c0 e8       	rjmp	800069a8 <usart_write_line+0x1c>
 8000698e:	e0 68 27 10 	mov	r8,10000
+{
+  int timeout = USART_DEFAULT_TIMEOUT;
+
+  do
+  {
+    if (!timeout--) return USART_FAILURE;
 80006992:	20 18       	sub	r8,1
 80006994:	5b f8       	cp.w	r8,-1
 80006996:	c0 80       	breq	800069a6 <usart_write_line+0x1a>
+ *
+ * \return \c 1 if the USART Transmit Holding Register is free, otherwise \c 0.
+ */
+__always_inline static int usart_tx_ready(volatile avr32_usart_t *usart)
+{
+  return (usart->csr & AVR32_USART_CSR_TXRDY_MASK) != 0;
 80006998:	78 59       	ld.w	r9,r12[0x14]
+}
+
+
+int usart_write_char(volatile avr32_usart_t *usart, int c)
+{
+  if (usart_tx_ready(usart))
 8000699a:	ed b9 00 01 	bld	r9,0x1
 8000699e:	cf a1       	brne	80006992 <usart_write_line+0x6>
+  {
+    usart->thr = (c << AVR32_USART_THR_TXCHR_OFFSET) & AVR32_USART_THR_TXCHR_MASK;
 800069a0:	f5 da c0 09 	bfextu	r10,r10,0x0,0x9
 800069a4:	99 7a       	st.w	r12[0x1c],r10
+
+
+void usart_write_line(volatile avr32_usart_t *usart, const char *string)
+{
+  while (*string != '\0')
+    usart_putchar(usart, *string++);
 800069a6:	2f fb       	sub	r11,-1
+}
+
+
+void usart_write_line(volatile avr32_usart_t *usart, const char *string)
+{
+  while (*string != '\0')
 800069a8:	17 8a       	ld.ub	r10,r11[0x0]
 800069aa:	58 0a       	cp.w	r10,0
 800069ac:	cf 11       	brne	8000698e <usart_write_line+0x2>
+    usart_putchar(usart, *string++);
+}
 800069ae:	5e fc       	retal	r12
 
 800069b0 <usart_reset>:
+//! @{
+
+
+void usart_reset(volatile avr32_usart_t *usart)
+{
+  bool global_interrupt_enabled = cpu_irq_is_enabled();
 800069b0:	e1 b8 00 00 	mfsr	r8,0x0
 800069b4:	ee 18 00 01 	eorh	r8,0x1
 800069b8:	f1 d8 c2 01 	bfextu	r8,r8,0x10,0x1
+
+  // Disable all USART interrupts.
+  // Interrupts needed should be set explicitly on every reset.
+  if (global_interrupt_enabled) cpu_irq_disable();
 800069bc:	c0 20       	breq	800069c0 <usart_reset+0x10>
 800069be:	d3 03       	ssrf	0x10
+  usart->idr = 0xFFFFFFFF;
 800069c0:	3f f9       	mov	r9,-1
 800069c2:	99 39       	st.w	r12[0xc],r9
+  usart->csr;
 800069c4:	78 59       	ld.w	r9,r12[0x14]
+  if (global_interrupt_enabled) cpu_irq_enable();
 800069c6:	58 08       	cp.w	r8,0
 800069c8:	c0 20       	breq	800069cc <usart_reset+0x1c>
 800069ca:	d5 03       	csrf	0x10
+
+  // Reset mode and other registers that could cause unpredictable behavior after reset.
+  usart->mr = 0;
 800069cc:	30 08       	mov	r8,0
 800069ce:	99 18       	st.w	r12[0x4],r8
+  usart->rtor = 0;
 800069d0:	99 98       	st.w	r12[0x24],r8
+  usart->ttgr = 0;
 800069d2:	99 a8       	st.w	r12[0x28],r8
+
+  // Shutdown TX and RX (will be re-enabled when setup has successfully completed),
+  // reset status bits and turn off DTR and RTS.
+  usart->cr = AVR32_USART_CR_RSTRX_MASK   |
 800069d4:	ea 68 61 0c 	mov	r8,680204
 800069d8:	99 08       	st.w	r12[0x0],r8
+#ifndef AVR32_USART_440_H_INCLUDED
+// Note: Modem Signal Management DTR-DSR-DCD-RI are not included in USART rev.440.
+              AVR32_USART_CR_DTRDIS_MASK  |
+#endif
+              AVR32_USART_CR_RTSDIS_MASK;
+}
 800069da:	5e fc       	retal	r12
 
 800069dc <usart_init_rs232>:
+
+
+int usart_init_rs232(volatile avr32_usart_t *usart, const usart_options_t *opt, long pba_hz)
+{
 800069dc:	d4 21       	pushm	r4-r7,lr
 800069de:	20 1d       	sub	sp,4
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
 800069e0:	50 0a       	stdsp	sp[0x0],r10
+              AVR32_USART_CR_RTSDIS_MASK;
+}
+
+
+int usart_init_rs232(volatile avr32_usart_t *usart, const usart_options_t *opt, long pba_hz)
+{
 800069e2:	16 96       	mov	r6,r11
 800069e4:	18 97       	mov	r7,r12
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
 800069e6:	ce 5f       	rcall	800069b0 <usart_reset>
 800069e8:	40 0a       	lddsp	r10,sp[0x0]
+
+  // Check input values.
+  if (!opt || // Null pointer.
 800069ea:	58 06       	cp.w	r6,0
 800069ec:	c5 40       	breq	80006a94 <usart_init_rs232+0xb8>
 800069ee:	0d c8       	ld.ub	r8,r6[0x4]
+      opt->charlength < 5 || opt->charlength > 9 ||
 800069f0:	30 49       	mov	r9,4
+{
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
+
+  // Check input values.
+  if (!opt || // Null pointer.
 800069f2:	f2 08 18 00 	cp.b	r8,r9
 800069f6:	e0 88 00 4f 	brls	80006a94 <usart_init_rs232+0xb8>
 800069fa:	30 95       	mov	r5,9
 800069fc:	ea 08 18 00 	cp.b	r8,r5
 80006a00:	e0 8b 00 4a 	brhi	80006a94 <usart_init_rs232+0xb8>
 80006a04:	0d d9       	ld.ub	r9,r6[0x5]
+      opt->charlength < 5 || opt->charlength > 9 ||
+      opt->paritytype > 7 ||
 80006a06:	30 78       	mov	r8,7
 80006a08:	f0 09 18 00 	cp.b	r9,r8
 80006a0c:	e0 8b 00 44 	brhi	80006a94 <usart_init_rs232+0xb8>
 80006a10:	8c 39       	ld.sh	r9,r6[0x6]
+      opt->stopbits > 2 + 255 ||
 80006a12:	e0 68 01 01 	mov	r8,257
 80006a16:	f0 09 19 00 	cp.h	r9,r8
 80006a1a:	e0 8b 00 3d 	brhi	80006a94 <usart_init_rs232+0xb8>
 80006a1e:	ed 39 00 08 	ld.ub	r9,r6[8]
+      opt->channelmode > 3 ||
 80006a22:	30 38       	mov	r8,3
 80006a24:	f0 09 18 00 	cp.b	r9,r8
 80006a28:	e0 8b 00 36 	brhi	80006a94 <usart_init_rs232+0xb8>
 80006a2c:	6c 0b       	ld.w	r11,r6[0x0]
+      usart_set_async_baudrate(usart, opt->baudrate, pba_hz) == USART_INVALID_INPUT)
 80006a2e:	0e 9c       	mov	r12,r7
 80006a30:	c8 0f       	rcall	80006930 <usart_set_async_baudrate>
 80006a32:	58 1c       	cp.w	r12,1
 80006a34:	c3 00       	breq	80006a94 <usart_init_rs232+0xb8>
+{
+  // Reset the USART and shutdown TX and RX.
+  usart_reset(usart);
+
+  // Check input values.
+  if (!opt || // Null pointer.
 80006a36:	0d c8       	ld.ub	r8,r6[0x4]
 80006a38:	ea 08 18 00 	cp.b	r8,r5
+      opt->stopbits > 2 + 255 ||
+      opt->channelmode > 3 ||
+      usart_set_async_baudrate(usart, opt->baudrate, pba_hz) == USART_INVALID_INPUT)
+    return USART_INVALID_INPUT;
+
+  if (opt->charlength == 9)
 80006a3c:	c0 41       	brne	80006a44 <usart_init_rs232+0x68>
 80006a3e:	6e 18       	ld.w	r8,r7[0x4]
 80006a40:	b1 b8       	sbr	r8,0x11
+  {
+    // Character length set to 9 bits. MODE9 dominates CHRL.
+    usart->mr |= AVR32_USART_MR_MODE9_MASK;
 80006a42:	c0 58       	rjmp	80006a4c <usart_init_rs232+0x70>
 80006a44:	20 58       	sub	r8,5
 80006a46:	6e 19       	ld.w	r9,r7[0x4]
+  }
+  else
+  {
+    // CHRL gives the character length (- 5) when MODE9 = 0.
+    usart->mr |= (opt->charlength - 5) << AVR32_USART_MR_CHRL_OFFSET;
 80006a48:	f3 e8 10 68 	or	r8,r9,r8<<0x6
 80006a4c:	8f 18       	st.w	r7[0x4],r8
 80006a4e:	6e 19       	ld.w	r9,r7[0x4]
 80006a50:	ed 3a 00 08 	ld.ub	r10,r6[8]
+  }
+
+  usart->mr |= opt->paritytype << AVR32_USART_MR_PAR_OFFSET |
 80006a54:	0d d8       	ld.ub	r8,r6[0x5]
 80006a56:	a9 78       	lsl	r8,0x9
 80006a58:	f1 ea 10 e8 	or	r8,r8,r10<<0xe
@@ -12384,29 +14044,53 @@ __always_inline static unsigned long cpu_is_timeout(t_cpu_time *cpu_time)
 80006a5e:	8f 18       	st.w	r7[0x4],r8
 80006a60:	30 29       	mov	r9,2
 80006a62:	8c 38       	ld.sh	r8,r6[0x6]
+               opt->channelmode << AVR32_USART_MR_CHMODE_OFFSET;
+
+  if (opt->stopbits > USART_2_STOPBITS)
 80006a64:	f2 08 19 00 	cp.h	r8,r9
 80006a68:	e0 88 00 09 	brls	80006a7a <usart_init_rs232+0x9e>
 80006a6c:	6e 18       	ld.w	r8,r7[0x4]
 80006a6e:	ad b8       	sbr	r8,0xd
+  {
+    // Set two stop bits
+    usart->mr |= AVR32_USART_MR_NBSTOP_2 << AVR32_USART_MR_NBSTOP_OFFSET;
 80006a70:	8f 18       	st.w	r7[0x4],r8
 80006a72:	8c b8       	ld.uh	r8,r6[0x6]
 80006a74:	20 28       	sub	r8,2
+    // and a timeguard period gives the rest.
+    usart->ttgr = opt->stopbits - USART_2_STOPBITS;
 80006a76:	8f a8       	st.w	r7[0x28],r8
 80006a78:	c0 68       	rjmp	80006a84 <usart_init_rs232+0xa8>
 80006a7a:	6e 19       	ld.w	r9,r7[0x4]
 80006a7c:	5c 78       	castu.h	r8
+  }
+  else
+    // Insert 1, 1.5 or 2 stop bits.
+    usart->mr |= opt->stopbits << AVR32_USART_MR_NBSTOP_OFFSET;
 80006a7e:	f3 e8 10 c8 	or	r8,r9,r8<<0xc
 80006a82:	8f 18       	st.w	r7[0x4],r8
 80006a84:	6e 18       	ld.w	r8,r7[0x4]
 80006a86:	e0 18 ff f0 	andl	r8,0xfff0
+
+  // Set normal mode.
+  usart->mr = (usart->mr & ~AVR32_USART_MR_MODE_MASK) |
 80006a8a:	8f 18       	st.w	r7[0x4],r8
 80006a8c:	30 0c       	mov	r12,0
 80006a8e:	35 08       	mov	r8,80
+              AVR32_USART_MR_MODE_NORMAL << AVR32_USART_MR_MODE_OFFSET;
+
+  // Setup complete; enable communication.
+  // Enable input and output.
+  usart->cr = AVR32_USART_CR_RXEN_MASK |
 80006a90:	8f 08       	st.w	r7[0x0],r8
 80006a92:	c0 28       	rjmp	80006a96 <usart_init_rs232+0xba>
 80006a94:	30 1c       	mov	r12,1
+              AVR32_USART_CR_TXEN_MASK;
+
+  return USART_SUCCESS;
 80006a96:	2f fd       	sub	sp,-4
 80006a98:	d8 22       	popm	r4-r7,pc
+}
 80006a9a:	d7 03       	nop
 
 80006a9c <uhd_get_speed>:
@@ -15915,22 +17599,76 @@ static void uhd_pipe_interrupt_dma(uint8_t pipe)
 80007cba:	d7 03       	nop
 
 80007cbc <print_hex>:
+  print(usart, tmp);
+}
+
+
+void print_hex(volatile avr32_usart_t *usart, unsigned long n)
+{
 80007cbc:	d4 01       	pushm	lr
 80007cbe:	20 3d       	sub	sp,12
+  char tmp[9];
+  int i;
+
+  // Convert the given number to an ASCII hexadecimal representation.
+  tmp[8] = '\0';
 80007cc0:	30 08       	mov	r8,0
+  // Transmit the resulting string with the given USART.
+  print(usart, tmp);
+}
+
+
+void print_hex(volatile avr32_usart_t *usart, unsigned long n)
 80007cc2:	fa ca 00 01 	sub	r10,sp,1
+{
+  char tmp[9];
+  int i;
+
+  // Convert the given number to an ASCII hexadecimal representation.
+  tmp[8] = '\0';
 80007cc6:	fb 68 00 08 	st.b	sp[8],r8
+  for (i = 7; i >= 0; i--)
+  {
+    tmp[i] = HEX_DIGITS[n & 0xF];
 80007cca:	fe c9 e3 36 	sub	r9,pc,-7370
+{
+  char tmp[9];
+  int i;
+
+  // Convert the given number to an ASCII hexadecimal representation.
+  tmp[8] = '\0';
 80007cce:	fa c8 ff f9 	sub	r8,sp,-7
+  for (i = 7; i >= 0; i--)
+  {
+    tmp[i] = HEX_DIGITS[n & 0xF];
 80007cd2:	fd db c0 04 	bfextu	lr,r11,0x0,0x4
 80007cd6:	f2 0e 07 0e 	ld.ub	lr,r9[lr]
+    n >>= 4;
 80007cda:	b0 8e       	st.b	r8[0x0],lr
 80007cdc:	a5 8b       	lsr	r11,0x4
+  char tmp[9];
+  int i;
+
+  // Convert the given number to an ASCII hexadecimal representation.
+  tmp[8] = '\0';
+  for (i = 7; i >= 0; i--)
 80007cde:	20 18       	sub	r8,1
 80007ce0:	14 38       	cp.w	r8,r10
+
+
+void print(volatile avr32_usart_t *usart, const char *str)
+{
+  // Invoke the USART driver to transmit the input string with the given USART.
+  usart_write_line(usart, str);
 80007ce2:	cf 81       	brne	80007cd2 <print_hex+0x16>
 80007ce4:	1a 9b       	mov	r11,sp
 80007ce6:	fe b0 f6 53 	rcall	8000698c <usart_write_line>
+    n >>= 4;
+  }
+
+  // Transmit the resulting string with the given USART.
+  print(usart, tmp);
+}
 80007cea:	2f dd       	sub	sp,-12
 80007cec:	d8 02       	popm	pc
 80007cee:	d7 03       	nop
@@ -15938,65 +17676,149 @@ static void uhd_pipe_interrupt_dma(uint8_t pipe)
 80007cf0 <print_dbg_hex>:
 80007cf0:	d4 01       	pushm	lr
 80007cf2:	18 9b       	mov	r11,r12
+
+
+void print_dbg_hex(unsigned long n)
+{
+  // Redirection to the debug USART.
+  print_hex(DBG_USART, n);
 80007cf4:	fe 7c 18 00 	mov	r12,-59392
 80007cf8:	ce 2f       	rcall	80007cbc <print_hex>
 80007cfa:	d8 02       	popm	pc
 
 80007cfc <print_ulong>:
+}
 80007cfc:	d4 21       	pushm	r4-r7,lr
 80007cfe:	20 3d       	sub	sp,12
 80007d00:	30 08       	mov	r8,0
 80007d02:	1a 99       	mov	r9,sp
+{
+  char tmp[11];
+  int i = sizeof(tmp) - 1;
+
+  // Convert the given number to an ASCII decimal representation.
+  tmp[i] = '\0';
 80007d04:	fb 68 00 0a 	st.b	sp[10],r8
 80007d08:	30 a8       	mov	r8,10
+  do
+  {
+    tmp[--i] = '0' + n % 10;
 80007d0a:	10 9a       	mov	r10,r8
 80007d0c:	f6 0a 0d 06 	divu	r6,r11,r10
 80007d10:	20 18       	sub	r8,1
 80007d12:	0e 9b       	mov	r11,r7
 80007d14:	2d 0b       	sub	r11,-48
 80007d16:	f2 08 0b 0b 	st.b	r9[r8],r11
+    n /= 10;
 80007d1a:	0c 9b       	mov	r11,r6
+  } while (n);
 80007d1c:	58 06       	cp.w	r6,0
 80007d1e:	cf 71       	brne	80007d0c <print_ulong+0x10>
+
+
+void print(volatile avr32_usart_t *usart, const char *str)
+{
+  // Invoke the USART driver to transmit the input string with the given USART.
+  usart_write_line(usart, str);
 80007d20:	f2 08 00 0b 	add	r11,r9,r8
 80007d24:	fe b0 f6 34 	rcall	8000698c <usart_write_line>
+    n /= 10;
+  } while (n);
+
+  // Transmit the resulting string with the given USART.
+  print(usart, tmp + i);
+}
 80007d28:	2f dd       	sub	sp,-12
 80007d2a:	d8 22       	popm	r4-r7,pc
 
 80007d2c <print_dbg_ulong>:
 80007d2c:	d4 01       	pushm	lr
 80007d2e:	18 9b       	mov	r11,r12
+
+
+void print_dbg_ulong(unsigned long n)
+{
+  // Redirection to the debug USART.
+  print_ulong(DBG_USART, n);
 80007d30:	fe 7c 18 00 	mov	r12,-59392
 80007d34:	ce 4f       	rcall	80007cfc <print_ulong>
 80007d36:	d8 02       	popm	pc
 
 80007d38 <print_dbg>:
+}
 80007d38:	d4 01       	pushm	lr
 80007d3a:	18 9b       	mov	r11,r12
 80007d3c:	fe 7c 18 00 	mov	r12,-59392
+
+
+void print(volatile avr32_usart_t *usart, const char *str)
+{
+  // Invoke the USART driver to transmit the input string with the given USART.
+  usart_write_line(usart, str);
 80007d40:	fe b0 f6 26 	rcall	8000698c <usart_write_line>
+
+void print_dbg(const char *str)
+{
+  // Redirection to the debug USART.
+  print(DBG_USART, str);
+}
 80007d44:	d8 02       	popm	pc
 80007d46:	d7 03       	nop
 
 80007d48 <init_dbg_rs232_ex>:
 80007d48:	d4 21       	pushm	r4-r7,lr
 80007d4a:	20 3d       	sub	sp,12
+    .baudrate = baudrate,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
 80007d4c:	30 08       	mov	r8,0
 80007d4e:	fb 68 00 08 	st.b	sp[8],r8
 80007d52:	ba 38       	st.h	sp[0x6],r8
 80007d54:	30 88       	mov	r8,8
 80007d56:	ba c8       	st.b	sp[0x4],r8
 80007d58:	30 48       	mov	r8,4
+  init_dbg_rs232_ex(DBG_USART_BAUDRATE, pba_hz);
+}
+
+
+void init_dbg_rs232_ex(unsigned long baudrate, long pba_hz)
+{
 80007d5a:	16 97       	mov	r7,r11
+    .baudrate = baudrate,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
 80007d5c:	50 0c       	stdsp	sp[0x0],r12
+
+  // Setup GPIO for debug USART.
+  gpio_enable_module(DBG_USART_GPIO_MAP,
 80007d5e:	30 2b       	mov	r11,2
+    .baudrate = baudrate,
+    .charlength = 8,
+    .paritytype = USART_NO_PARITY,
+    .stopbits = USART_1_STOPBIT,
+    .channelmode = USART_NORMAL_CHMODE
+  };
 80007d60:	ba d8       	st.b	sp[0x5],r8
+
+  // Setup GPIO for debug USART.
+  gpio_enable_module(DBG_USART_GPIO_MAP,
 80007d62:	fe cc e3 de 	sub	r12,pc,-7202
 80007d66:	fe b0 f3 29 	rcall	800063b8 <gpio_enable_module>
+                     sizeof(DBG_USART_GPIO_MAP) / sizeof(DBG_USART_GPIO_MAP[0]));
+
+  // Initialize it in RS232 mode.
+  usart_init_rs232(DBG_USART, &dbg_usart_options, pba_hz);
 80007d6a:	0e 9a       	mov	r10,r7
 80007d6c:	1a 9b       	mov	r11,sp
 80007d6e:	fe 7c 18 00 	mov	r12,-59392
 80007d72:	fe b0 f6 35 	rcall	800069dc <usart_init_rs232>
+}
 80007d76:	2f dd       	sub	sp,-12
 80007d78:	d8 22       	popm	r4-r7,pc
 80007d7a:	d7 03       	nop
@@ -16005,6 +17827,12 @@ static void uhd_pipe_interrupt_dma(uint8_t pipe)
 80007d7c:	d4 01       	pushm	lr
 80007d7e:	18 9b       	mov	r11,r12
 80007d80:	e0 6c e1 00 	mov	r12,57600
+static const char HEX_DIGITS[16] = "0123456789ABCDEF";
+
+
+void init_dbg_rs232(long pba_hz)
+{
+  init_dbg_rs232_ex(DBG_USART_BAUDRATE, pba_hz);
 80007d84:	ce 2f       	rcall	80007d48 <init_dbg_rs232_ex>
 80007d86:	d8 02       	popm	pc
 
@@ -17241,47 +19069,138 @@ static void uhc_connection_tree(bool b_plug, uhc_device_t* dev)
 800082ea:	d8 22       	popm	r4-r7,pc
 
 800082ec <sysclk_priv_disable_module>:
+
+static inline irqflags_t cpu_irq_save(void)
+{
+	irqflags_t flags;
+
+	flags = sysreg_read(AVR32_SR);
 800082ec:	e1 b9 00 00 	mfsr	r9,0x0
+	cpu_irq_disable();
 800082f0:	d3 03       	ssrf	0x10
+
+	/*
+	 * Poll MSKRDY before changing mask rather than after, as it's
+	 * highly unlikely to actually be cleared at this point.
+	 */
+	while (!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_MSKRDY))) {
 800082f2:	fe 7a 0c 00 	mov	r10,-62464
 800082f6:	75 58       	ld.w	r8,r10[0x54]
 800082f8:	ed b8 00 06 	bld	r8,0x6
 800082fc:	cf d1       	brne	800082f6 <sysclk_priv_disable_module+0xa>
+		/* Do nothing */
+	}
+
+	/* Disable the clock */
+	mask = *(&AVR32_PM.cpumask + bus_id);
+	mask &= ~(1U << module_index);
 800082fe:	30 18       	mov	r8,1
+	while (!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_MSKRDY))) {
+		/* Do nothing */
+	}
+
+	/* Disable the clock */
+	mask = *(&AVR32_PM.cpumask + bus_id);
 80008300:	a3 6c       	lsl	r12,0x2
+	mask &= ~(1U << module_index);
 80008302:	f0 0b 09 4b 	lsl	r11,r8,r11
+	while (!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_MSKRDY))) {
+		/* Do nothing */
+	}
+
+	/* Disable the clock */
+	mask = *(&AVR32_PM.cpumask + bus_id);
 80008306:	e0 2c f3 f8 	sub	r12,62456
+	mask &= ~(1U << module_index);
 8000830a:	5c db       	com	r11
+	while (!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_MSKRDY))) {
+		/* Do nothing */
+	}
+
+	/* Disable the clock */
+	mask = *(&AVR32_PM.cpumask + bus_id);
 8000830c:	78 08       	ld.w	r8,r12[0x0]
+	mask &= ~(1U << module_index);
 8000830e:	10 6b       	and	r11,r8
+	*(&AVR32_PM.cpumask + bus_id) = mask;
 80008310:	99 0b       	st.w	r12[0x0],r11
+static inline void cpu_irq_restore(irqflags_t flags)
+{
+	barrier();
+
+   /* Restore the global IRQ mask status flag if it was previously set */
+   if ( cpu_irq_is_enabled_flags(flags) ) {
 80008312:	ed b9 00 10 	bld	r9,0x10
 80008316:	c0 20       	breq	8000831a <sysclk_priv_disable_module+0x2e>
+      cpu_irq_enable();
 80008318:	d5 03       	csrf	0x10
+
+	cpu_irq_restore(flags);
+}
 8000831a:	5e fc       	retal	r12
 
 8000831c <sysclk_disable_pbb_module>:
+/**
+ * \brief Disable a module clock derived from the PBB clock
+ * \param index Index of the module clock in the PBBMASK register
+ */
+void sysclk_disable_pbb_module(unsigned int index)
+{
 8000831c:	d4 21       	pushm	r4-r7,lr
+	irqflags_t flags;
+
+	/* Disable the module */
+	sysclk_priv_disable_module(AVR32_PM_CLK_GRP_PBB, index);
 8000831e:	18 9b       	mov	r11,r12
 80008320:	30 3c       	mov	r12,3
 80008322:	ce 5f       	rcall	800082ec <sysclk_priv_disable_module>
 80008324:	e1 b7 00 00 	mfsr	r7,0x0
+
+static inline irqflags_t cpu_irq_save(void)
+{
+	irqflags_t flags;
+
+	flags = sysreg_read(AVR32_SR);
 80008328:	d3 03       	ssrf	0x10
+	cpu_irq_disable();
 8000832a:	e0 69 09 98 	mov	r9,2456
+
+	/* Disable the bridge if possible */
+	flags = cpu_irq_save();
+
+	sysclk_pbb_refcount--;
 8000832e:	13 88       	ld.ub	r8,r9[0x0]
 80008330:	20 18       	sub	r8,1
 80008332:	5c 58       	castu.b	r8
 80008334:	b2 88       	st.b	r9[0x0],r8
+	if (!sysclk_pbb_refcount)
 80008336:	c0 41       	brne	8000833e <sysclk_disable_pbb_module+0x22>
+ * \brief Disable a module clock derived from the HSB clock
+ * \param index Index of the module clock in the HSBMASK register
+ */
+static inline void sysclk_disable_hsb_module(unsigned int index)
+{
+	sysclk_priv_disable_module(AVR32_PM_CLK_GRP_HSB, index);
 80008338:	30 2b       	mov	r11,2
 8000833a:	30 1c       	mov	r12,1
 8000833c:	cd 8f       	rcall	800082ec <sysclk_priv_disable_module>
 8000833e:	e6 17 00 01 	andh	r7,0x1,COH
+static inline void cpu_irq_restore(irqflags_t flags)
+{
+	barrier();
+
+   /* Restore the global IRQ mask status flag if it was previously set */
+   if ( cpu_irq_is_enabled_flags(flags) ) {
 80008342:	c0 21       	brne	80008346 <sysclk_disable_pbb_module+0x2a>
 80008344:	d5 03       	csrf	0x10
+      cpu_irq_enable();
 80008346:	d8 22       	popm	r4-r7,pc
 
 80008348 <sysclk_disable_usb>:
+		sysclk_disable_hsb_module(SYSCLK_PBB_BRIDGE);
+
+	cpu_irq_restore(flags);
+}
 80008348:	d4 01       	pushm	lr
 8000834a:	30 09       	mov	r9,0
 8000834c:	fe 78 0c 00 	mov	r8,-62464
@@ -17290,102 +19209,295 @@ static void uhc_connection_tree(bool b_plug, uhc_device_t* dev)
 80008356:	30 3b       	mov	r11,3
 80008358:	cc af       	rcall	800082ec <sysclk_priv_disable_module>
 8000835a:	30 1c       	mov	r12,1
+ */
+void sysclk_disable_usb(void)
+{
+	genclk_disable(AVR32_PM_GCLK_USBB);
+	sysclk_disable_hsb_module(SYSCLK_USBB_DATA);
+	sysclk_disable_pbb_module(SYSCLK_USBB_REGS);
 8000835c:	ce 0f       	rcall	8000831c <sysclk_disable_pbb_module>
 8000835e:	d8 02       	popm	pc
 
 80008360 <sysclk_priv_enable_module>:
 80008360:	e1 b9 00 00 	mfsr	r9,0x0
+}
 80008364:	d3 03       	ssrf	0x10
 80008366:	fe 7a 0c 00 	mov	r10,-62464
 8000836a:	75 58       	ld.w	r8,r10[0x54]
+
+	/*
+	 * Poll MSKRDY before changing mask rather than after, as it's
+	 * highly unlikely to actually be cleared at this point.
+	 */
+	while (!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_MSKRDY))) {
 8000836c:	ed b8 00 06 	bld	r8,0x6
 80008370:	cf d1       	brne	8000836a <sysclk_priv_enable_module+0xa>
+		/* Do nothing */
+	}
+
+	/* Enable the clock */
+	mask = *(&AVR32_PM.cpumask + bus_id);
+	mask |= 1U << module_index;
 80008372:	30 18       	mov	r8,1
+	while (!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_MSKRDY))) {
+		/* Do nothing */
+	}
+
+	/* Enable the clock */
+	mask = *(&AVR32_PM.cpumask + bus_id);
 80008374:	a3 6c       	lsl	r12,0x2
+	mask |= 1U << module_index;
 80008376:	f0 0b 09 4b 	lsl	r11,r8,r11
+	while (!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_MSKRDY))) {
+		/* Do nothing */
+	}
+
+	/* Enable the clock */
+	mask = *(&AVR32_PM.cpumask + bus_id);
 8000837a:	e0 2c f3 f8 	sub	r12,62456
 8000837e:	78 08       	ld.w	r8,r12[0x0]
+	mask |= 1U << module_index;
 80008380:	10 4b       	or	r11,r8
+	*(&AVR32_PM.cpumask + bus_id) = mask;
 80008382:	99 0b       	st.w	r12[0x0],r11
+static inline void cpu_irq_restore(irqflags_t flags)
+{
+	barrier();
+
+   /* Restore the global IRQ mask status flag if it was previously set */
+   if ( cpu_irq_is_enabled_flags(flags) ) {
 80008384:	ed b9 00 10 	bld	r9,0x10
 80008388:	c0 20       	breq	8000838c <sysclk_priv_enable_module+0x2c>
+      cpu_irq_enable();
 8000838a:	d5 03       	csrf	0x10
+
+	cpu_irq_restore(flags);
+}
 8000838c:	5e fc       	retal	r12
 8000838e:	d7 03       	nop
 
 80008390 <sysclk_enable_pbb_module>:
+/**
+ * \brief Enable a module clock derived from the PBB clock
+ * \param index Index of the module clock in the PBBMASK register
+ */
+void sysclk_enable_pbb_module(unsigned int index)
+{
 80008390:	d4 21       	pushm	r4-r7,lr
 80008392:	18 97       	mov	r7,r12
+
+static inline irqflags_t cpu_irq_save(void)
+{
+	irqflags_t flags;
+
+	flags = sysreg_read(AVR32_SR);
 80008394:	e1 b6 00 00 	mfsr	r6,0x0
+	cpu_irq_disable();
 80008398:	d3 03       	ssrf	0x10
+	irqflags_t flags;
+
+	/* Enable the bridge if necessary */
+	flags = cpu_irq_save();
+
+	if (!sysclk_pbb_refcount)
 8000839a:	e0 68 09 98 	mov	r8,2456
 8000839e:	11 89       	ld.ub	r9,r8[0x0]
 800083a0:	30 08       	mov	r8,0
 800083a2:	f0 09 18 00 	cp.b	r9,r8
+ * \brief Enable a module clock derived from the HSB clock
+ * \param index Index of the module clock in the HSBMASK register
+ */
+static inline void sysclk_enable_hsb_module(unsigned int index)
+{
+	sysclk_priv_enable_module(AVR32_PM_CLK_GRP_HSB, index);
 800083a6:	c0 41       	brne	800083ae <sysclk_enable_pbb_module+0x1e>
 800083a8:	30 2b       	mov	r11,2
 800083aa:	30 1c       	mov	r12,1
 800083ac:	cd af       	rcall	80008360 <sysclk_priv_enable_module>
+		sysclk_enable_hsb_module(SYSCLK_PBB_BRIDGE);
+	sysclk_pbb_refcount++;
 800083ae:	e0 68 09 98 	mov	r8,2456
 800083b2:	11 89       	ld.ub	r9,r8[0x0]
 800083b4:	2f f9       	sub	r9,-1
+static inline void cpu_irq_restore(irqflags_t flags)
+{
+	barrier();
+
+   /* Restore the global IRQ mask status flag if it was previously set */
+   if ( cpu_irq_is_enabled_flags(flags) ) {
 800083b6:	b0 89       	st.b	r8[0x0],r9
 800083b8:	e6 16 00 01 	andh	r6,0x1,COH
+      cpu_irq_enable();
 800083bc:	c0 21       	brne	800083c0 <sysclk_enable_pbb_module+0x30>
+
+	cpu_irq_restore(flags);
+
+	/* Enable the module */
+	sysclk_priv_enable_module(AVR32_PM_CLK_GRP_PBB, index);
 800083be:	d5 03       	csrf	0x10
 800083c0:	30 3c       	mov	r12,3
 800083c2:	0e 9b       	mov	r11,r7
 800083c4:	cc ef       	rcall	80008360 <sysclk_priv_enable_module>
+}
 800083c6:	d8 22       	popm	r4-r7,pc
 
 800083c8 <T.62>:
 800083c8:	fe 78 0c 00 	mov	r8,-62464
 800083cc:	71 59       	ld.w	r9,r8[0x54]
 800083ce:	ed b9 00 07 	bld	r9,0x7
+
+static inline void pll_enable_source(enum pll_source src)
+{
+	switch (src) {
+	case PLL_SRC_OSC0:
+		if (!osc_is_ready(OSC_ID_OSC0)) {
 800083d2:	5e 0c       	reteq	r12
+
+static inline irqflags_t cpu_irq_save(void)
+{
+	irqflags_t flags;
+
+	flags = sysreg_read(AVR32_SR);
 800083d4:	e1 b9 00 00 	mfsr	r9,0x0
+	cpu_irq_disable();
 800083d8:	d3 03       	ssrf	0x10
+#ifdef BOARD_OSC0_HZ
+	case OSC_ID_OSC0:
+		oscctrl = OSC0_STARTUP_VALUE <<
+				AVR32_PM_OSCCTRL0_STARTUP_OFFSET;
+		oscctrl |= OSC0_MODE_VALUE << AVR32_PM_OSCCTRL0_MODE_OFFSET;
+		AVR32_PM.oscctrl0 = oscctrl;
 800083da:	e0 6a 03 07 	mov	r10,775
 800083de:	91 aa       	st.w	r8[0x28],r10
+		AVR32_PM.mcctrl |= 1U << AVR32_PM_MCCTRL_OSC0EN;
 800083e0:	70 0a       	ld.w	r10,r8[0x0]
 800083e2:	a3 aa       	sbr	r10,0x2
 800083e4:	91 0a       	st.w	r8[0x0],r10
+static inline void cpu_irq_restore(irqflags_t flags)
+{
+	barrier();
+
+   /* Restore the global IRQ mask status flag if it was previously set */
+   if ( cpu_irq_is_enabled_flags(flags) ) {
 800083e6:	ed b9 00 10 	bld	r9,0x10
 800083ea:	c0 20       	breq	800083ee <T.62+0x26>
+      cpu_irq_enable();
 800083ec:	d5 03       	csrf	0x10
+static inline bool osc_is_ready(uint8_t id)
+{
+	switch (id) {
+#ifdef BOARD_OSC0_HZ
+	case OSC_ID_OSC0:
+		return !!(AVR32_PM.poscsr & (1U << AVR32_PM_POSCSR_OSC0RDY));
 800083ee:	fe 79 0c 00 	mov	r9,-62464
 800083f2:	73 58       	ld.w	r8,r9[0x54]
+ *
+ * \param id A number identifying the oscillator to wait for.
+ */
+static inline void osc_wait_ready(uint8_t id)
+{
+	while (!osc_is_ready(id)) {
 800083f4:	ed b8 00 07 	bld	r8,0x7
 800083f8:	cf d1       	brne	800083f2 <T.62+0x2a>
 800083fa:	5e fc       	retal	r12
 
 800083fc <pll_enable_config_defaults>:
+		break;
+	}
+}
+
+static inline void pll_enable_config_defaults(unsigned int pll_id)
+{
 800083fc:	d4 21       	pushm	r4-r7,lr
+
+static inline bool pll_is_locked(unsigned int pll_id)
+{
+	Assert(pll_id < NR_PLLS);
+
+	return !!(AVR32_PM.poscsr & (1U << (AVR32_PM_POSCSR_LOCK0 + pll_id)));
 800083fe:	fe 78 0c 00 	mov	r8,-62464
 80008402:	71 58       	ld.w	r8,r8[0x54]
 80008404:	30 16       	mov	r6,1
+		break;
+	}
+}
+
+static inline void pll_enable_config_defaults(unsigned int pll_id)
+{
 80008406:	18 97       	mov	r7,r12
+
+static inline bool pll_is_locked(unsigned int pll_id)
+{
+	Assert(pll_id < NR_PLLS);
+
+	return !!(AVR32_PM.poscsr & (1U << (AVR32_PM_POSCSR_LOCK0 + pll_id)));
 80008408:	ec 0c 09 46 	lsl	r6,r6,r12
+{
+	struct pll_config pllcfg;
+
+	pllcfg.ctrl = 0;	// HACK 8/4/14 (bc) to remove warning
+
+	if (pll_is_locked(pll_id)) {
 8000840c:	ed e8 00 08 	and	r8,r6,r8
 80008410:	c1 b1       	brne	80008446 <pll_enable_config_defaults+0x4a>
+		return; // Pll already running
+	}
+	switch (pll_id) {
 80008412:	58 0c       	cp.w	r12,0
 80008414:	c0 40       	breq	8000841c <pll_enable_config_defaults+0x20>
 80008416:	58 1c       	cp.w	r12,1
 80008418:	c0 d1       	brne	80008432 <pll_enable_config_defaults+0x36>
 8000841a:	c0 78       	rjmp	80008428 <pll_enable_config_defaults+0x2c>
+#ifdef CONFIG_PLL0_SOURCE
+	case 0:
+		pll_enable_source(CONFIG_PLL0_SOURCE);
 8000841c:	cd 6f       	rcall	800083c8 <T.62>
 8000841e:	e0 68 01 0c 	mov	r8,268
+		pll_config_set_option(cfg, PLL_OPT_VCO_RANGE_LOW);
+
+	Assert((mul > 2) && (mul <= 16));
+	Assert((div > 0) && (div <= 15));
+
+	cfg->ctrl |= ((mul - 1) << AVR32_PM_PLL0_PLLMUL)
 80008422:	ea 18 3f 09 	orh	r8,0x3f09
 80008426:	c0 68       	rjmp	80008432 <pll_enable_config_defaults+0x36>
+		pll_enable_source(CONFIG_PLL0_SOURCE);
+		pll_config_init(&pllcfg,
+				CONFIG_PLL0_SOURCE,
+				CONFIG_PLL0_DIV,
+				CONFIG_PLL0_MUL);
+		break;
 80008428:	cd 0f       	rcall	800083c8 <T.62>
+#endif
+#ifdef CONFIG_PLL1_SOURCE
+	case 1:
+		pll_enable_source(CONFIG_PLL1_SOURCE);
 8000842a:	e0 68 01 0c 	mov	r8,268
+		pll_config_set_option(cfg, PLL_OPT_VCO_RANGE_LOW);
+
+	Assert((mul > 2) && (mul <= 16));
+	Assert((div > 0) && (div <= 15));
+
+	cfg->ctrl |= ((mul - 1) << AVR32_PM_PLL0_PLLMUL)
 8000842e:	ea 18 3f 07 	orh	r8,0x3f07
 80008432:	a1 a8       	sbr	r8,0x0
 80008434:	2f 87       	sub	r7,-8
+static inline void pll_enable(const struct pll_config *cfg,
+		unsigned int pll_id)
+{
+	Assert(pll_id < NR_PLLS);
+
+	AVR32_PM.pll[pll_id] = cfg->ctrl | (1U << AVR32_PM_PLL0_PLLEN);
 80008436:	fe 79 0c 00 	mov	r9,-62464
 8000843a:	f2 07 09 28 	st.w	r9[r7<<0x2],r8
 8000843e:	73 58       	ld.w	r8,r9[0x54]
 80008440:	ed e8 00 08 	and	r8,r6,r8
+	default:
+		Assert(false);
+		break;
+	}
+	pll_enable(&pllcfg, pll_id);
+	while (!pll_is_locked(pll_id));
 80008444:	cf d0       	breq	8000843e <pll_enable_config_defaults+0x42>
 80008446:	d8 22       	popm	r4-r7,pc
 
@@ -17394,31 +19506,83 @@ static void uhc_connection_tree(bool b_plug, uhc_device_t* dev)
 8000844a:	30 0c       	mov	r12,0
 8000844c:	cd 8f       	rcall	800083fc <pll_enable_config_defaults>
 8000844e:	e0 6c 87 00 	mov	r12,34560
+
+#ifdef CONFIG_PLL0_SOURCE
+	case SYSCLK_SRC_PLL0: {
+		pll_enable_config_defaults(0);
+		// Set a flash wait state depending on the new cpu frequency.
+		flash_set_bus_freq(sysclk_get_cpu_hz());
 80008452:	ea 1c 03 93 	orh	r12,0x393
 80008456:	fe b0 ed 6d 	rcall	80005f30 <flashc_set_bus_freq>
 8000845a:	e1 b9 00 00 	mfsr	r9,0x0
+
+static inline irqflags_t cpu_irq_save(void)
+{
+	irqflags_t flags;
+
+	flags = sysreg_read(AVR32_SR);
 8000845e:	d3 03       	ssrf	0x10
+	cpu_irq_disable();
 80008460:	fe 7a 0c 00 	mov	r10,-62464
+	irqflags_t flags;
+
+	Assert(src <= SYSCLK_SRC_PLL0);
+
+	flags = cpu_irq_save();
+	mcctrl = AVR32_PM.mcctrl & ~AVR32_PM_MCCTRL_MCSEL_MASK;
 80008464:	74 08       	ld.w	r8,r10[0x0]
 80008466:	e0 18 ff fc 	andl	r8,0xfffc
 8000846a:	a1 b8       	sbr	r8,0x1
+	mcctrl |= src << AVR32_PM_MCCTRL_MCSEL;
 8000846c:	95 08       	st.w	r10[0x0],r8
+	AVR32_PM.mcctrl = mcctrl;
 8000846e:	ed b9 00 10 	bld	r9,0x10
+static inline void cpu_irq_restore(irqflags_t flags)
+{
+	barrier();
+
+   /* Restore the global IRQ mask status flag if it was previously set */
+   if ( cpu_irq_is_enabled_flags(flags) ) {
 80008472:	c0 20       	breq	80008476 <sysclk_init+0x2e>
 80008474:	d5 03       	csrf	0x10
+      cpu_irq_enable();
 80008476:	d8 02       	popm	pc
 
 80008478 <sysclk_enable_usb>:
+
+#if (defined CONFIG_SYSCLK_DEFAULT_RETURNS_SLOW_OSC)
+	/* Signal that the internal frequencies are setup */
+	sysclk_initialized = true;
+#endif
+}
 80008478:	d4 01       	pushm	lr
 8000847a:	30 1c       	mov	r12,1
 8000847c:	c8 af       	rcall	80008390 <sysclk_enable_pbb_module>
 8000847e:	30 3b       	mov	r11,3
 80008480:	30 1c       	mov	r12,1
 80008482:	c6 ff       	rcall	80008360 <sysclk_priv_enable_module>
+ * \brief Enable a module clock derived from the HSB clock
+ * \param index Index of the module clock in the HSBMASK register
+ */
+static inline void sysclk_enable_hsb_module(unsigned int index)
+{
+	sysclk_priv_enable_module(AVR32_PM_CLK_GRP_HSB, index);
 80008484:	30 1c       	mov	r12,1
 80008486:	cb bf       	rcall	800083fc <pll_enable_config_defaults>
+	}
+#endif
+
+#ifdef CONFIG_PLL1_SOURCE
+	case GENCLK_SRC_PLL1: {
+		pll_enable_config_defaults(1);
 80008488:	30 79       	mov	r9,7
 8000848a:	fe 78 0c 00 	mov	r8,-62464
+}
+
+static inline void genclk_enable(const struct genclk_config *cfg,
+		unsigned int id)
+{
+	AVR32_PM.gcctrl[id] = cfg->ctrl | (1U << AVR32_PM_GCCTRL_CEN);
 8000848e:	f1 49 00 6c 	st.w	r8[108],r9
 80008492:	d8 02       	popm	pc
 
