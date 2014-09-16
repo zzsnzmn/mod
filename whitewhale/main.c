@@ -27,6 +27,7 @@
 #include "timers.h"
 #include "adc.h"
 #include "util.h"
+#include "ftdi.h"
 
 // this
 #include "conf_board.h"
@@ -270,7 +271,7 @@ void clock(u8 phase) {
 			cut_pos = 1;
  		}
 		else if(w.wp[pattern].step_mode == mRandom) {	// RANDOM
-			next_pos = (rnd() % (w.wp[pattern].loop_len + 1)) + w.wp[pattern].loop_start;
+			next_pos = ((rnd() % (w.wp[pattern].loop_len + 1)) + w.wp[pattern].loop_start) % LENGTH;
 			cut_pos = 1;
 		}
 
@@ -510,7 +511,7 @@ static void handler_MonomeRefresh(s32 data) {
 
 
 static void handler_Front(s32 data) {
-	print_dbg("\r FRONT HOLD");
+	print_dbg("\r\n FRONT HOLD");
 
 	if(data == 0) {
 		front_timer = 15;
@@ -1621,7 +1622,7 @@ void flash_write(void) {
 void flash_read(void) {
 	u8 i1, i2;
 
-	print_dbg("\r read preset ");
+	print_dbg("\r\n read preset ");
 	print_dbg_ulong(preset_select);
 
 	for(i1=0;i1<16;i1++) {
@@ -1694,7 +1695,7 @@ int main(void)
 	print_dbg_ulong(sizeof(glyph));
 
 	if(flash_is_fresh()) {
-		print_dbg("\rfirst run.");
+		print_dbg("\r\nfirst run.");
 		flash_unfresh();
 		flashc_memset8((void*)&(flashy.edit_mode), mTrig, 4, true);
 		flashc_memset32((void*)&(flashy.preset_select), 0, 4, true);
