@@ -1239,7 +1239,7 @@ LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
 .plt
  *(.plt)
 
-.text           0x0000000080002020     0x75f4
+.text           0x0000000080002020     0x7764
  *(.text .stub .text.* .gnu.linkonce.t.*)
  .text          0x0000000080002020       0x60 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/crt0.o
                                          0x84 (size before relaxing)
@@ -1263,709 +1263,709 @@ LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
                 0x0000000080002114       0x3c ../whitewhale/main.o
                                          0x48 (size before relaxing)
  .text.flash_read
-                0x0000000080002150      0x15c ../whitewhale/main.o
-                                        0x168 (size before relaxing)
+                0x0000000080002150      0x164 ../whitewhale/main.o
+                                        0x170 (size before relaxing)
                 0x0000000080002150                flash_read
  .text.flash_unfresh
-                0x00000000800022ac       0x14 ../whitewhale/main.o
+                0x00000000800022b4       0x14 ../whitewhale/main.o
                                          0x18 (size before relaxing)
-                0x00000000800022ac                flash_unfresh
+                0x00000000800022b4                flash_unfresh
  .text.flash_write
-                0x00000000800022c0       0x60 ../whitewhale/main.o
+                0x00000000800022c8       0x60 ../whitewhale/main.o
                                          0x74 (size before relaxing)
-                0x00000000800022c0                flash_write
+                0x00000000800022c8                flash_write
  .text.handler_SaveFlash
-                0x0000000080002320        0x8 ../whitewhale/main.o
+                0x0000000080002328        0x8 ../whitewhale/main.o
                                           0xc (size before relaxing)
  .text.timers_set_monome
-                0x0000000080002328       0x24 ../whitewhale/main.o
+                0x0000000080002330       0x24 ../whitewhale/main.o
                                          0x30 (size before relaxing)
-                0x0000000080002328                timers_set_monome
+                0x0000000080002330                timers_set_monome
  .text.handler_MonomeGridKey
-                0x000000008000234c     0x108c ../whitewhale/main.o
+                0x0000000080002354     0x108c ../whitewhale/main.o
                                        0x10a8 (size before relaxing)
  .text.handler_MonomeRefresh
-                0x00000000800033d8       0x9c ../whitewhale/main.o
+                0x00000000800033e0       0x9c ../whitewhale/main.o
                                          0xac (size before relaxing)
  .text.refresh_mono
-                0x0000000080003474      0x5e0 ../whitewhale/main.o
+                0x000000008000347c      0x5e0 ../whitewhale/main.o
                                         0x608 (size before relaxing)
- .text.refresh  0x0000000080003a54      0x8a4 ../whitewhale/main.o
-                                        0x8ac (size before relaxing)
+ .text.refresh  0x0000000080003a5c      0x920 ../whitewhale/main.o
+                                        0x92c (size before relaxing)
  .text.handler_MonomeConnect
-                0x00000000800042f8       0x70 ../whitewhale/main.o
+                0x000000008000437c       0x70 ../whitewhale/main.o
                                          0x8c (size before relaxing)
  .text.handler_FtdiConnect
-                0x0000000080004368        0x8 ../whitewhale/main.o
+                0x00000000800043ec        0x8 ../whitewhale/main.o
                                           0xc (size before relaxing)
  .text.handler_KeyTimer
-                0x0000000080004370      0x230 ../whitewhale/main.o
+                0x00000000800043f4      0x230 ../whitewhale/main.o
                                         0x25c (size before relaxing)
  .text.adcTimer_callback
-                0x00000000800045a0       0x18 ../whitewhale/main.o
+                0x0000000080004624       0x18 ../whitewhale/main.o
                                          0x1c (size before relaxing)
  .text.keyTimer_callback
-                0x00000000800045b8       0x18 ../whitewhale/main.o
+                0x000000008000463c       0x18 ../whitewhale/main.o
                                          0x1c (size before relaxing)
  .text.monome_refresh_timer_callback
-                0x00000000800045d0       0x20 ../whitewhale/main.o
+                0x0000000080004654       0x20 ../whitewhale/main.o
                                          0x28 (size before relaxing)
  .text.handler_PollADC
-                0x00000000800045f0       0xb8 ../whitewhale/main.o
+                0x0000000080004674       0xb8 ../whitewhale/main.o
                                          0xd0 (size before relaxing)
- .text.main     0x00000000800046a8      0x2c0 ../whitewhale/main.o
+ .text.main     0x000000008000472c      0x2c0 ../whitewhale/main.o
                                         0x358 (size before relaxing)
-                0x00000000800046a8                main
- .text.clock    0x0000000080004968      0x718 ../whitewhale/main.o
-                                        0x788 (size before relaxing)
+                0x000000008000472c                main
+ .text.clock    0x00000000800049ec      0x804 ../whitewhale/main.o
+                                        0x854 (size before relaxing)
  .text.timers_unset_monome
-                0x0000000080005080       0x14 ../whitewhale/main.o
+                0x00000000800051f0       0x14 ../whitewhale/main.o
                                          0x1c (size before relaxing)
-                0x0000000080005080                timers_unset_monome
+                0x00000000800051f0                timers_unset_monome
  .text.handler_FtdiDisconnect
-                0x0000000080005094        0x8 ../whitewhale/main.o
+                0x0000000080005204        0x8 ../whitewhale/main.o
                                           0xc (size before relaxing)
  .text.monome_poll_timer_callback
-                0x000000008000509c        0x8 ../whitewhale/main.o
+                0x000000008000520c        0x8 ../whitewhale/main.o
                                           0xc (size before relaxing)
  .text.init_adc
-                0x00000000800050a4       0x7c ../skeleton/adc.o
+                0x0000000080005214       0x7c ../skeleton/adc.o
                                          0x8c (size before relaxing)
-                0x00000000800050a4                init_adc
+                0x0000000080005214                init_adc
  .text.adc_convert
-                0x0000000080005120       0xf8 ../skeleton/adc.o
+                0x0000000080005290       0xf8 ../skeleton/adc.o
                                         0x108 (size before relaxing)
-                0x0000000080005120                adc_convert
+                0x0000000080005290                adc_convert
  .text.init_events
-                0x0000000080005218       0x24 ../skeleton/events.o
+                0x0000000080005388       0x24 ../skeleton/events.o
                                          0x2c (size before relaxing)
-                0x0000000080005218                init_events
+                0x0000000080005388                init_events
  .text.event_post
-                0x000000008000523c       0x50 ../skeleton/events.o
+                0x00000000800053ac       0x50 ../skeleton/events.o
                                          0x5c (size before relaxing)
-                0x000000008000523c                event_post
+                0x00000000800053ac                event_post
  .text.event_next
-                0x000000008000528c       0x4c ../skeleton/events.o
+                0x00000000800053fc       0x4c ../skeleton/events.o
                                          0x50 (size before relaxing)
-                0x000000008000528c                event_next
+                0x00000000800053fc                event_next
  .text.init_usb_host
-                0x00000000800052d8        0x8 ../skeleton/init.o
+                0x0000000080005448        0x8 ../skeleton/init.o
                                           0xc (size before relaxing)
-                0x00000000800052d8                init_usb_host
+                0x0000000080005448                init_usb_host
  .text.init_spi
-                0x00000000800052e0       0xa0 ../skeleton/init.o
+                0x0000000080005450       0xa0 ../skeleton/init.o
                                          0xbc (size before relaxing)
-                0x00000000800052e0                init_spi
- .text.init_tc  0x0000000080005380       0x38 ../skeleton/init.o
+                0x0000000080005450                init_spi
+ .text.init_tc  0x00000000800054f0       0x38 ../skeleton/init.o
                                          0x4c (size before relaxing)
-                0x0000000080005380                init_tc
+                0x00000000800054f0                init_tc
  .text.init_gpio
-                0x00000000800053b8       0x4c ../skeleton/init.o
+                0x0000000080005528       0x4c ../skeleton/init.o
                                          0x50 (size before relaxing)
-                0x00000000800053b8                init_gpio
+                0x0000000080005528                init_gpio
  .text.clock_null
-                0x0000000080005404        0x2 ../skeleton/interrupts.o
-                0x0000000080005404                clock_null
- *fill*         0x0000000080005406        0x2 d703d703
+                0x0000000080005574        0x2 ../skeleton/interrupts.o
+                0x0000000080005574                clock_null
+ *fill*         0x0000000080005576        0x2 d703d703
  .text.register_interrupts
-                0x0000000080005408       0x44 ../skeleton/interrupts.o
+                0x0000000080005578       0x44 ../skeleton/interrupts.o
                                          0x50 (size before relaxing)
-                0x0000000080005408                register_interrupts
- .text.irq_tc   0x000000008000544c       0x5c ../skeleton/interrupts.o
+                0x0000000080005578                register_interrupts
+ .text.irq_tc   0x00000000800055bc       0x5c ../skeleton/interrupts.o
                                          0x68 (size before relaxing)
  .text.irq_port1_line1
-                0x00000000800054a8       0x54 ../skeleton/interrupts.o
+                0x0000000080005618       0x54 ../skeleton/interrupts.o
                                          0x70 (size before relaxing)
  .text.irq_port0_line1
-                0x00000000800054fc       0x2c ../skeleton/interrupts.o
+                0x000000008000566c       0x2c ../skeleton/interrupts.o
                                          0x40 (size before relaxing)
  .text.read_serial_dummy
-                0x0000000080005528        0x2 ../skeleton/monome.o
- *fill*         0x000000008000552a        0x2 d703d703
+                0x0000000080005698        0x2 ../skeleton/monome.o
+ *fill*         0x000000008000569a        0x2 d703d703
  .text.init_monome
-                0x000000008000552c       0x14 ../skeleton/monome.o
-                0x000000008000552c                init_monome
+                0x000000008000569c       0x14 ../skeleton/monome.o
+                0x000000008000569c                init_monome
  .text.monome_grid_key_parse_event_data
-                0x0000000080005540       0x18 ../skeleton/monome.o
-                0x0000000080005540                monome_grid_key_parse_event_data
+                0x00000000800056b0       0x18 ../skeleton/monome.o
+                0x00000000800056b0                monome_grid_key_parse_event_data
  .text.monome_set_quadrant_flag
-                0x0000000080005558       0x14 ../skeleton/monome.o
-                0x0000000080005558                monome_set_quadrant_flag
+                0x00000000800056c8       0x14 ../skeleton/monome.o
+                0x00000000800056c8                monome_set_quadrant_flag
  .text.monome_size_x
-                0x000000008000556c        0x8 ../skeleton/monome.o
+                0x00000000800056dc        0x8 ../skeleton/monome.o
                                           0xc (size before relaxing)
-                0x000000008000556c                monome_size_x
+                0x00000000800056dc                monome_size_x
  .text.monome_is_vari
-                0x0000000080005574        0x8 ../skeleton/monome.o
+                0x00000000800056e4        0x8 ../skeleton/monome.o
                                           0xc (size before relaxing)
-                0x0000000080005574                monome_is_vari
+                0x00000000800056e4                monome_is_vari
  .text.set_intense_mext
-                0x000000008000557c        0x2 ../skeleton/monome.o
- *fill*         0x000000008000557e        0x2 d703d703
+                0x00000000800056ec        0x2 ../skeleton/monome.o
+ *fill*         0x00000000800056ee        0x2 d703d703
  .text.monome_grid_refresh
-                0x0000000080005580      0x124 ../skeleton/monome.o
+                0x00000000800056f0      0x124 ../skeleton/monome.o
                                         0x118 (size before relaxing)
-                0x0000000080005580                monome_grid_refresh
+                0x00000000800056f0                monome_grid_refresh
  .text.monome_arc_refresh
-                0x00000000800056a4       0x80 ../skeleton/monome.o
+                0x0000000080005814       0x80 ../skeleton/monome.o
                                          0x94 (size before relaxing)
-                0x00000000800056a4                monome_arc_refresh
+                0x0000000080005814                monome_arc_refresh
  .text.set_intense_series
-                0x0000000080005724       0x1c ../skeleton/monome.o
+                0x0000000080005894       0x1c ../skeleton/monome.o
                                          0x24 (size before relaxing)
  .text.ring_map_mext
-                0x0000000080005740       0x4c ../skeleton/monome.o
+                0x00000000800058b0       0x4c ../skeleton/monome.o
                                          0x54 (size before relaxing)
  .text.grid_map_mext
-                0x000000008000578c       0x70 ../skeleton/monome.o
+                0x00000000800058fc       0x70 ../skeleton/monome.o
                                          0x78 (size before relaxing)
  .text.grid_map_series
-                0x00000000800057fc       0x88 ../skeleton/monome.o
+                0x000000008000596c       0x88 ../skeleton/monome.o
                                          0x90 (size before relaxing)
  .text.grid_map_40h
-                0x0000000080005884       0x80 ../skeleton/monome.o
+                0x00000000800059f4       0x80 ../skeleton/monome.o
                                          0x88 (size before relaxing)
  .text.read_serial_series
-                0x0000000080005904       0x50 ../skeleton/monome.o
+                0x0000000080005a74       0x50 ../skeleton/monome.o
                                          0x60 (size before relaxing)
  .text.read_serial_40h
-                0x0000000080005954       0x58 ../skeleton/monome.o
+                0x0000000080005ac4       0x58 ../skeleton/monome.o
                                          0x68 (size before relaxing)
  .text.read_serial_mext
-                0x00000000800059ac       0xcc ../skeleton/monome.o
+                0x0000000080005b1c       0xcc ../skeleton/monome.o
                                          0xdc (size before relaxing)
  .text.monome_connect_write_event
-                0x0000000080005a78       0x28 ../skeleton/monome.o
+                0x0000000080005be8       0x28 ../skeleton/monome.o
                                          0x34 (size before relaxing)
  .text.setup_series
-                0x0000000080005aa0       0x54 ../skeleton/monome.o
+                0x0000000080005c10       0x54 ../skeleton/monome.o
                                          0x74 (size before relaxing)
  .text.check_monome_device_desc
-                0x0000000080005af4      0x394 ../skeleton/monome.o
+                0x0000000080005c64      0x394 ../skeleton/monome.o
                                         0x430 (size before relaxing)
-                0x0000000080005af4                check_monome_device_desc
+                0x0000000080005c64                check_monome_device_desc
  .text.process_timers
-                0x0000000080005e88       0x48 ../skeleton/timers.o
+                0x0000000080005ff8       0x48 ../skeleton/timers.o
                                          0x4c (size before relaxing)
-                0x0000000080005e88                process_timers
+                0x0000000080005ff8                process_timers
  .text.timer_set
-                0x0000000080005ed0        0xc ../skeleton/timers.o
-                0x0000000080005ed0                timer_set
+                0x0000000080006040        0xc ../skeleton/timers.o
+                0x0000000080006040                timer_set
  .text.timer_remove
-                0x0000000080005edc       0x6c ../skeleton/timers.o
+                0x000000008000604c       0x6c ../skeleton/timers.o
                                          0x70 (size before relaxing)
-                0x0000000080005edc                timer_remove
+                0x000000008000604c                timer_remove
  .text.timer_add
-                0x0000000080005f48       0x6c ../skeleton/timers.o
-                0x0000000080005f48                timer_add
+                0x00000000800060b8       0x6c ../skeleton/timers.o
+                0x00000000800060b8                timer_add
  .text.usb_mode_change
-                0x0000000080005fb4        0x2 ../skeleton/usb.o
-                0x0000000080005fb4                usb_mode_change
+                0x0000000080006124        0x2 ../skeleton/usb.o
+                0x0000000080006124                usb_mode_change
  .text.usb_vbus_change
-                0x0000000080005fb6        0x2 ../skeleton/usb.o
-                0x0000000080005fb6                usb_vbus_change
+                0x0000000080006126        0x2 ../skeleton/usb.o
+                0x0000000080006126                usb_vbus_change
  .text.usb_vbus_error
-                0x0000000080005fb8        0x2 ../skeleton/usb.o
-                0x0000000080005fb8                usb_vbus_error
+                0x0000000080006128        0x2 ../skeleton/usb.o
+                0x0000000080006128                usb_vbus_error
  .text.usb_connection
-                0x0000000080005fba        0x2 ../skeleton/usb.o
-                0x0000000080005fba                usb_connection
+                0x000000008000612a        0x2 ../skeleton/usb.o
+                0x000000008000612a                usb_connection
  .text.usb_wakeup
-                0x0000000080005fbc        0x2 ../skeleton/usb.o
-                0x0000000080005fbc                usb_wakeup
- .text.usb_sof  0x0000000080005fbe        0x2 ../skeleton/usb.o
-                0x0000000080005fbe                usb_sof
+                0x000000008000612c        0x2 ../skeleton/usb.o
+                0x000000008000612c                usb_wakeup
+ .text.usb_sof  0x000000008000612e        0x2 ../skeleton/usb.o
+                0x000000008000612e                usb_sof
  .text.usb_enum
-                0x0000000080005fc0        0x2 ../skeleton/usb.o
-                0x0000000080005fc0                usb_enum
- *fill*         0x0000000080005fc2        0x2 d703d703
- .text.rnd      0x0000000080005fc4       0x34 ../skeleton/util.o
+                0x0000000080006130        0x2 ../skeleton/usb.o
+                0x0000000080006130                usb_enum
+ *fill*         0x0000000080006132        0x2 d703d703
+ .text.rnd      0x0000000080006134       0x34 ../skeleton/util.o
                                          0x3c (size before relaxing)
-                0x0000000080005fc4                rnd
+                0x0000000080006134                rnd
  .text.ftdi_rx_done
-                0x0000000080005ff8       0x24 ../skeleton/usb/ftdi/ftdi.o
+                0x0000000080006168       0x24 ../skeleton/usb/ftdi/ftdi.o
                                          0x30 (size before relaxing)
  .text.ftdi_tx_done
-                0x000000008000601c       0x10 ../skeleton/usb/ftdi/ftdi.o
+                0x000000008000618c       0x10 ../skeleton/usb/ftdi/ftdi.o
                                          0x14 (size before relaxing)
  .text.ftdi_rx_buf
-                0x000000008000602c        0x8 ../skeleton/usb/ftdi/ftdi.o
+                0x000000008000619c        0x8 ../skeleton/usb/ftdi/ftdi.o
                                           0xc (size before relaxing)
-                0x000000008000602c                ftdi_rx_buf
+                0x000000008000619c                ftdi_rx_buf
  .text.ftdi_rx_bytes
-                0x0000000080006034        0x8 ../skeleton/usb/ftdi/ftdi.o
+                0x00000000800061a4        0x8 ../skeleton/usb/ftdi/ftdi.o
                                           0xc (size before relaxing)
-                0x0000000080006034                ftdi_rx_bytes
+                0x00000000800061a4                ftdi_rx_bytes
  .text.ftdi_rx_busy
-                0x000000008000603c        0x8 ../skeleton/usb/ftdi/ftdi.o
+                0x00000000800061ac        0x8 ../skeleton/usb/ftdi/ftdi.o
                                           0xc (size before relaxing)
-                0x000000008000603c                ftdi_rx_busy
+                0x00000000800061ac                ftdi_rx_busy
  .text.ftdi_tx_busy
-                0x0000000080006044        0x8 ../skeleton/usb/ftdi/ftdi.o
+                0x00000000800061b4        0x8 ../skeleton/usb/ftdi/ftdi.o
                                           0xc (size before relaxing)
-                0x0000000080006044                ftdi_tx_busy
+                0x00000000800061b4                ftdi_tx_busy
  .text.ftdi_setup
-                0x000000008000604c       0x28 ../skeleton/usb/ftdi/ftdi.o
+                0x00000000800061bc       0x28 ../skeleton/usb/ftdi/ftdi.o
                                          0x34 (size before relaxing)
-                0x000000008000604c                ftdi_setup
+                0x00000000800061bc                ftdi_setup
  .text.ftdi_change
-                0x0000000080006074       0x1c ../skeleton/usb/ftdi/ftdi.o
+                0x00000000800061e4       0x1c ../skeleton/usb/ftdi/ftdi.o
                                          0x20 (size before relaxing)
-                0x0000000080006074                ftdi_change
+                0x00000000800061e4                ftdi_change
  .text.ftdi_read
-                0x0000000080006090       0x2c ../skeleton/usb/ftdi/ftdi.o
+                0x0000000080006200       0x2c ../skeleton/usb/ftdi/ftdi.o
                                          0x40 (size before relaxing)
-                0x0000000080006090                ftdi_read
+                0x0000000080006200                ftdi_read
  .text.ftdi_write
-                0x00000000800060bc       0x14 ../skeleton/usb/ftdi/ftdi.o
+                0x000000008000622c       0x14 ../skeleton/usb/ftdi/ftdi.o
                                          0x1c (size before relaxing)
-                0x00000000800060bc                ftdi_write
+                0x000000008000622c                ftdi_write
  .text.ctl_req_end
-                0x00000000800060d0        0xc ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x0000000080006240        0xc ../skeleton/usb/ftdi/uhi_ftdi.o
  .text.send_ctl_request
-                0x00000000800060dc       0x34 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x000000008000624c       0x34 ../skeleton/usb/ftdi/uhi_ftdi.o
                                          0x3c (size before relaxing)
  .text.ftdi_get_strings
-                0x0000000080006110       0xdc ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x0000000080006280       0xdc ../skeleton/usb/ftdi/uhi_ftdi.o
                                          0xe0 (size before relaxing)
-                0x0000000080006110                ftdi_get_strings
+                0x0000000080006280                ftdi_get_strings
  .text.uhi_ftdi_out_run
-                0x00000000800061ec       0x24 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x000000008000635c       0x24 ../skeleton/usb/ftdi/uhi_ftdi.o
                                          0x2c (size before relaxing)
-                0x00000000800061ec                uhi_ftdi_out_run
+                0x000000008000635c                uhi_ftdi_out_run
  .text.uhi_ftdi_in_run
-                0x0000000080006210       0x24 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x0000000080006380       0x24 ../skeleton/usb/ftdi/uhi_ftdi.o
                                          0x2c (size before relaxing)
-                0x0000000080006210                uhi_ftdi_in_run
+                0x0000000080006380                uhi_ftdi_in_run
  .text.uhi_ftdi_uninstall
-                0x0000000080006234       0x14 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x00000000800063a4       0x14 ../skeleton/usb/ftdi/uhi_ftdi.o
                                          0x1c (size before relaxing)
-                0x0000000080006234                uhi_ftdi_uninstall
+                0x00000000800063a4                uhi_ftdi_uninstall
  .text.uhi_ftdi_enable
-                0x0000000080006248       0x88 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x00000000800063b8       0x88 ../skeleton/usb/ftdi/uhi_ftdi.o
                                          0xa0 (size before relaxing)
-                0x0000000080006248                uhi_ftdi_enable
+                0x00000000800063b8                uhi_ftdi_enable
  .text.uhi_ftdi_install
-                0x00000000800062d0       0xe0 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x0000000080006440       0xe0 ../skeleton/usb/ftdi/uhi_ftdi.o
                                          0xe4 (size before relaxing)
-                0x00000000800062d0                uhi_ftdi_install
+                0x0000000080006440                uhi_ftdi_install
  .text.flashc_set_bus_freq
-                0x00000000800063b0       0x28 avr32/drivers/flashc/flashc.o
-                0x00000000800063b0                flashc_set_bus_freq
+                0x0000000080006520       0x28 avr32/drivers/flashc/flashc.o
+                0x0000000080006520                flashc_set_bus_freq
  .text.flashc_default_wait_until_ready
-                0x00000000800063d8       0x14 avr32/drivers/flashc/flashc.o
-                0x00000000800063d8                flashc_default_wait_until_ready
+                0x0000000080006548       0x14 avr32/drivers/flashc/flashc.o
+                0x0000000080006548                flashc_default_wait_until_ready
  .text.flashc_issue_command
-                0x00000000800063ec       0x40 avr32/drivers/flashc/flashc.o
+                0x000000008000655c       0x40 avr32/drivers/flashc/flashc.o
                                          0x44 (size before relaxing)
-                0x00000000800063ec                flashc_issue_command
+                0x000000008000655c                flashc_issue_command
  .text.flashc_clear_page_buffer
-                0x000000008000642c        0xc avr32/drivers/flashc/flashc.o
+                0x000000008000659c        0xc avr32/drivers/flashc/flashc.o
                                          0x10 (size before relaxing)
-                0x000000008000642c                flashc_clear_page_buffer
+                0x000000008000659c                flashc_clear_page_buffer
  .text.flashc_quick_page_read
-                0x0000000080006438       0x14 avr32/drivers/flashc/flashc.o
+                0x00000000800065a8       0x14 avr32/drivers/flashc/flashc.o
                                          0x1c (size before relaxing)
-                0x0000000080006438                flashc_quick_page_read
+                0x00000000800065a8                flashc_quick_page_read
  .text.flashc_erase_page
-                0x000000008000644c       0x24 avr32/drivers/flashc/flashc.o
+                0x00000000800065bc       0x24 avr32/drivers/flashc/flashc.o
                                          0x34 (size before relaxing)
-                0x000000008000644c                flashc_erase_page
+                0x00000000800065bc                flashc_erase_page
  .text.flashc_write_page
-                0x0000000080006470        0xc avr32/drivers/flashc/flashc.o
+                0x00000000800065e0        0xc avr32/drivers/flashc/flashc.o
                                          0x10 (size before relaxing)
-                0x0000000080006470                flashc_write_page
+                0x00000000800065e0                flashc_write_page
  .text.flashc_quick_user_page_read
-                0x000000008000647c       0x14 avr32/drivers/flashc/flashc.o
+                0x00000000800065ec       0x14 avr32/drivers/flashc/flashc.o
                                          0x1c (size before relaxing)
-                0x000000008000647c                flashc_quick_user_page_read
+                0x00000000800065ec                flashc_quick_user_page_read
  .text.flashc_erase_user_page
-                0x0000000080006490       0x14 avr32/drivers/flashc/flashc.o
+                0x0000000080006600       0x14 avr32/drivers/flashc/flashc.o
                                          0x20 (size before relaxing)
-                0x0000000080006490                flashc_erase_user_page
+                0x0000000080006600                flashc_erase_user_page
  .text.flashc_write_user_page
-                0x00000000800064a4        0xc avr32/drivers/flashc/flashc.o
+                0x0000000080006614        0xc avr32/drivers/flashc/flashc.o
                                          0x10 (size before relaxing)
-                0x00000000800064a4                flashc_write_user_page
+                0x0000000080006614                flashc_write_user_page
  .text.flashc_memset64
-                0x00000000800064b0      0x24c avr32/drivers/flashc/flashc.o
+                0x0000000080006620      0x24c avr32/drivers/flashc/flashc.o
                                         0x270 (size before relaxing)
-                0x00000000800064b0                flashc_memset64
+                0x0000000080006620                flashc_memset64
  .text.flashc_memset32
-                0x00000000800066fc       0x18 avr32/drivers/flashc/flashc.o
+                0x000000008000686c       0x18 avr32/drivers/flashc/flashc.o
                                          0x20 (size before relaxing)
-                0x00000000800066fc                flashc_memset32
+                0x000000008000686c                flashc_memset32
  .text.flashc_memset16
-                0x0000000080006714        0xc avr32/drivers/flashc/flashc.o
+                0x0000000080006884        0xc avr32/drivers/flashc/flashc.o
                                          0x10 (size before relaxing)
-                0x0000000080006714                flashc_memset16
+                0x0000000080006884                flashc_memset16
  .text.flashc_memset8
-                0x0000000080006720        0xc avr32/drivers/flashc/flashc.o
+                0x0000000080006890        0xc avr32/drivers/flashc/flashc.o
                                          0x14 (size before relaxing)
-                0x0000000080006720                flashc_memset8
+                0x0000000080006890                flashc_memset8
  .text.flashc_memcpy
-                0x000000008000672c       0xbc avr32/drivers/flashc/flashc.o
+                0x000000008000689c       0xbc avr32/drivers/flashc/flashc.o
                                          0xdc (size before relaxing)
-                0x000000008000672c                flashc_memcpy
+                0x000000008000689c                flashc_memcpy
  .text.gpio_enable_module_pin
-                0x00000000800067e8       0x4e avr32/drivers/gpio/gpio.o
-                0x00000000800067e8                gpio_enable_module_pin
- *fill*         0x0000000080006836        0x2 d703d703
+                0x0000000080006958       0x4e avr32/drivers/gpio/gpio.o
+                0x0000000080006958                gpio_enable_module_pin
+ *fill*         0x00000000800069a6        0x2 d703d703
  .text.gpio_enable_module
-                0x0000000080006838       0x20 avr32/drivers/gpio/gpio.o
+                0x00000000800069a8       0x20 avr32/drivers/gpio/gpio.o
                                          0x28 (size before relaxing)
-                0x0000000080006838                gpio_enable_module
+                0x00000000800069a8                gpio_enable_module
  .text.gpio_enable_gpio_pin
-                0x0000000080006858       0x16 avr32/drivers/gpio/gpio.o
-                0x0000000080006858                gpio_enable_gpio_pin
+                0x00000000800069c8       0x16 avr32/drivers/gpio/gpio.o
+                0x00000000800069c8                gpio_enable_gpio_pin
  .text.gpio_get_pin_value
-                0x000000008000686e       0x16 avr32/drivers/gpio/gpio.o
-                0x000000008000686e                gpio_get_pin_value
+                0x00000000800069de       0x16 avr32/drivers/gpio/gpio.o
+                0x00000000800069de                gpio_get_pin_value
  .text.gpio_set_gpio_pin
-                0x0000000080006884       0x1a avr32/drivers/gpio/gpio.o
-                0x0000000080006884                gpio_set_gpio_pin
+                0x00000000800069f4       0x1a avr32/drivers/gpio/gpio.o
+                0x00000000800069f4                gpio_set_gpio_pin
  .text.gpio_clr_gpio_pin
-                0x000000008000689e       0x1a avr32/drivers/gpio/gpio.o
-                0x000000008000689e                gpio_clr_gpio_pin
+                0x0000000080006a0e       0x1a avr32/drivers/gpio/gpio.o
+                0x0000000080006a0e                gpio_clr_gpio_pin
  .text.gpio_enable_pin_interrupt
-                0x00000000800068b8       0x42 avr32/drivers/gpio/gpio.o
-                0x00000000800068b8                gpio_enable_pin_interrupt
+                0x0000000080006a28       0x42 avr32/drivers/gpio/gpio.o
+                0x0000000080006a28                gpio_enable_pin_interrupt
  .text.gpio_get_pin_interrupt_flag
-                0x00000000800068fa       0x18 avr32/drivers/gpio/gpio.o
-                0x00000000800068fa                gpio_get_pin_interrupt_flag
+                0x0000000080006a6a       0x18 avr32/drivers/gpio/gpio.o
+                0x0000000080006a6a                gpio_get_pin_interrupt_flag
  .text.gpio_clear_pin_interrupt_flag
-                0x0000000080006912       0x14 avr32/drivers/gpio/gpio.o
-                0x0000000080006912                gpio_clear_pin_interrupt_flag
+                0x0000000080006a82       0x14 avr32/drivers/gpio/gpio.o
+                0x0000000080006a82                gpio_clear_pin_interrupt_flag
  .text._unhandled_interrupt
-                0x0000000080006926        0x2 avr32/drivers/intc/intc.o
+                0x0000000080006a96        0x2 avr32/drivers/intc/intc.o
  .text.INTC_register_interrupt
-                0x0000000080006928       0x6c avr32/drivers/intc/intc.o
+                0x0000000080006a98       0x6c avr32/drivers/intc/intc.o
                                          0x74 (size before relaxing)
-                0x0000000080006928                INTC_register_interrupt
+                0x0000000080006a98                INTC_register_interrupt
  .text.INTC_init_interrupts
-                0x0000000080006994       0x44 avr32/drivers/intc/intc.o
+                0x0000000080006b04       0x44 avr32/drivers/intc/intc.o
                                          0x4c (size before relaxing)
-                0x0000000080006994                INTC_init_interrupts
+                0x0000000080006b04                INTC_init_interrupts
  .text._get_interrupt_handler
-                0x00000000800069d8       0x34 avr32/drivers/intc/intc.o
+                0x0000000080006b48       0x34 avr32/drivers/intc/intc.o
                                          0x38 (size before relaxing)
-                0x00000000800069d8                _get_interrupt_handler
+                0x0000000080006b48                _get_interrupt_handler
  .text.getBaudDiv
-                0x0000000080006a0c       0x20 avr32/drivers/spi/spi.o
-                0x0000000080006a0c                getBaudDiv
+                0x0000000080006b7c       0x20 avr32/drivers/spi/spi.o
+                0x0000000080006b7c                getBaudDiv
  .text.spi_initMaster
-                0x0000000080006a2c       0x3e avr32/drivers/spi/spi.o
-                0x0000000080006a2c                spi_initMaster
+                0x0000000080006b9c       0x3e avr32/drivers/spi/spi.o
+                0x0000000080006b9c                spi_initMaster
  .text.spi_selectionMode
-                0x0000000080006a6a       0x2a avr32/drivers/spi/spi.o
-                0x0000000080006a6a                spi_selectionMode
+                0x0000000080006bda       0x2a avr32/drivers/spi/spi.o
+                0x0000000080006bda                spi_selectionMode
  .text.spi_selectChip
-                0x0000000080006a94       0x50 avr32/drivers/spi/spi.o
-                0x0000000080006a94                spi_selectChip
+                0x0000000080006c04       0x50 avr32/drivers/spi/spi.o
+                0x0000000080006c04                spi_selectChip
  .text.spi_unselectChip
-                0x0000000080006ae4       0x28 avr32/drivers/spi/spi.o
-                0x0000000080006ae4                spi_unselectChip
+                0x0000000080006c54       0x28 avr32/drivers/spi/spi.o
+                0x0000000080006c54                spi_unselectChip
  .text.spi_setupChipReg
-                0x0000000080006b0c       0xa0 avr32/drivers/spi/spi.o
+                0x0000000080006c7c       0xa0 avr32/drivers/spi/spi.o
                                          0xa8 (size before relaxing)
-                0x0000000080006b0c                spi_setupChipReg
+                0x0000000080006c7c                spi_setupChipReg
  .text.spi_enable
-                0x0000000080006bac        0x6 avr32/drivers/spi/spi.o
-                0x0000000080006bac                spi_enable
+                0x0000000080006d1c        0x6 avr32/drivers/spi/spi.o
+                0x0000000080006d1c                spi_enable
  .text.spi_write
-                0x0000000080006bb2       0x1c avr32/drivers/spi/spi.o
-                0x0000000080006bb2                spi_write
+                0x0000000080006d22       0x1c avr32/drivers/spi/spi.o
+                0x0000000080006d22                spi_write
  .text.spi_read
-                0x0000000080006bce       0x22 avr32/drivers/spi/spi.o
-                0x0000000080006bce                spi_read
+                0x0000000080006d3e       0x22 avr32/drivers/spi/spi.o
+                0x0000000080006d3e                spi_read
  .text.tc_init_waveform
-                0x0000000080006bf0       0xa0 avr32/drivers/tc/tc.o
-                0x0000000080006bf0                tc_init_waveform
+                0x0000000080006d60       0xa0 avr32/drivers/tc/tc.o
+                0x0000000080006d60                tc_init_waveform
  .text.tc_start
-                0x0000000080006c90       0x12 avr32/drivers/tc/tc.o
-                0x0000000080006c90                tc_start
+                0x0000000080006e00       0x12 avr32/drivers/tc/tc.o
+                0x0000000080006e00                tc_start
  .text.tc_read_sr
-                0x0000000080006ca2       0x12 avr32/drivers/tc/tc.o
-                0x0000000080006ca2                tc_read_sr
+                0x0000000080006e12       0x12 avr32/drivers/tc/tc.o
+                0x0000000080006e12                tc_read_sr
  .text.tc_write_rc
-                0x0000000080006cb4       0x34 avr32/drivers/tc/tc.o
-                0x0000000080006cb4                tc_write_rc
+                0x0000000080006e24       0x34 avr32/drivers/tc/tc.o
+                0x0000000080006e24                tc_write_rc
  .text.tc_configure_interrupts
-                0x0000000080006ce8       0xc8 avr32/drivers/tc/tc.o
-                0x0000000080006ce8                tc_configure_interrupts
+                0x0000000080006e58       0xc8 avr32/drivers/tc/tc.o
+                0x0000000080006e58                tc_configure_interrupts
  .text.usart_set_async_baudrate
-                0x0000000080006db0       0x5c avr32/drivers/usart/usart.o
+                0x0000000080006f20       0x5c avr32/drivers/usart/usart.o
  .text.usart_write_line
-                0x0000000080006e0c       0x24 avr32/drivers/usart/usart.o
-                0x0000000080006e0c                usart_write_line
+                0x0000000080006f7c       0x24 avr32/drivers/usart/usart.o
+                0x0000000080006f7c                usart_write_line
  .text.usart_reset
-                0x0000000080006e30       0x2c avr32/drivers/usart/usart.o
-                0x0000000080006e30                usart_reset
+                0x0000000080006fa0       0x2c avr32/drivers/usart/usart.o
+                0x0000000080006fa0                usart_reset
  .text.usart_init_rs232
-                0x0000000080006e5c       0xc0 avr32/drivers/usart/usart.o
+                0x0000000080006fcc       0xc0 avr32/drivers/usart/usart.o
                                          0xcc (size before relaxing)
-                0x0000000080006e5c                usart_init_rs232
+                0x0000000080006fcc                usart_init_rs232
  .text.uhd_get_speed
-                0x0000000080006f1c       0x1c avr32/drivers/usbb/usbb_host.o
-                0x0000000080006f1c                uhd_get_speed
+                0x000000008000708c       0x1c avr32/drivers/usbb/usbb_host.o
+                0x000000008000708c                uhd_get_speed
  .text.uhd_send_reset
-                0x0000000080006f38       0x14 avr32/drivers/usbb/usbb_host.o
-                0x0000000080006f38                uhd_send_reset
+                0x00000000800070a8       0x14 avr32/drivers/usbb/usbb_host.o
+                0x00000000800070a8                uhd_send_reset
  .text.uhd_suspend
-                0x0000000080006f4c       0x50 avr32/drivers/usbb/usbb_host.o
+                0x00000000800070bc       0x50 avr32/drivers/usbb/usbb_host.o
                                          0x58 (size before relaxing)
-                0x0000000080006f4c                uhd_suspend
+                0x00000000800070bc                uhd_suspend
  .text.uhd_ctrl_phase_data_out
-                0x0000000080006f9c      0x150 avr32/drivers/usbb/usbb_host.o
+                0x000000008000710c      0x150 avr32/drivers/usbb/usbb_host.o
  .text.uhd_get_pipe
-                0x00000000800070ec       0x7e avr32/drivers/usbb/usbb_host.o
- *fill*         0x000000008000716a        0x2 d703d703
+                0x000000008000725c       0x7e avr32/drivers/usbb/usbb_host.o
+ *fill*         0x00000000800072da        0x2 d703d703
  .text.uhd_pipe_finish_job
-                0x000000008000716c       0x78 avr32/drivers/usbb/usbb_host.o
+                0x00000000800072dc       0x78 avr32/drivers/usbb/usbb_host.o
                                          0x7c (size before relaxing)
  .text.uhd_ep_abort_pipe
-                0x00000000800071e4       0x60 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007354       0x60 avr32/drivers/usbb/usbb_host.o
                                          0x68 (size before relaxing)
  .text.uhd_pipe_trans_complet
-                0x0000000080007244      0x1b0 avr32/drivers/usbb/usbb_host.o
+                0x00000000800073b4      0x1b0 avr32/drivers/usbb/usbb_host.o
                                         0x1b4 (size before relaxing)
  .text.uhd_ep_run
-                0x00000000800073f4       0x6c avr32/drivers/usbb/usbb_host.o
+                0x0000000080007564       0x6c avr32/drivers/usbb/usbb_host.o
                                          0x78 (size before relaxing)
-                0x00000000800073f4                uhd_ep_run
+                0x0000000080007564                uhd_ep_run
  .text.uhd_ctrl_request_end
-                0x0000000080007460       0x60 avr32/drivers/usbb/usbb_host.o
+                0x00000000800075d0       0x60 avr32/drivers/usbb/usbb_host.o
                                          0x78 (size before relaxing)
  .text.uhd_ctrl_phase_setup
-                0x00000000800074c0       0xc8 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007630       0xc8 avr32/drivers/usbb/usbb_host.o
                                          0xdc (size before relaxing)
  .text.uhd_setup_request
-                0x0000000080007588       0x6c avr32/drivers/usbb/usbb_host.o
+                0x00000000800076f8       0x6c avr32/drivers/usbb/usbb_host.o
                                          0x7c (size before relaxing)
-                0x0000000080007588                uhd_setup_request
+                0x00000000800076f8                uhd_setup_request
  .text.uhd_ep_free
-                0x00000000800075f4       0xb0 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007764       0xb0 avr32/drivers/usbb/usbb_host.o
                                          0xbc (size before relaxing)
-                0x00000000800075f4                uhd_ep_free
+                0x0000000080007764                uhd_ep_free
  .text.uhd_ep_alloc
-                0x00000000800076a4      0x15e avr32/drivers/usbb/usbb_host.o
-                0x00000000800076a4                uhd_ep_alloc
+                0x0000000080007814      0x15e avr32/drivers/usbb/usbb_host.o
+                0x0000000080007814                uhd_ep_alloc
  .text.uhd_ep0_alloc
-                0x0000000080007802       0x88 avr32/drivers/usbb/usbb_host.o
-                0x0000000080007802                uhd_ep0_alloc
- *fill*         0x000000008000788a        0x2 d703d703
+                0x0000000080007972       0x88 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007972                uhd_ep0_alloc
+ *fill*         0x00000000800079fa        0x2 d703d703
  .text.otg_dual_disable
-                0x000000008000788c       0x48 avr32/drivers/usbb/usbb_host.o
+                0x00000000800079fc       0x48 avr32/drivers/usbb/usbb_host.o
                                          0x4c (size before relaxing)
-                0x000000008000788c                otg_dual_disable
+                0x00000000800079fc                otg_dual_disable
  .text.uhd_disable
-                0x00000000800078d4       0x68 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007a44       0x68 avr32/drivers/usbb/usbb_host.o
                                          0x70 (size before relaxing)
-                0x00000000800078d4                uhd_disable
+                0x0000000080007a44                uhd_disable
  .text.otg_dual_enable
-                0x000000008000793c       0x94 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007aac       0x94 avr32/drivers/usbb/usbb_host.o
                                          0xa8 (size before relaxing)
-                0x000000008000793c                otg_dual_enable
+                0x0000000080007aac                otg_dual_enable
  .text.uhd_enable
-                0x00000000800079d0       0xc4 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007b40       0xc4 avr32/drivers/usbb/usbb_host.o
                                          0xd4 (size before relaxing)
-                0x00000000800079d0                uhd_enable
+                0x0000000080007b40                uhd_enable
  .text.otg_interrupt
-                0x0000000080007a94      0x6a8 avr32/drivers/usbb/usbb_host.o
+                0x0000000080007c04      0x6a8 avr32/drivers/usbb/usbb_host.o
                                         0x704 (size before relaxing)
  .text.print_hex
-                0x000000008000813c       0x34 avr32/utils/debug/print_funcs.o
+                0x00000000800082ac       0x34 avr32/utils/debug/print_funcs.o
                                          0x38 (size before relaxing)
-                0x000000008000813c                print_hex
+                0x00000000800082ac                print_hex
  .text.print_dbg_hex
-                0x0000000080008170        0xc avr32/utils/debug/print_funcs.o
+                0x00000000800082e0        0xc avr32/utils/debug/print_funcs.o
                                          0x14 (size before relaxing)
-                0x0000000080008170                print_dbg_hex
+                0x00000000800082e0                print_dbg_hex
  .text.print_ulong
-                0x000000008000817c       0x30 avr32/utils/debug/print_funcs.o
+                0x00000000800082ec       0x30 avr32/utils/debug/print_funcs.o
                                          0x34 (size before relaxing)
-                0x000000008000817c                print_ulong
+                0x00000000800082ec                print_ulong
  .text.print_dbg_ulong
-                0x00000000800081ac        0xc avr32/utils/debug/print_funcs.o
+                0x000000008000831c        0xc avr32/utils/debug/print_funcs.o
                                          0x14 (size before relaxing)
-                0x00000000800081ac                print_dbg_ulong
+                0x000000008000831c                print_dbg_ulong
  .text.print_dbg
-                0x00000000800081b8       0x10 avr32/utils/debug/print_funcs.o
+                0x0000000080008328       0x10 avr32/utils/debug/print_funcs.o
                                          0x14 (size before relaxing)
-                0x00000000800081b8                print_dbg
+                0x0000000080008328                print_dbg
  .text.init_dbg_rs232_ex
-                0x00000000800081c8       0x34 avr32/utils/debug/print_funcs.o
+                0x0000000080008338       0x34 avr32/utils/debug/print_funcs.o
                                          0x3c (size before relaxing)
-                0x00000000800081c8                init_dbg_rs232_ex
+                0x0000000080008338                init_dbg_rs232_ex
  .text.init_dbg_rs232
-                0x00000000800081fc        0xc avr32/utils/debug/print_funcs.o
+                0x000000008000836c        0xc avr32/utils/debug/print_funcs.o
                                          0x14 (size before relaxing)
-                0x00000000800081fc                init_dbg_rs232
+                0x000000008000836c                init_dbg_rs232
  .text.uhc_enumeration_step2
-                0x0000000080008208       0x14 common/services/usb/uhc/uhc.o
+                0x0000000080008378       0x14 common/services/usb/uhc/uhc.o
                                          0x1c (size before relaxing)
  .text.uhc_enumeration_step8
-                0x000000008000821c       0x14 common/services/usb/uhc/uhc.o
+                0x000000008000838c       0x14 common/services/usb/uhc/uhc.o
                                          0x1c (size before relaxing)
  .text.uhc_notify_sof
-                0x0000000080008230       0x30 common/services/usb/uhc/uhc.o
+                0x00000000800083a0       0x30 common/services/usb/uhc/uhc.o
                                          0x38 (size before relaxing)
-                0x0000000080008230                uhc_notify_sof
+                0x00000000800083a0                uhc_notify_sof
  .text.uhc_remotewakeup
-                0x0000000080008260       0x4c common/services/usb/uhc/uhc.o
+                0x00000000800083d0       0x4c common/services/usb/uhc/uhc.o
                                          0x50 (size before relaxing)
  .text.uhc_stop
-                0x00000000800082ac        0x8 common/services/usb/uhc/uhc.o
+                0x000000008000841c        0x8 common/services/usb/uhc/uhc.o
                                           0xc (size before relaxing)
-                0x00000000800082ac                uhc_stop
+                0x000000008000841c                uhc_stop
  .text.uhc_start
-                0x00000000800082b4       0x1c common/services/usb/uhc/uhc.o
+                0x0000000080008424       0x1c common/services/usb/uhc/uhc.o
                                          0x24 (size before relaxing)
-                0x00000000800082b4                uhc_start
+                0x0000000080008424                uhc_start
  .text.uhc_notify_resume
-                0x00000000800082d0        0xc common/services/usb/uhc/uhc.o
+                0x0000000080008440        0xc common/services/usb/uhc/uhc.o
                                          0x18 (size before relaxing)
-                0x00000000800082d0                uhc_notify_resume
+                0x0000000080008440                uhc_notify_resume
  .text.uhc_enumeration_step3
-                0x00000000800082dc        0xc common/services/usb/uhc/uhc.o
+                0x000000008000844c        0xc common/services/usb/uhc/uhc.o
                                          0x14 (size before relaxing)
  .text.uhc_enumeration_step7
-                0x00000000800082e8        0xc common/services/usb/uhc/uhc.o
+                0x0000000080008458        0xc common/services/usb/uhc/uhc.o
                                          0x14 (size before relaxing)
  .text.uhc_enumeration_step4
-                0x00000000800082f4       0x20 common/services/usb/uhc/uhc.o
+                0x0000000080008464       0x20 common/services/usb/uhc/uhc.o
                                          0x2c (size before relaxing)
  .text.uhc_enumeration_error
-                0x0000000080008314       0x6c common/services/usb/uhc/uhc.o
+                0x0000000080008484       0x6c common/services/usb/uhc/uhc.o
                                          0x80 (size before relaxing)
  .text.uhc_enumeration_step5
-                0x0000000080008380       0x58 common/services/usb/uhc/uhc.o
+                0x00000000800084f0       0x58 common/services/usb/uhc/uhc.o
                                          0x6c (size before relaxing)
  .text.uhc_enumeration_step6
-                0x00000000800083d8       0x48 common/services/usb/uhc/uhc.o
+                0x0000000080008548       0x48 common/services/usb/uhc/uhc.o
                                          0x54 (size before relaxing)
  .text.uhc_enumeration_step9
-                0x0000000080008420       0x58 common/services/usb/uhc/uhc.o
+                0x0000000080008590       0x58 common/services/usb/uhc/uhc.o
                                          0x6c (size before relaxing)
  .text.uhc_enumeration_step10
-                0x0000000080008478       0x28 common/services/usb/uhc/uhc.o
+                0x00000000800085e8       0x28 common/services/usb/uhc/uhc.o
                                          0x34 (size before relaxing)
  .text.uhc_enumeration_step11
-                0x00000000800084a0       0x58 common/services/usb/uhc/uhc.o
+                0x0000000080008610       0x58 common/services/usb/uhc/uhc.o
                                          0x70 (size before relaxing)
  .text.uhc_enumeration_step12
-                0x00000000800084f8       0x78 common/services/usb/uhc/uhc.o
+                0x0000000080008668       0x78 common/services/usb/uhc/uhc.o
                                          0x88 (size before relaxing)
  .text.uhc_enumeration_step13
-                0x0000000080008570       0x94 common/services/usb/uhc/uhc.o
+                0x00000000800086e0       0x94 common/services/usb/uhc/uhc.o
                                          0xac (size before relaxing)
  .text.uhc_enumeration_step14
-                0x0000000080008604       0xac common/services/usb/uhc/uhc.o
+                0x0000000080008774       0xac common/services/usb/uhc/uhc.o
                                          0xc8 (size before relaxing)
  .text.uhc_enumeration_step15
-                0x00000000800086b0       0x50 common/services/usb/uhc/uhc.o
+                0x0000000080008820       0x50 common/services/usb/uhc/uhc.o
                                          0x5c (size before relaxing)
  .text.uhc_notify_connection
-                0x0000000080008700       0x6c common/services/usb/uhc/uhc.o
+                0x0000000080008870       0x6c common/services/usb/uhc/uhc.o
                                          0x88 (size before relaxing)
-                0x0000000080008700                uhc_notify_connection
+                0x0000000080008870                uhc_notify_connection
  .text.sysclk_priv_disable_module
-                0x000000008000876c       0x30 common/services/clock/uc3b0_b1/sysclk.o
-                0x000000008000876c                sysclk_priv_disable_module
+                0x00000000800088dc       0x30 common/services/clock/uc3b0_b1/sysclk.o
+                0x00000000800088dc                sysclk_priv_disable_module
  .text.sysclk_disable_pbb_module
-                0x000000008000879c       0x2c common/services/clock/uc3b0_b1/sysclk.o
+                0x000000008000890c       0x2c common/services/clock/uc3b0_b1/sysclk.o
                                          0x38 (size before relaxing)
-                0x000000008000879c                sysclk_disable_pbb_module
+                0x000000008000890c                sysclk_disable_pbb_module
  .text.sysclk_disable_usb
-                0x00000000800087c8       0x18 common/services/clock/uc3b0_b1/sysclk.o
+                0x0000000080008938       0x18 common/services/clock/uc3b0_b1/sysclk.o
                                          0x24 (size before relaxing)
-                0x00000000800087c8                sysclk_disable_usb
+                0x0000000080008938                sysclk_disable_usb
  .text.sysclk_priv_enable_module
-                0x00000000800087e0       0x2e common/services/clock/uc3b0_b1/sysclk.o
-                0x00000000800087e0                sysclk_priv_enable_module
- *fill*         0x000000008000880e        0x2 d703d703
+                0x0000000080008950       0x2e common/services/clock/uc3b0_b1/sysclk.o
+                0x0000000080008950                sysclk_priv_enable_module
+ *fill*         0x000000008000897e        0x2 d703d703
  .text.sysclk_enable_pbb_module
-                0x0000000080008810       0x38 common/services/clock/uc3b0_b1/sysclk.o
+                0x0000000080008980       0x38 common/services/clock/uc3b0_b1/sysclk.o
                                          0x40 (size before relaxing)
-                0x0000000080008810                sysclk_enable_pbb_module
- .text.T.62     0x0000000080008848       0x34 common/services/clock/uc3b0_b1/sysclk.o
+                0x0000000080008980                sysclk_enable_pbb_module
+ .text.T.62     0x00000000800089b8       0x34 common/services/clock/uc3b0_b1/sysclk.o
  .text.pll_enable_config_defaults
-                0x000000008000887c       0x4c common/services/clock/uc3b0_b1/sysclk.o
+                0x00000000800089ec       0x4c common/services/clock/uc3b0_b1/sysclk.o
                                          0x54 (size before relaxing)
  .text.sysclk_init
-                0x00000000800088c8       0x30 common/services/clock/uc3b0_b1/sysclk.o
+                0x0000000080008a38       0x30 common/services/clock/uc3b0_b1/sysclk.o
                                          0x3c (size before relaxing)
-                0x00000000800088c8                sysclk_init
+                0x0000000080008a38                sysclk_init
  .text.sysclk_enable_usb
-                0x00000000800088f8       0x1c common/services/clock/uc3b0_b1/sysclk.o
+                0x0000000080008a68       0x1c common/services/clock/uc3b0_b1/sysclk.o
                                          0x30 (size before relaxing)
-                0x00000000800088f8                sysclk_enable_usb
+                0x0000000080008a68                sysclk_enable_usb
  .text.__udivdi3
-                0x0000000080008914      0x288 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_udivdi3.o)
-                0x0000000080008914                __udivdi3
-                0x0000000080008914                __avr32_udiv64
- .text.atexit   0x0000000080008b9c       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+                0x0000000080008a84      0x288 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_udivdi3.o)
+                0x0000000080008a84                __udivdi3
+                0x0000000080008a84                __avr32_udiv64
+ .text.atexit   0x0000000080008d0c       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
                                          0x14 (size before relaxing)
-                0x0000000080008b9c                atexit
- .text.exit     0x0000000080008bac       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+                0x0000000080008d0c                atexit
+ .text.exit     0x0000000080008d1c       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
                                          0x28 (size before relaxing)
-                0x0000000080008bac                exit
- .text.free     0x0000000080008bcc       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                0x0000000080008d1c                exit
+ .text.free     0x0000000080008d3c       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
                                          0x18 (size before relaxing)
-                0x0000000080008bcc                free
- .text.malloc   0x0000000080008bdc       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+                0x0000000080008d3c                free
+ .text.malloc   0x0000000080008d4c       0x10 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
                                          0x18 (size before relaxing)
-                0x0000000080008bdc                malloc
+                0x0000000080008d4c                malloc
  .text._malloc_r
-                0x0000000080008bec      0x428 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000080008d5c      0x428 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
                                         0x44c (size before relaxing)
-                0x0000000080008bec                _malloc_r
- .text          0x0000000080009014      0x148 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memcpy.o)
-                0x0000000080009014                memcpy
+                0x0000000080008d5c                _malloc_r
+ .text          0x0000000080009184      0x148 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-memcpy.o)
+                0x0000000080009184                memcpy
  .text.__malloc_lock
-                0x000000008000915c        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
-                0x000000008000915c                __malloc_lock
+                0x00000000800092cc        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                0x00000000800092cc                __malloc_lock
  .text.__malloc_unlock
-                0x000000008000915e        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
-                0x000000008000915e                __malloc_unlock
- .text.rand     0x0000000080009160       0x80 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-rand.o)
+                0x00000000800092ce        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+                0x00000000800092ce                __malloc_unlock
+ .text.rand     0x00000000800092d0       0x80 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-rand.o)
                                          0x84 (size before relaxing)
-                0x0000000080009160                rand
- .text._sbrk_r  0x00000000800091e0       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+                0x00000000800092d0                rand
+ .text._sbrk_r  0x0000000080009350       0x20 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
                                          0x28 (size before relaxing)
-                0x00000000800091e0                _sbrk_r
- .text.strncmp  0x0000000080009200       0x26 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-strncmp.o)
-                0x0000000080009200                strncmp
+                0x0000000080009350                _sbrk_r
+ .text.strncmp  0x0000000080009370       0x26 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-strncmp.o)
+                0x0000000080009370                strncmp
  .text._init_startup
-                0x0000000080009226        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
-                0x0000000080009226                _init_startup
+                0x0000000080009396        0x2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x0000000080009396                _init_startup
  .text._init_argv
-                0x0000000080009228        0xa /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
-                0x0000000080009228                _init_argv
- .text._exit    0x0000000080009232        0xa /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
-                0x0000000080009232                _exit
- .text._sbrk    0x000000008000923c       0x38 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x0000000080009398        0xa /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x0000000080009398                _init_argv
+ .text._exit    0x00000000800093a2        0xa /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x00000000800093a2                _exit
+ .text._sbrk    0x00000000800093ac       0x38 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
                                          0x40 (size before relaxing)
-                0x000000008000923c                _sbrk
+                0x00000000800093ac                _sbrk
  .text.__register_exitproc
-                0x0000000080009274       0xa4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+                0x00000000800093e4       0xa4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
                                          0xac (size before relaxing)
-                0x0000000080009274                __register_exitproc
+                0x00000000800093e4                __register_exitproc
  .text.__call_exitprocs
-                0x0000000080009318       0xcc /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+                0x0000000080009488       0xcc /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
                                          0xd0 (size before relaxing)
-                0x0000000080009318                __call_exitprocs
- .text.__errno  0x00000000800093e4        0xc /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
-                0x00000000800093e4                __errno
+                0x0000000080009488                __call_exitprocs
+ .text.__errno  0x0000000080009554        0xc /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+                0x0000000080009554                __errno
  .text._malloc_trim_r
-                0x00000000800093f0       0x8c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                0x0000000080009560       0x8c /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
                                          0xa8 (size before relaxing)
-                0x00000000800093f0                _malloc_trim_r
- .text._free_r  0x000000008000947c      0x184 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+                0x0000000080009560                _malloc_trim_r
+ .text._free_r  0x00000000800095ec      0x184 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
                                         0x19c (size before relaxing)
-                0x000000008000947c                _free_r
+                0x00000000800095ec                _free_r
  .text.__do_global_ctors_aux
-                0x0000000080009600       0x14 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
+                0x0000000080009770       0x14 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtend.o
                                          0x18 (size before relaxing)
  *(.text.*personality*)
  *(.gnu.warning)
@@ -2193,7 +2193,7 @@ LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
                 0x0000000000000548                PROVIDE (edata, .)
                 0x0000000000000548                __bss_start = .
 
-.bss            0x0000000000000564     0x179c
+.bss            0x0000000000000564     0x1794
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
  .bss.completed.2746
@@ -2203,258 +2203,256 @@ LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
                 0x0000000000000568        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
  .bss.monomePollTimer
                 0x000000000000056c       0x18 ../whitewhale/main.o
- .bss.x.12754   0x0000000000000584        0x2 ../whitewhale/main.o
- *fill*         0x0000000000000586        0x2 
- .bss.e.12760   0x0000000000000588        0x8 ../whitewhale/main.o
- .bss.e.12756   0x0000000000000590        0x8 ../whitewhale/main.o
- .bss.e.12644   0x0000000000000598        0x8 ../whitewhale/main.o
+ .bss.adcTimer  0x0000000000000584       0x18 ../whitewhale/main.o
  .bss.count.12295
-                0x00000000000005a0        0x1 ../whitewhale/main.o
- .bss.i1.12294  0x00000000000005a1        0x1 ../whitewhale/main.o
- *fill*         0x00000000000005a2        0x2 
- .bss.keyTimer  0x00000000000005a4       0x18 ../whitewhale/main.o
- .bss.n1.12755  0x00000000000005bc        0x2 ../whitewhale/main.o
- *fill*         0x00000000000005be        0x2 
- .bss.e.14143   0x00000000000005c0        0x8 ../whitewhale/main.o
- .bss.clockTimer
-                0x00000000000005c8       0x18 ../whitewhale/main.o
- .bss.i1.12753  0x00000000000005e0        0x2 ../whitewhale/main.o
+                0x000000000000059c        0x1 ../whitewhale/main.o
+ .bss.i1.12294  0x000000000000059d        0x1 ../whitewhale/main.o
+ .bss.i1.12779  0x000000000000059e        0x2 ../whitewhale/main.o
+ .bss.keyTimer  0x00000000000005a0       0x18 ../whitewhale/main.o
+ .bss.e.12663   0x00000000000005b8        0x8 ../whitewhale/main.o
+ .bss.x.12780   0x00000000000005c0        0x2 ../whitewhale/main.o
+ *fill*         0x00000000000005c2        0x2 
+ .bss.e.12670   0x00000000000005c4        0x8 ../whitewhale/main.o
+ .bss.e.12782   0x00000000000005cc        0x8 ../whitewhale/main.o
+ .bss.e.12659   0x00000000000005d4        0x8 ../whitewhale/main.o
+ .bss.e.12786   0x00000000000005dc        0x8 ../whitewhale/main.o
  .bss.found.12296
-                0x00000000000005e2       0x20 ../whitewhale/main.o
- *fill*         0x0000000000000602        0x2 
- .bss.adcTimer  0x0000000000000604       0x18 ../whitewhale/main.o
- .bss.e.12637   0x000000000000061c        0x8 ../whitewhale/main.o
- .bss.e.12633   0x0000000000000624        0x8 ../whitewhale/main.o
+                0x00000000000005e4       0x20 ../whitewhale/main.o
+ .bss.e.14172   0x0000000000000604        0x8 ../whitewhale/main.o
+ .bss.clockTimer
+                0x000000000000060c       0x18 ../whitewhale/main.o
+ .bss.n1.12781  0x0000000000000624        0x2 ../whitewhale/main.o
+ *fill*         0x0000000000000626        0x2 
  .bss.monomeRefreshTimer
-                0x000000000000062c       0x18 ../whitewhale/main.o
- .bss.putIdx    0x0000000000000644        0x4 ../skeleton/events.o
- .bss.getIdx    0x0000000000000648        0x4 ../skeleton/events.o
+                0x0000000000000628       0x18 ../whitewhale/main.o
+ .bss.putIdx    0x0000000000000640        0x4 ../skeleton/events.o
+ .bss.getIdx    0x0000000000000644        0x4 ../skeleton/events.o
  .bss.sysEvents
-                0x000000000000064c      0x100 ../skeleton/events.o
- .bss.e.10793   0x000000000000074c        0x8 ../skeleton/interrupts.o
+                0x0000000000000648      0x100 ../skeleton/events.o
+ .bss.e.10793   0x0000000000000748        0x8 ../skeleton/interrupts.o
  .bss.tcOverflow
-                0x0000000000000754        0x1 ../skeleton/interrupts.o
-                0x0000000000000754                tcOverflow
- *fill*         0x0000000000000755        0x3 
- .bss.tcTicks   0x0000000000000758        0x8 ../skeleton/interrupts.o
-                0x0000000000000758                tcTicks
+                0x0000000000000750        0x1 ../skeleton/interrupts.o
+                0x0000000000000750                tcOverflow
+ *fill*         0x0000000000000751        0x3 
+ .bss.tcTicks   0x0000000000000754        0x8 ../skeleton/interrupts.o
+                0x0000000000000754                tcTicks
  .bss.ptx.11451
-                0x0000000000000760        0x4 ../skeleton/monome.o
+                0x000000000000075c        0x4 ../skeleton/monome.o
  .bss.com.11359
-                0x0000000000000764        0x1 ../skeleton/monome.o
+                0x0000000000000760        0x1 ../skeleton/monome.o
  .bss.monomeFrameDirty
-                0x0000000000000765        0x1 ../skeleton/monome.o
-                0x0000000000000765                monomeFrameDirty
- .bss.i.11418   0x0000000000000766        0x1 ../skeleton/monome.o
- *fill*         0x0000000000000767        0x1 
+                0x0000000000000761        0x1 ../skeleton/monome.o
+                0x0000000000000761                monomeFrameDirty
+ .bss.i.11418   0x0000000000000762        0x1 ../skeleton/monome.o
+ *fill*         0x0000000000000763        0x1 
  .bss.prx.11358
-                0x0000000000000768        0x4 ../skeleton/monome.o
- .bss.i.11452   0x000000000000076c        0x1 ../skeleton/monome.o
- .bss.j.11419   0x000000000000076d        0x1 ../skeleton/monome.o
- *fill*         0x000000000000076e        0x2 
+                0x0000000000000764        0x4 ../skeleton/monome.o
+ .bss.i.11452   0x0000000000000768        0x1 ../skeleton/monome.o
+ .bss.j.11419   0x0000000000000769        0x1 ../skeleton/monome.o
+ *fill*         0x000000000000076a        0x2 
  .bss.ptx.11489
-                0x0000000000000770        0x4 ../skeleton/monome.o
+                0x000000000000076c        0x4 ../skeleton/monome.o
  .bss.nbp.11357
-                0x0000000000000774        0x1 ../skeleton/monome.o
- .bss.i.11395   0x0000000000000775        0x1 ../skeleton/monome.o
- .bss.j.11396   0x0000000000000776        0x1 ../skeleton/monome.o
- .bss.j.11453   0x0000000000000777        0x1 ../skeleton/monome.o
- .bss.txBuf     0x0000000000000778       0x48 ../skeleton/monome.o
- .bss.i.11490   0x00000000000007c0        0x1 ../skeleton/monome.o
- *fill*         0x00000000000007c1        0x3 
- .bss.ev        0x00000000000007c4        0x8 ../skeleton/monome.o
+                0x0000000000000770        0x1 ../skeleton/monome.o
+ .bss.i.11395   0x0000000000000771        0x1 ../skeleton/monome.o
+ .bss.j.11396   0x0000000000000772        0x1 ../skeleton/monome.o
+ .bss.j.11453   0x0000000000000773        0x1 ../skeleton/monome.o
+ .bss.txBuf     0x0000000000000774       0x48 ../skeleton/monome.o
+ .bss.i.11490   0x00000000000007bc        0x1 ../skeleton/monome.o
+ *fill*         0x00000000000007bd        0x3 
+ .bss.ev        0x00000000000007c0        0x8 ../skeleton/monome.o
  .bss.ptx.11394
-                0x00000000000007cc        0x4 ../skeleton/monome.o
- .bss.rxBytes   0x00000000000007d0        0x1 ../skeleton/monome.o
- *fill*         0x00000000000007d1        0x3 
- .bss.head      0x00000000000007d4        0x4 ../skeleton/timers.o
- .bss.num       0x00000000000007d8        0x4 ../skeleton/timers.o
- .bss.tail      0x00000000000007dc        0x4 ../skeleton/timers.o
- .bss.txBusy    0x00000000000007e0        0x1 ../skeleton/usb/ftdi/ftdi.o
+                0x00000000000007c8        0x4 ../skeleton/monome.o
+ .bss.rxBytes   0x00000000000007cc        0x1 ../skeleton/monome.o
+ *fill*         0x00000000000007cd        0x3 
+ .bss.head      0x00000000000007d0        0x4 ../skeleton/timers.o
+ .bss.num       0x00000000000007d4        0x4 ../skeleton/timers.o
+ .bss.tail      0x00000000000007d8        0x4 ../skeleton/timers.o
+ .bss.txBusy    0x00000000000007dc        0x1 ../skeleton/usb/ftdi/ftdi.o
  .bss.ftdiConnect
-                0x00000000000007e1        0x1 ../skeleton/usb/ftdi/ftdi.o
-                0x00000000000007e1                ftdiConnect
- *fill*         0x00000000000007e2        0x2 
- .bss.rxBuf     0x00000000000007e4       0x40 ../skeleton/usb/ftdi/ftdi.o
- .bss.rxBusy    0x0000000000000824        0x1 ../skeleton/usb/ftdi/ftdi.o
- *fill*         0x0000000000000825        0x3 
- .bss.rxBytes   0x0000000000000828        0x4 ../skeleton/usb/ftdi/ftdi.o
- .bss.e         0x000000000000082c        0x8 ../skeleton/usb/ftdi/ftdi.o
- .bss.status    0x0000000000000834        0x4 ../skeleton/usb/ftdi/ftdi.o
+                0x00000000000007dd        0x1 ../skeleton/usb/ftdi/ftdi.o
+                0x00000000000007dd                ftdiConnect
+ *fill*         0x00000000000007de        0x2 
+ .bss.rxBuf     0x00000000000007e0       0x40 ../skeleton/usb/ftdi/ftdi.o
+ .bss.rxBusy    0x0000000000000820        0x1 ../skeleton/usb/ftdi/ftdi.o
+ *fill*         0x0000000000000821        0x3 
+ .bss.rxBytes   0x0000000000000824        0x4 ../skeleton/usb/ftdi/ftdi.o
+ .bss.e         0x0000000000000828        0x8 ../skeleton/usb/ftdi/ftdi.o
+ .bss.status    0x0000000000000830        0x4 ../skeleton/usb/ftdi/ftdi.o
  .bss.uhi_ftdi_dev
-                0x0000000000000838        0x8 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x0000000000000834        0x8 ../skeleton/usb/ftdi/uhi_ftdi.o
  .bss.ctlReadBusy
-                0x0000000000000840        0x1 ../skeleton/usb/ftdi/uhi_ftdi.o
- *fill*         0x0000000000000841        0x3 
+                0x000000000000083c        0x1 ../skeleton/usb/ftdi/uhi_ftdi.o
+ *fill*         0x000000000000083d        0x3 
  .bss.flashc_error_status
-                0x0000000000000844        0x4 avr32/drivers/flashc/flashc.o
+                0x0000000000000840        0x4 avr32/drivers/flashc/flashc.o
  .bss._int_line_handler_table_6
-                0x0000000000000848        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000844        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_7
-                0x000000000000084c        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000848        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_8
-                0x0000000000000850        0x4 avr32/drivers/intc/intc.o
+                0x000000000000084c        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_9
-                0x0000000000000854        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000850        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_10
-                0x0000000000000858        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000854        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_11
-                0x000000000000085c        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000858        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_12
-                0x0000000000000860        0x4 avr32/drivers/intc/intc.o
+                0x000000000000085c        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_13
-                0x0000000000000864        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000860        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_14
-                0x0000000000000868        0xc avr32/drivers/intc/intc.o
+                0x0000000000000864        0xc avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_15
-                0x0000000000000874        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000870        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_16
-                0x0000000000000878        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000874        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_17
-                0x000000000000087c        0x4 avr32/drivers/intc/intc.o
+                0x0000000000000878        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_0
-                0x0000000000000880        0x4 avr32/drivers/intc/intc.o
+                0x000000000000087c        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_1
-                0x0000000000000884       0x2c avr32/drivers/intc/intc.o
+                0x0000000000000880       0x2c avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_2
-                0x00000000000008b0       0x18 avr32/drivers/intc/intc.o
+                0x00000000000008ac       0x18 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_3
-                0x00000000000008c8       0x1c avr32/drivers/intc/intc.o
+                0x00000000000008c4       0x1c avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_4
-                0x00000000000008e4        0x4 avr32/drivers/intc/intc.o
+                0x00000000000008e0        0x4 avr32/drivers/intc/intc.o
  .bss._int_line_handler_table_5
-                0x00000000000008e8        0x4 avr32/drivers/intc/intc.o
+                0x00000000000008e4        0x4 avr32/drivers/intc/intc.o
  .bss.otg_initialized
-                0x00000000000008ec        0x1 avr32/drivers/usbb/usbb_host.o
- *fill*         0x00000000000008ed        0x3 
+                0x00000000000008e8        0x1 avr32/drivers/usbb/usbb_host.o
+ *fill*         0x00000000000008e9        0x3 
  .bss.uhd_reset_callback
-                0x00000000000008f0        0x4 avr32/drivers/usbb/usbb_host.o
+                0x00000000000008ec        0x4 avr32/drivers/usbb/usbb_host.o
  .bss.uhd_pipe_job
-                0x00000000000008f4       0x78 avr32/drivers/usbb/usbb_host.o
+                0x00000000000008f0       0x78 avr32/drivers/usbb/usbb_host.o
  .bss.uhd_suspend_start
-                0x000000000000096c        0x1 avr32/drivers/usbb/usbb_host.o
+                0x0000000000000968        0x1 avr32/drivers/usbb/usbb_host.o
  .bss.uhd_pipes_unfreeze
-                0x000000000000096d        0x1 avr32/drivers/usbb/usbb_host.o
+                0x0000000000000969        0x1 avr32/drivers/usbb/usbb_host.o
  .bss.uhd_resume_start
-                0x000000000000096e        0x1 avr32/drivers/usbb/usbb_host.o
+                0x000000000000096a        0x1 avr32/drivers/usbb/usbb_host.o
  .bss.uhd_b_suspend_requested
-                0x000000000000096f        0x1 avr32/drivers/usbb/usbb_host.o
+                0x000000000000096b        0x1 avr32/drivers/usbb/usbb_host.o
  .bss.g_uhc_device_root
-                0x0000000000000970       0x1c common/services/usb/uhc/uhc.o
+                0x000000000000096c       0x1c common/services/usb/uhc/uhc.o
  .bss.uhc_enum_try
-                0x000000000000098c        0x1 common/services/usb/uhc/uhc.o
- *fill*         0x000000000000098d        0x3 
+                0x0000000000000988        0x1 common/services/usb/uhc/uhc.o
+ *fill*         0x0000000000000989        0x3 
  .bss.uhc_sof_timeout_callback
-                0x0000000000000990        0x4 common/services/usb/uhc/uhc.o
+                0x000000000000098c        0x4 common/services/usb/uhc/uhc.o
  .bss.sysclk_pbb_refcount
-                0x0000000000000994        0x1 common/services/clock/uc3b0_b1/sysclk.o
- *fill*         0x0000000000000995        0x3 
+                0x0000000000000990        0x1 common/services/clock/uc3b0_b1/sysclk.o
+ *fill*         0x0000000000000991        0x3 
  .bss.__malloc_max_total_mem
-                0x0000000000000998        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
-                0x0000000000000998                __malloc_max_total_mem
+                0x0000000000000994        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000000000994                __malloc_max_total_mem
  .bss.__malloc_max_sbrked_mem
-                0x000000000000099c        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
-                0x000000000000099c                __malloc_max_sbrked_mem
+                0x0000000000000998        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x0000000000000998                __malloc_max_sbrked_mem
  .bss.__malloc_top_pad
-                0x00000000000009a0        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
-                0x00000000000009a0                __malloc_top_pad
+                0x000000000000099c        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x000000000000099c                __malloc_top_pad
  .bss.__malloc_current_mallinfo
-                0x00000000000009a4       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
-                0x00000000000009a4                __malloc_current_mallinfo
+                0x00000000000009a0       0x28 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+                0x00000000000009a0                __malloc_current_mallinfo
  .bss.cur_heap_pos.1869
-                0x00000000000009cc        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+                0x00000000000009c8        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
  *(COMMON)
- COMMON         0x00000000000009d0     0x1103 ../whitewhale/main.o
-                0x00000000000009d0                held_keys
-                0x00000000000009f0                key_times
-                0x0000000000000af0                SIZE
-                0x0000000000000af4                param_dest
-                0x0000000000000af8                keycount_series
-                0x0000000000000afa                clip
-                0x0000000000000afc                re
-                0x0000000000000b00                preset_select
-                0x0000000000000b01                series_pos
-                0x0000000000000b02                pos
-                0x0000000000000b03                LENGTH
-                0x0000000000000b04                series_next
-                0x0000000000000b08                w
-                0x0000000000001a90                preset_mode
-                0x0000000000001a91                VARI
-                0x0000000000001a92                keycount_cv
-                0x0000000000001a93                next_pos
-                0x0000000000001a94                live_in
-                0x0000000000001a96                cv0
-                0x0000000000001a98                cv_chosen
-                0x0000000000001a9a                edit_cv_step
-                0x0000000000001a9b                pattern
-                0x0000000000001a9c                clock_phase
-                0x0000000000001a9d                key_alt
-                0x0000000000001a9e                front_timer
-                0x0000000000001a9f                center
-                0x0000000000001aa0                adc
-                0x0000000000001aa8                edit_cv_value
-                0x0000000000001aa9                key_count
-                0x0000000000001aaa                cv1
-                0x0000000000001aac                glyph
-                0x0000000000001ab4                drunk_step
-                0x0000000000001ab5                scroll
-                0x0000000000001ab6                pattern_jump
-                0x0000000000001ab7                edit_cv_ch
-                0x0000000000001ab8                param_accept
-                0x0000000000001ab9                triggered
-                0x0000000000001abc                param_dest8
-                0x0000000000001ac0                scale_select
-                0x0000000000001ac1                edit_prob
-                0x0000000000001ac2                cut_pos
-                0x0000000000001ac3                scroll_pos
-                0x0000000000001ac4                next_pattern
-                0x0000000000001ac6                clock_time
-                0x0000000000001ac8                edit_mode
-                0x0000000000001acc                clock_temp
-                0x0000000000001ace                series_jump
-                0x0000000000001acf                keysecond_pos
-                0x0000000000001ad0                series_playing
-                0x0000000000001ad1                keycount_pos
-                0x0000000000001ad2                keyfirst_pos
- *fill*         0x0000000000001ad3        0x1 
- COMMON         0x0000000000001ad4       0x38 ../skeleton/events.o
-                0x0000000000001ad4                app_event_handlers
- COMMON         0x0000000000001b0c        0x1 ../skeleton/interrupts.o
-                0x0000000000001b0c                clock_external
- *fill*         0x0000000000001b0d        0x3 
- COMMON         0x0000000000001b10      0x114 ../skeleton/monome.o
-                0x0000000000001b10                monome_refresh
-                0x0000000000001b14                monome_grid_map
-                0x0000000000001b18                monome_ring_map
-                0x0000000000001b1c                monomeLedBuffer
-                0x0000000000001c1c                monome_set_intense
-                0x0000000000001c20                monome_grid_level_map
- COMMON         0x0000000000001c24       0xc0 ../skeleton/usb/ftdi/uhi_ftdi.o
-                0x0000000000001c24                manufacturer_string
-                0x0000000000001c64                serial_string
-                0x0000000000001ca4                product_string
- COMMON         0x0000000000001ce4       0x12 avr32/drivers/usbb/usbb_host.o
-                0x0000000000001ce4                uhd_ctrl_request_phase
-                0x0000000000001ce8                uhd_ctrl_request_first
-                0x0000000000001cec                uhd_ctrl_nb_trans
-                0x0000000000001cf0                uhd_ctrl_request_last
-                0x0000000000001cf4                uhd_ctrl_request_timeout
- COMMON         0x0000000000001cf6        0x1 common/services/usb/uhc/uhc.o
-                0x0000000000001cf6                uhc_sof_timeout
- *fill*         0x0000000000001cf7        0x1 
- COMMON         0x0000000000001cf8        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
-                0x0000000000001cf8                errno
-                0x0000000000001d00                . = ALIGN (0x8)
- *fill*         0x0000000000001cfc        0x4 
-                0x0000000000001d00                . = ALIGN (0x8)
-                0x0000000000001d00                _end = .
-                0x0000000000001d00                PROVIDE (end, .)
-                0x0000000000001d00                __heap_start__ = ALIGN (0x8)
+ COMMON         0x00000000000009cc     0x1103 ../whitewhale/main.o
+                0x00000000000009cc                held_keys
+                0x00000000000009ec                key_times
+                0x0000000000000aec                SIZE
+                0x0000000000000af0                param_dest
+                0x0000000000000af4                keycount_series
+                0x0000000000000af6                clip
+                0x0000000000000af8                re
+                0x0000000000000afc                preset_select
+                0x0000000000000afd                series_pos
+                0x0000000000000afe                pos
+                0x0000000000000aff                LENGTH
+                0x0000000000000b00                series_next
+                0x0000000000000b04                w
+                0x0000000000001a8c                preset_mode
+                0x0000000000001a8d                VARI
+                0x0000000000001a8e                keycount_cv
+                0x0000000000001a8f                next_pos
+                0x0000000000001a90                live_in
+                0x0000000000001a92                cv0
+                0x0000000000001a94                cv_chosen
+                0x0000000000001a96                edit_cv_step
+                0x0000000000001a97                pattern
+                0x0000000000001a98                clock_phase
+                0x0000000000001a99                key_alt
+                0x0000000000001a9a                front_timer
+                0x0000000000001a9b                center
+                0x0000000000001a9c                adc
+                0x0000000000001aa4                edit_cv_value
+                0x0000000000001aa5                key_count
+                0x0000000000001aa6                cv1
+                0x0000000000001aa8                glyph
+                0x0000000000001ab0                drunk_step
+                0x0000000000001ab1                scroll
+                0x0000000000001ab2                pattern_jump
+                0x0000000000001ab3                edit_cv_ch
+                0x0000000000001ab4                param_accept
+                0x0000000000001ab5                triggered
+                0x0000000000001ab8                param_dest8
+                0x0000000000001abc                scale_select
+                0x0000000000001abd                edit_prob
+                0x0000000000001abe                cut_pos
+                0x0000000000001abf                scroll_pos
+                0x0000000000001ac0                next_pattern
+                0x0000000000001ac2                clock_time
+                0x0000000000001ac4                edit_mode
+                0x0000000000001ac8                clock_temp
+                0x0000000000001aca                series_jump
+                0x0000000000001acb                keysecond_pos
+                0x0000000000001acc                series_playing
+                0x0000000000001acd                keycount_pos
+                0x0000000000001ace                keyfirst_pos
+ *fill*         0x0000000000001acf        0x1 
+ COMMON         0x0000000000001ad0       0x38 ../skeleton/events.o
+                0x0000000000001ad0                app_event_handlers
+ COMMON         0x0000000000001b08        0x1 ../skeleton/interrupts.o
+                0x0000000000001b08                clock_external
+ *fill*         0x0000000000001b09        0x3 
+ COMMON         0x0000000000001b0c      0x114 ../skeleton/monome.o
+                0x0000000000001b0c                monome_refresh
+                0x0000000000001b10                monome_grid_map
+                0x0000000000001b14                monome_ring_map
+                0x0000000000001b18                monomeLedBuffer
+                0x0000000000001c18                monome_set_intense
+                0x0000000000001c1c                monome_grid_level_map
+ COMMON         0x0000000000001c20       0xc0 ../skeleton/usb/ftdi/uhi_ftdi.o
+                0x0000000000001c20                manufacturer_string
+                0x0000000000001c60                serial_string
+                0x0000000000001ca0                product_string
+ COMMON         0x0000000000001ce0       0x12 avr32/drivers/usbb/usbb_host.o
+                0x0000000000001ce0                uhd_ctrl_request_phase
+                0x0000000000001ce4                uhd_ctrl_request_first
+                0x0000000000001ce8                uhd_ctrl_nb_trans
+                0x0000000000001cec                uhd_ctrl_request_last
+                0x0000000000001cf0                uhd_ctrl_request_timeout
+ COMMON         0x0000000000001cf2        0x1 common/services/usb/uhc/uhc.o
+                0x0000000000001cf2                uhc_sof_timeout
+ *fill*         0x0000000000001cf3        0x1 
+ COMMON         0x0000000000001cf4        0x4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+                0x0000000000001cf4                errno
+                0x0000000000001cf8                . = ALIGN (0x8)
+ *fill*         0x0000000000001cf8        0x0 
+                0x0000000000001cf8                . = ALIGN (0x8)
+                0x0000000000001cf8                _end = .
+                0x0000000000001cf8                PROVIDE (end, .)
+                0x0000000000001cf8                __heap_start__ = ALIGN (0x8)
 
-.heap           0x0000000000001d00     0x5300
+.heap           0x0000000000001cf8     0x5308
  *(.heap)
-                0x0000000000005300                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0x7ffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
- *fill*         0x0000000000001d00     0x5300 
+                0x0000000000005308                . = (__heap_size__ == __max_heap_size__)?(((ORIGIN (INTRAM) + 0x7ffc) - __stack_size__) - ABSOLUTE (.)):__heap_size__
+ *fill*         0x0000000000001cf8     0x5308 
                 0x0000000000007000                __heap_end__ = .
 
 .stab
@@ -2770,46 +2768,46 @@ LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
  .debug_abbrev  0x0000000000004ac0      0x1db /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
  .debug_abbrev  0x0000000000004c9b      0x1e8 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
 
-.debug_line     0x0000000000000000    0x1333f
+.debug_line     0x0000000000000000    0x13393
  *(.debug_line)
- .debug_line    0x0000000000000000     0x2934 ../whitewhale/main.o
- .debug_line    0x0000000000002934      0x8e5 ../skeleton/adc.o
- .debug_line    0x0000000000003219      0x763 ../skeleton/events.o
- .debug_line    0x000000000000397c      0xaba ../skeleton/init.o
- .debug_line    0x0000000000004436      0x953 ../skeleton/interrupts.o
- .debug_line    0x0000000000004d89     0x15e5 ../skeleton/monome.o
- .debug_line    0x000000000000636e      0x826 ../skeleton/timers.o
- .debug_line    0x0000000000006b94      0x875 ../skeleton/usb.o
- .debug_line    0x0000000000007409       0xe5 ../skeleton/util.o
- .debug_line    0x00000000000074ee      0xadc ../skeleton/usb/ftdi/ftdi.o
- .debug_line    0x0000000000007fca      0xbb1 ../skeleton/usb/ftdi/uhi_ftdi.o
- .debug_line    0x0000000000008b7b     0x1432 avr32/drivers/flashc/flashc.o
- .debug_line    0x0000000000009fad      0xbaa avr32/drivers/gpio/gpio.o
- .debug_line    0x000000000000ab57      0x631 avr32/drivers/intc/intc.o
- .debug_line    0x000000000000b188      0x961 avr32/drivers/spi/spi.o
- .debug_line    0x000000000000bae9      0x854 avr32/drivers/tc/tc.o
- .debug_line    0x000000000000c33d      0xd8d avr32/drivers/usart/usart.o
- .debug_line    0x000000000000d0ca     0x1908 avr32/drivers/usbb/usbb_host.o
- .debug_line    0x000000000000e9d2      0x8a9 avr32/utils/debug/print_funcs.o
- .debug_line    0x000000000000f27b      0xfe7 common/services/usb/uhc/uhc.o
- .debug_line    0x0000000000010262      0xa42 common/services/clock/uc3b0_b1/sysclk.o
- .debug_line    0x0000000000010ca4      0x193 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_udivdi3.o)
- .debug_line    0x0000000000010e37       0xe2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
- .debug_line    0x0000000000010f19      0x1a9 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
- .debug_line    0x00000000000110c2      0x11b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
- .debug_line    0x00000000000111dd      0x1b1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
- .debug_line    0x000000000001138e      0x4ea /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
- .debug_line    0x0000000000011878      0x147 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
- .debug_line    0x00000000000119bf      0x1cd /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-rand.o)
- .debug_line    0x0000000000011b8c      0x1b4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
- .debug_line    0x0000000000011d40      0x13f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-strncmp.o)
- .debug_line    0x0000000000011e7f      0x54b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
- .debug_line    0x00000000000123ca      0x1f4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
- .debug_line    0x00000000000125be      0x219 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
- .debug_line    0x00000000000127d7      0x141 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
- .debug_line    0x0000000000012918      0x509 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
- .debug_line    0x0000000000012e21      0x2bf /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
- .debug_line    0x00000000000130e0      0x25f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_line    0x0000000000000000     0x2988 ../whitewhale/main.o
+ .debug_line    0x0000000000002988      0x8e5 ../skeleton/adc.o
+ .debug_line    0x000000000000326d      0x763 ../skeleton/events.o
+ .debug_line    0x00000000000039d0      0xaba ../skeleton/init.o
+ .debug_line    0x000000000000448a      0x953 ../skeleton/interrupts.o
+ .debug_line    0x0000000000004ddd     0x15e5 ../skeleton/monome.o
+ .debug_line    0x00000000000063c2      0x826 ../skeleton/timers.o
+ .debug_line    0x0000000000006be8      0x875 ../skeleton/usb.o
+ .debug_line    0x000000000000745d       0xe5 ../skeleton/util.o
+ .debug_line    0x0000000000007542      0xadc ../skeleton/usb/ftdi/ftdi.o
+ .debug_line    0x000000000000801e      0xbb1 ../skeleton/usb/ftdi/uhi_ftdi.o
+ .debug_line    0x0000000000008bcf     0x1432 avr32/drivers/flashc/flashc.o
+ .debug_line    0x000000000000a001      0xbaa avr32/drivers/gpio/gpio.o
+ .debug_line    0x000000000000abab      0x631 avr32/drivers/intc/intc.o
+ .debug_line    0x000000000000b1dc      0x961 avr32/drivers/spi/spi.o
+ .debug_line    0x000000000000bb3d      0x854 avr32/drivers/tc/tc.o
+ .debug_line    0x000000000000c391      0xd8d avr32/drivers/usart/usart.o
+ .debug_line    0x000000000000d11e     0x1908 avr32/drivers/usbb/usbb_host.o
+ .debug_line    0x000000000000ea26      0x8a9 avr32/utils/debug/print_funcs.o
+ .debug_line    0x000000000000f2cf      0xfe7 common/services/usb/uhc/uhc.o
+ .debug_line    0x00000000000102b6      0xa42 common/services/clock/uc3b0_b1/sysclk.o
+ .debug_line    0x0000000000010cf8      0x193 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_udivdi3.o)
+ .debug_line    0x0000000000010e8b       0xe2 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_line    0x0000000000010f6d      0x1a9 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_line    0x0000000000011116      0x11b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-impure.o)
+ .debug_line    0x0000000000011231      0x1b1 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_line    0x00000000000113e2      0x4ea /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_line    0x00000000000118cc      0x147 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mlock.o)
+ .debug_line    0x0000000000011a13      0x1cd /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-rand.o)
+ .debug_line    0x0000000000011be0      0x1b4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_line    0x0000000000011d94      0x13f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-strncmp.o)
+ .debug_line    0x0000000000011ed3      0x54b /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_line    0x000000000001241e      0x1f4 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_line    0x0000000000012612      0x219 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_line    0x000000000001282b      0x141 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-errno.o)
+ .debug_line    0x000000000001296c      0x509 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_line    0x0000000000012e75      0x2bf /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+ .debug_line    0x0000000000013134      0x25f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
 
 .debug_frame    0x0000000000000000     0x2bac
  *(.debug_frame)
@@ -2932,42 +2930,42 @@ LOAD /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/crtbegin.o
  .debug_str     0x0000000000008b6e       0x77 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
                                         0x510 (size before relaxing)
 
-.debug_loc      0x0000000000000000     0x6ff1
+.debug_loc      0x0000000000000000     0x701d
  *(.debug_loc)
- .debug_loc     0x0000000000000000      0xaec ../whitewhale/main.o
- .debug_loc     0x0000000000000aec       0xa0 ../skeleton/adc.o
- .debug_loc     0x0000000000000b8c       0xb5 ../skeleton/events.o
- .debug_loc     0x0000000000000c41       0x88 ../skeleton/init.o
- .debug_loc     0x0000000000000cc9       0x7c ../skeleton/interrupts.o
- .debug_loc     0x0000000000000d45      0x592 ../skeleton/monome.o
- .debug_loc     0x00000000000012d7      0x144 ../skeleton/timers.o
- .debug_loc     0x000000000000141b       0x26 ../skeleton/util.o
- .debug_loc     0x0000000000001441      0x168 ../skeleton/usb/ftdi/ftdi.o
- .debug_loc     0x00000000000015a9      0x40c ../skeleton/usb/ftdi/uhi_ftdi.o
- .debug_loc     0x00000000000019b5      0xfb3 avr32/drivers/flashc/flashc.o
- .debug_loc     0x0000000000002968      0x360 avr32/drivers/gpio/gpio.o
- .debug_loc     0x0000000000002cc8       0x89 avr32/drivers/intc/intc.o
- .debug_loc     0x0000000000002d51      0x387 avr32/drivers/spi/spi.o
- .debug_loc     0x00000000000030d8      0x41e avr32/drivers/tc/tc.o
- .debug_loc     0x00000000000034f6      0x8ea avr32/drivers/usart/usart.o
- .debug_loc     0x0000000000003de0      0x97f avr32/drivers/usbb/usbb_host.o
- .debug_loc     0x000000000000475f      0x3d2 avr32/utils/debug/print_funcs.o
- .debug_loc     0x0000000000004b31      0x947 common/services/usb/uhc/uhc.o
- .debug_loc     0x0000000000005478      0x1b2 common/services/clock/uc3b0_b1/sysclk.o
- .debug_loc     0x000000000000562a      0x7ba /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_udivdi3.o)
- .debug_loc     0x0000000000005de4       0x32 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
- .debug_loc     0x0000000000005e16       0x3d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
- .debug_loc     0x0000000000005e53       0x64 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
- .debug_loc     0x0000000000005eb7      0x5b0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
- .debug_loc     0x0000000000006467       0x6f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-rand.o)
- .debug_loc     0x00000000000064d6       0x63 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
- .debug_loc     0x0000000000006539       0x1e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-strncmp.o)
- .debug_loc     0x0000000000006557      0x268 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
- .debug_loc     0x00000000000067bf       0xe9 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
- .debug_loc     0x00000000000068a8       0xf0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
- .debug_loc     0x0000000000006998      0x202 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
- .debug_loc     0x0000000000006b9a      0x34d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
- .debug_loc     0x0000000000006ee7      0x10a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
+ .debug_loc     0x0000000000000000      0xb18 ../whitewhale/main.o
+ .debug_loc     0x0000000000000b18       0xa0 ../skeleton/adc.o
+ .debug_loc     0x0000000000000bb8       0xb5 ../skeleton/events.o
+ .debug_loc     0x0000000000000c6d       0x88 ../skeleton/init.o
+ .debug_loc     0x0000000000000cf5       0x7c ../skeleton/interrupts.o
+ .debug_loc     0x0000000000000d71      0x592 ../skeleton/monome.o
+ .debug_loc     0x0000000000001303      0x144 ../skeleton/timers.o
+ .debug_loc     0x0000000000001447       0x26 ../skeleton/util.o
+ .debug_loc     0x000000000000146d      0x168 ../skeleton/usb/ftdi/ftdi.o
+ .debug_loc     0x00000000000015d5      0x40c ../skeleton/usb/ftdi/uhi_ftdi.o
+ .debug_loc     0x00000000000019e1      0xfb3 avr32/drivers/flashc/flashc.o
+ .debug_loc     0x0000000000002994      0x360 avr32/drivers/gpio/gpio.o
+ .debug_loc     0x0000000000002cf4       0x89 avr32/drivers/intc/intc.o
+ .debug_loc     0x0000000000002d7d      0x387 avr32/drivers/spi/spi.o
+ .debug_loc     0x0000000000003104      0x41e avr32/drivers/tc/tc.o
+ .debug_loc     0x0000000000003522      0x8ea avr32/drivers/usart/usart.o
+ .debug_loc     0x0000000000003e0c      0x97f avr32/drivers/usbb/usbb_host.o
+ .debug_loc     0x000000000000478b      0x3d2 avr32/utils/debug/print_funcs.o
+ .debug_loc     0x0000000000004b5d      0x947 common/services/usb/uhc/uhc.o
+ .debug_loc     0x00000000000054a4      0x1b2 common/services/clock/uc3b0_b1/sysclk.o
+ .debug_loc     0x0000000000005656      0x7ba /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/ucr1/libgcc.a(_udivdi3.o)
+ .debug_loc     0x0000000000005e10       0x32 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-atexit.o)
+ .debug_loc     0x0000000000005e42       0x3d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-exit.o)
+ .debug_loc     0x0000000000005e7f       0x64 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-malloc.o)
+ .debug_loc     0x0000000000005ee3      0x5b0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-mallocr.o)
+ .debug_loc     0x0000000000006493       0x6f /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-rand.o)
+ .debug_loc     0x0000000000006502       0x63 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-sbrkr.o)
+ .debug_loc     0x0000000000006565       0x1e /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-strncmp.o)
+ .debug_loc     0x0000000000006583      0x268 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-syscalls.o)
+ .debug_loc     0x00000000000067eb       0xe9 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__atexit.o)
+ .debug_loc     0x00000000000068d4       0xf0 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-__call_atexit.o)
+ .debug_loc     0x00000000000069c4      0x202 /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-findfp.o)
+ .debug_loc     0x0000000000006bc6      0x34d /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-freer.o)
+ .debug_loc     0x0000000000006f13      0x10a /Users/tehn/avr32-tools-20140411/lib/gcc/avr32/4.4.7/../../../../avr32/lib/ucr1/libc.a(lib_a-reent.o)
 
 .debug_macinfo  0x0000000000000000  0x10f7999
  *(.debug_macinfo)

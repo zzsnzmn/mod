@@ -316,10 +316,30 @@ void clock(u8 phase) {
 				triggered = w.wp[pattern].steps[pos];
 			}
 			
-			if(triggered & 0x1 && w.tr_mute[0]) gpio_set_gpio_pin(B00);
-			if(triggered & 0x2 && w.tr_mute[1]) gpio_set_gpio_pin(B01);
-			if(triggered & 0x4 && w.tr_mute[2]) gpio_set_gpio_pin(B02);
-			if(triggered & 0x8 && w.tr_mute[3]) gpio_set_gpio_pin(B03);
+			if(w.wp[pattern].tr_mode == 0) {
+				if(triggered & 0x1 && w.tr_mute[0]) gpio_set_gpio_pin(B00);
+				if(triggered & 0x2 && w.tr_mute[1]) gpio_set_gpio_pin(B01);
+				if(triggered & 0x4 && w.tr_mute[2]) gpio_set_gpio_pin(B02);
+				if(triggered & 0x8 && w.tr_mute[3]) gpio_set_gpio_pin(B03);
+			} else {
+				if(w.tr_mute[0]) {
+					if(triggered & 0x1) gpio_set_gpio_pin(B00);
+					else gpio_clr_gpio_pin(B00);
+				}
+				if(w.tr_mute[1]) {
+					if(triggered & 0x2) gpio_set_gpio_pin(B01);
+					else gpio_clr_gpio_pin(B01);
+				}
+				if(w.tr_mute[2]) {
+					if(triggered & 0x4) gpio_set_gpio_pin(B02);
+					else gpio_clr_gpio_pin(B02);
+				}
+				if(w.tr_mute[3]) {
+					if(triggered & 0x8) gpio_set_gpio_pin(B03);
+					else gpio_clr_gpio_pin(B03);
+				}
+
+			}
 		}
 
 		monomeFrameDirty++;
@@ -387,10 +407,12 @@ void clock(u8 phase) {
 	else {
 		gpio_clr_gpio_pin(B10);
 
-		gpio_clr_gpio_pin(B00);
-		gpio_clr_gpio_pin(B01);
-		gpio_clr_gpio_pin(B02);
-		gpio_clr_gpio_pin(B03);
+		if(w.wp[pattern].tr_mode == 0) {
+			gpio_clr_gpio_pin(B00);
+			gpio_clr_gpio_pin(B01);
+			gpio_clr_gpio_pin(B02);
+			gpio_clr_gpio_pin(B03);
+		}
  	}
 
 	// print_dbg("\r\n pos: ");
@@ -1173,10 +1195,10 @@ static void refresh() {
 		if(w.tr_mute[3]) monomeLedBuffer[3] = 11;
 	}
 	else if(triggered) {
-		if(triggered & 0x1 && w.tr_mute[0]) monomeLedBuffer[0] = 11;
-		if(triggered & 0x2 && w.tr_mute[1]) monomeLedBuffer[1] = 11;
-		if(triggered & 0x4 && w.tr_mute[2]) monomeLedBuffer[2] = 11;
-		if(triggered & 0x8 && w.tr_mute[3]) monomeLedBuffer[3] = 11;
+		if(triggered & 0x1 && w.tr_mute[0]) monomeLedBuffer[0] = 11 - 4 * w.wp[pattern].tr_mode;
+		if(triggered & 0x2 && w.tr_mute[1]) monomeLedBuffer[1] = 11 - 4 * w.wp[pattern].tr_mode;
+		if(triggered & 0x4 && w.tr_mute[2]) monomeLedBuffer[2] = 11 - 4 * w.wp[pattern].tr_mode;
+		if(triggered & 0x8 && w.tr_mute[3]) monomeLedBuffer[3] = 11 - 4 * w.wp[pattern].tr_mode;
 	}
 
 	// cv indication
@@ -1720,6 +1742,7 @@ void flash_read(void) {
 		w.wp[i1].step_mode = flashy.w[preset_select].wp[i1].step_mode;
 		w.wp[i1].cv_mode[0] = flashy.w[preset_select].wp[i1].cv_mode[0];
 		w.wp[i1].cv_mode[1] = flashy.w[preset_select].wp[i1].cv_mode[1];
+		w.wp[i1].tr_mode = flashy.w[preset_select].wp[i1].tr_mode;
 	}
 
 	w.series_start = flashy.w[preset_select].series_start;
