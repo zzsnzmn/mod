@@ -256,22 +256,27 @@ void clock(u8 phase) {
 
 			next_pos += drunk_step;
 			if(next_pos < 0) 
-				next_pos += w.wp[pattern].loop_end;
+				next_pos = LENGTH;
 			else if(next_pos > LENGTH) 
-				next_pos -= (LENGTH-w.wp[pattern].loop_start);
+				next_pos = 0;
 			else if(w.wp[pattern].loop_dir == 1 && next_pos < w.wp[pattern].loop_start)
-				next_pos += w.wp[pattern].loop_len;
+				next_pos = w.wp[pattern].loop_end;
 			else if(w.wp[pattern].loop_dir == 1 && next_pos > w.wp[pattern].loop_end)
-				next_pos -= w.wp[pattern].loop_len;
-			else if(w.wp[pattern].loop_dir == 2 && next_pos < w.wp[pattern].loop_start)
-				next_pos += w.wp[pattern].loop_len - LENGTH;
-			else if(w.wp[pattern].loop_dir == 2 && next_pos > w.wp[pattern].loop_end)
-				next_pos -= w.wp[pattern].loop_len + LENGTH;
+				next_pos = w.wp[pattern].loop_start;
+			else if(w.wp[pattern].loop_dir == 2 && next_pos < w.wp[pattern].loop_start && next_pos > w.wp[pattern].loop_end) {
+				if(drunk_step == 1)
+					next_pos = w.wp[pattern].loop_start;
+				else
+					next_pos = w.wp[pattern].loop_end;
+			}
 
 			cut_pos = 1;
  		}
 		else if(w.wp[pattern].step_mode == mRandom) {	// RANDOM
-			next_pos = ((rnd() % (w.wp[pattern].loop_len + 1)) + w.wp[pattern].loop_start) % LENGTH;
+			next_pos = (rnd() % (w.wp[pattern].loop_len + 1)) + w.wp[pattern].loop_start;
+			// print_dbg("\r\nnext pos:");
+			// print_dbg_ulong(next_pos);
+			if(next_pos > LENGTH) next_pos -= LENGTH + 1;
 			cut_pos = 1;
 		}
 
@@ -775,8 +780,12 @@ static void handler_MonomeGridKey(s32 data) {
 	 			else w.wp[pattern].loop_dir = 1;
 
 	 			w.wp[pattern].loop_len = w.wp[pattern].loop_end - w.wp[pattern].loop_start;
+
+	 			if(w.wp[pattern].loop_dir == 2)
+	 				w.wp[pattern].loop_len = (LENGTH - w.wp[pattern].loop_start) + w.wp[pattern].loop_end + 1;
+
 				// print_dbg("\r\nloop_len: "); 
-				// print_dbg_ulong(loop_len);
+				// print_dbg_ulong(w.wp[pattern].loop_len);
 			}
 		}
 
