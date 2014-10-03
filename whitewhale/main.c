@@ -79,6 +79,7 @@ typedef struct {
 	u8 loop_start, loop_end, loop_len, loop_dir;
 	u16 step_choice;
 	u8 cv_mode[2];
+	u8 tr_mode;
 	step_modes step_mode;
 	u8 steps[16];
 	u8 step_probs[16];
@@ -92,6 +93,8 @@ typedef struct {
 	whale_pattern wp[16];
 	u16 series_list[64];
 	u8 series_start, series_end;
+	u8 tr_mute[4];
+	u8 cv_mute[2];
 } whale_set;
 
 typedef const struct {
@@ -313,17 +316,17 @@ void clock(u8 phase) {
 				triggered = w.wp[pattern].steps[pos];
 			}
 			
-			if(triggered & 0x1) gpio_set_gpio_pin(B00);
-			if(triggered & 0x2) gpio_set_gpio_pin(B01);
-			if(triggered & 0x4) gpio_set_gpio_pin(B02);
-			if(triggered & 0x8) gpio_set_gpio_pin(B03);
+			if(triggered & 0x1 && w.tr_mute[0]) gpio_set_gpio_pin(B00);
+			if(triggered & 0x2 && w.tr_mute[1]) gpio_set_gpio_pin(B01);
+			if(triggered & 0x4 && w.tr_mute[2]) gpio_set_gpio_pin(B02);
+			if(triggered & 0x8 && w.tr_mute[3]) gpio_set_gpio_pin(B03);
 		}
 
 		monomeFrameDirty++;
 
 
 		// PARAM 0
-		if((rnd() % 255) < w.wp[pattern].cv_probs[0][pos]) {
+		if((rnd() % 255) < w.wp[pattern].cv_probs[0][pos] && w.cv_mute[0]) {
 			if(w.wp[pattern].cv_mode[0] == 0) {
 				cv0 = w.wp[pattern].cv_curves[0][pos];
 			}
@@ -343,7 +346,7 @@ void clock(u8 phase) {
 		}
 
 		// PARAM 1
-		if((rnd() % 255) < w.wp[pattern].cv_probs[1][pos]) {
+		if((rnd() % 255) < w.wp[pattern].cv_probs[1][pos] && w.cv_mute[1]) {
 			if(w.wp[pattern].cv_mode[1] == 0) {
 				cv1 = w.wp[pattern].cv_curves[1][pos];
 			}
@@ -800,7 +803,10 @@ static void handler_MonomeGridKey(s32 data) {
 				monomeFrameDirty++;
 			}
 			else if(x < 4 && z) {
-				if(key_alt) w.wp[pattern].steps[pos] |=  1 << x;
+				if(key_alt)
+					w.wp[pattern].tr_mode ^= 1;
+				else if(scroll)
+					w.tr_mute[x] ^= 1;
 				else edit_mode = mTrig;
 				edit_prob = 0;
 				param_accept = 0;
@@ -814,6 +820,8 @@ static void handler_MonomeGridKey(s32 data) {
 
 				if(key_alt)
 					w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
+				else if(scroll)
+					w.cv_mute[edit_cv_ch] ^= 1;
 
 				monomeFrameDirty++;
 			}
@@ -825,6 +833,8 @@ static void handler_MonomeGridKey(s32 data) {
 
 				if(key_alt)
 					w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
+				else if(scroll)
+					w.cv_mute[edit_cv_ch] ^= 1;
 
 				monomeFrameDirty++;
 			}
@@ -841,7 +851,10 @@ static void handler_MonomeGridKey(s32 data) {
 		else if(edit_mode == mTrig) {
 			if(z && y>3 && edit_prob == 0) {
 				if(key_alt)
+					w.wp[pattern].steps[pos] |=  1 << (y-4);
+				else if(scroll) {
 					w.wp[pattern].step_choice ^= (1<<x);
+				}
 				else
 					w.wp[pattern].steps[x] ^= (1<<(y-4));
 				monomeFrameDirty++;
@@ -1152,16 +1165,45 @@ static void refresh() {
 	monomeLedBuffer[LENGTH] = 4;
 	if(key_alt) monomeLedBuffer[LENGTH] = 11;
 
-	// show on steps
-	if(triggered) {
-		if(triggered & 0x1) monomeLedBuffer[0] = 11;
-		if(triggered & 0x2) monomeLedBuffer[1] = 11;
-		if(triggered & 0x4) monomeLedBuffer[2] = 11;
-		if(triggered & 0x8) monomeLedBuffer[3] = 11;
+	// show mutes or on steps
+	if(scroll) {
+		if(w.tr_mute[0]) monomeLedBuffer[0] = 11;
+		if(w.tr_mute[1]) monomeLedBuffer[1] = 11;
+		if(w.tr_mute[2]) monomeLedBuffer[2] = 11;
+		if(w.tr_mute[3]) monomeLedBuffer[3] = 11;
+	}
+	else if(triggered) {
+		if(triggered & 0x1 && w.tr_mute[0]) monomeLedBuffer[0] = 11;
+		if(triggered & 0x2 && w.tr_mute[1]) monomeLedBuffer[1] = 11;
+		if(triggered & 0x4 && w.tr_mute[2]) monomeLedBuffer[2] = 11;
+		if(triggered & 0x8 && w.tr_mute[3]) monomeLedBuffer[3] = 11;
 	}
 
 	// cv indication
-	if(SIZE==16) {
+	if(scroll) {
+		if(SIZE==16) {
+			if(w.cv_mute[0]) {
+				monomeLedBuffer[4] = 11;
+				monomeLedBuffer[5] = 11;
+				monomeLedBuffer[6] = 11;
+				monomeLedBuffer[7] = 11;
+			}
+			if(w.cv_mute[1]) {
+				monomeLedBuffer[8] = 11;
+				monomeLedBuffer[9] = 11;
+				monomeLedBuffer[10] = 11;
+				monomeLedBuffer[11] = 11;
+			}
+		}
+		else {
+			if(w.cv_mute[0])
+				monomeLedBuffer[4] = 11;
+			if(w.cv_mute[1])
+				monomeLedBuffer[5] = 11;
+		}
+
+	}
+	else if(SIZE==16) {
 		monomeLedBuffer[cv0 / 1024 + 4] = 11;
 		monomeLedBuffer[cv1 / 1024 + 8] = 11;
 	}
@@ -1189,7 +1231,7 @@ static void refresh() {
 		if(edit_prob == 0) {
 			for(i1=0;i1<SIZE;i1++) {
 	 			for(i2=0;i2<4;i2++) {
-					if((w.wp[pattern].steps[i1] & (1<<i2)) && i1 == pos && (triggered & 1<<i2)) monomeLedBuffer[(i2+4)*16+i1] = 11;
+					if((w.wp[pattern].steps[i1] & (1<<i2)) && i1 == pos && (triggered & 1<<i2) && w.tr_mute[i2]) monomeLedBuffer[(i2+4)*16+i1] = 11;
 					else if(w.wp[pattern].steps[i1] & (1<<i2) && (w.wp[pattern].step_choice & 1<<i1)) monomeLedBuffer[(i2+4)*16+i1] = 4;
 					else if(w.wp[pattern].steps[i1] & (1<<i2)) monomeLedBuffer[(i2+4)*16+i1] = 7;
 					else if(i1 == pos) monomeLedBuffer[(i2+4)*16+i1] = 4;
@@ -1392,6 +1434,29 @@ static void refresh_mono() {
 	}
 	else if(edit_mode == mSeries) {
 		monomeLedBuffer[LENGTH-1] = 11;
+	}
+
+	if(scroll) {
+		monomeLedBuffer[0] = 11 * w.tr_mute[0];
+		monomeLedBuffer[1] = 11 * w.tr_mute[1];
+		monomeLedBuffer[2] = 11 * w.tr_mute[2];
+		monomeLedBuffer[3] = 11 * w.tr_mute[3];
+
+		if(SIZE == 16) {
+			monomeLedBuffer[4] = 11 * w.cv_mute[0];
+			monomeLedBuffer[5] = 11 * w.cv_mute[0];
+			monomeLedBuffer[6] = 11 * w.cv_mute[0];
+			monomeLedBuffer[7] = 11 * w.cv_mute[0];
+			monomeLedBuffer[8] = 11 * w.cv_mute[1];
+			monomeLedBuffer[9] = 11 * w.cv_mute[1];
+			monomeLedBuffer[10] = 11 * w.cv_mute[1];
+			monomeLedBuffer[11] = 11 * w.cv_mute[1];
+		} else {
+			monomeLedBuffer[4] = 11 * w.cv_mute[0];
+			monomeLedBuffer[5] = 11 * w.cv_mute[1];
+		}
+
+
 	}
 
 	// alt
@@ -1659,6 +1724,14 @@ void flash_read(void) {
 
 	w.series_start = flashy.w[preset_select].series_start;
 	w.series_end = flashy.w[preset_select].series_end;
+
+	w.tr_mute[0] = flashy.w[preset_select].tr_mute[0];
+	w.tr_mute[1] = flashy.w[preset_select].tr_mute[1];
+	w.tr_mute[2] = flashy.w[preset_select].tr_mute[2];
+	w.tr_mute[3] = flashy.w[preset_select].tr_mute[3];
+	w.cv_mute[0] = flashy.w[preset_select].cv_mute[0];
+	w.cv_mute[1] = flashy.w[preset_select].cv_mute[1];
+
 	for(i1=0;i1<64;i1++)
 		w.series_list[i1] = flashy.w[preset_select].series_list[i1];
 }
@@ -1731,10 +1804,19 @@ int main(void)
 			w.wp[i1].step_mode = mForward;
 			w.wp[i1].cv_mode[0] = 0;
 			w.wp[i1].cv_mode[1] = 0;
+			w.wp[i1].tr_mode = 0;
 		}
 
 		w.series_start = 0;
 		w.series_end = 3;
+
+		w.tr_mute[0] = 1;
+		w.tr_mute[1] = 1;
+		w.tr_mute[2] = 1;
+		w.tr_mute[3] = 1;
+		w.cv_mute[0] = 1;
+		w.cv_mute[1] = 1;
+
 		for(i1=0;i1<64;i1++)
 			w.series_list[i1] = 1;
 
