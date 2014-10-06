@@ -133,6 +133,7 @@ u16 *param_dest;
 
 u8 clock_phase;
 u16 clock_time, clock_temp;
+u8 series_step;
 
 u16 adc[4];
 u8 SIZE, LENGTH, VARI;
@@ -192,6 +193,7 @@ void clock(u8 phase) {
 
 		if(pattern_jump) {
 			pattern = next_pattern;
+			next_pos = w.wp[pattern].loop_start;
 			pattern_jump = 0;
 		}
 		// for series mode and delayed pattern change
@@ -224,9 +226,13 @@ void clock(u8 phase) {
 
 			pattern = next_pattern;
 			series_playing = pattern;
-			next_pos = w.wp[pattern].loop_start;
+			if(w.wp[pattern].step_mode == mReverse)
+				next_pos = w.wp[pattern].loop_end;
+			else
+				next_pos = w.wp[pattern].loop_start;
 
 			series_jump = 0;
+			series_step = 0;
 		}
 
 		pos = next_pos;
@@ -284,13 +290,24 @@ void clock(u8 phase) {
 		}
 
 		// next pattern?
-		if(pos == w.wp[pattern].loop_end) {
+		if(pos == w.wp[pattern].loop_end && w.wp[pattern].step_mode == mForward) {
 			if(edit_mode == mSeries) 
 				series_jump++;
 			else if(next_pattern != pattern)
 				pattern_jump++;
 		}
+		else if(pos == w.wp[pattern].loop_start && w.wp[pattern].step_mode == mReverse) {
+			if(edit_mode == mSeries) 
+				series_jump++;
+			else if(next_pattern != pattern)
+				pattern_jump++;
+		}
+		else if(series_step == w.wp[pattern].loop_len) {
+			series_jump++;
+		}
 
+		if(edit_mode == mSeries)
+			series_step++;
 
 
 		// TRIGGER
