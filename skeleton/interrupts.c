@@ -98,7 +98,11 @@ static void irq_port1_line1(void) {
 
     // clock norm
     if(gpio_get_pin_interrupt_flag(B09)) {
-      clock_external = !gpio_get_pin_value(B09); 
+
+      static event_t e;
+      e.type = kEventClockNormal;
+      e.data = !gpio_get_pin_value(B09);
+      event_post(&e);
 
       gpio_clear_pin_interrupt_flag(B09);
     }
