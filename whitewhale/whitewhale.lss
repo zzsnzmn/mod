@@ -43,21 +43,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  19 .debug_abbrev 00004e83  00000000  00000000  0003753f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 20 .debug_line   000133fb  00000000  00000000  0003c3c2  2**0
+ 20 .debug_line   000133dd  00000000  00000000  0003c3c2  2**0
                   CONTENTS, READONLY, DEBUGGING
- 21 .debug_frame  00002bc4  00000000  00000000  0004f7c0  2**2
+ 21 .debug_frame  00002bc4  00000000  00000000  0004f7a0  2**2
                   CONTENTS, READONLY, DEBUGGING
- 22 .debug_str    00008c17  00000000  00000000  00052384  2**0
+ 22 .debug_str    00008c12  00000000  00000000  00052364  2**0
                   CONTENTS, READONLY, DEBUGGING
- 23 .debug_loc    0000704f  00000000  00000000  0005af9b  2**0
+ 23 .debug_loc    0000704f  00000000  00000000  0005af76  2**0
                   CONTENTS, READONLY, DEBUGGING
- 24 .debug_macinfo 010f7999  00000000  00000000  00061fea  2**0
+ 24 .debug_macinfo 010f7999  00000000  00000000  00061fc5  2**0
                   CONTENTS, READONLY, DEBUGGING
  25 .stack        00001000  00007000  00007000  00000000  2**0
                   ALLOC
  26 .flash_nvram  00007c8c  80030000  8000a75c  0000b000  2**2
                   ALLOC
- 27 .debug_ranges 000016e8  00000000  00000000  01159983  2**0
+ 27 .debug_ranges 000016e8  00000000  00000000  0115995e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .reset:
