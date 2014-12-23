@@ -660,6 +660,9 @@ static void handler_KeyTimer(s32 data) {
 					w.wp[x].loop_len = w.wp[pattern].loop_len;
 					w.wp[x].loop_dir = w.wp[pattern].loop_dir;
 
+					w.wp[x].tr_mode = w.wp[pattern].tr_mode;
+					w.wp[x].step_mode = w.wp[pattern].step_mode;
+
 					pattern = x;
 					next_pattern = x;
 					monomeFrameDirty++;
