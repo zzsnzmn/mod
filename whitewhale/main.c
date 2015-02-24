@@ -116,9 +116,9 @@ s8 edit_cv_value;
 u8 edit_prob, live_in, scale_select;
 u8 pattern, next_pattern, pattern_jump;
 
-u8 series_pos, series_next, series_jump, series_playing, scroll, scroll_pos;
+u8 series_pos, series_next, series_jump, series_playing, scroll_pos;
 
-u8 key_alt, center;
+u8 key_alt, key_meta, center;
 u8 held_keys[32], key_count, key_times[256];
 u8 keyfirst_pos, keysecond_pos;
 s8 keycount_pos, keycount_series, keycount_cv;
@@ -130,6 +130,7 @@ u16 cv0, cv1;
 u8 param_accept, *param_dest8;
 u16 clip;
 u16 *param_dest;
+u8 quantize_in;
 
 u8 clock_phase;
 u16 clock_time, clock_temp;
@@ -599,10 +600,13 @@ static void handler_PollADC(s32 data) {
 		// print_dbg_ulong(adc[1]);
 	}
 	else if(param_accept) {
-		*param_dest = adc[1];
+		if(quantize_in)
+			*param_dest = (adc[1] / 34) * 34;
+		else
+			*param_dest = adc[1];
 		monomeFrameDirty++;
 	}
-	else if(scroll) {
+	else if(key_meta) {
 		i = adc[1]>>6;
 		if(i > 58) i = 58;
 		if(i != scroll_pos) {
@@ -852,9 +856,10 @@ static void handler_MonomeGridKey(s32 data) {
 			else if(x < 4 && z) {
 				if(key_alt)
 					w.wp[pattern].tr_mode ^= 1;
-				else if(scroll)
+				else if(key_meta)
 					w.tr_mute[x] ^= 1;
-				else edit_mode = mTrig;
+				else 
+					edit_mode = mTrig;
 				edit_prob = 0;
 				param_accept = 0;
 				monomeFrameDirty++;
@@ -862,13 +867,14 @@ static void handler_MonomeGridKey(s32 data) {
 			else if(SIZE==16 && x > 3 && x < 12 && z) {
 				param_accept = 0;
 				edit_cv_ch = (x-4)/4;
-				edit_mode = mMap;
 				edit_prob = 0;
 
 				if(key_alt)
 					w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
-				else if(scroll)
+				else if(key_meta)
 					w.cv_mute[edit_cv_ch] ^= 1;
+				else
+					edit_mode = mMap;
 
 				monomeFrameDirty++;
 			}
@@ -880,7 +886,7 @@ static void handler_MonomeGridKey(s32 data) {
 
 				if(key_alt)
 					w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
-				else if(scroll)
+				else if(key_meta)
 					w.cv_mute[edit_cv_ch] ^= 1;
 
 				monomeFrameDirty++;
@@ -890,7 +896,7 @@ static void handler_MonomeGridKey(s32 data) {
 				monomeFrameDirty++;
 			}
 			else if(x == LENGTH-1)
-				scroll = z;
+				key_meta = z;
 		}
 
 
@@ -899,7 +905,7 @@ static void handler_MonomeGridKey(s32 data) {
 			if(z && y>3 && edit_prob == 0) {
 				if(key_alt)
 					w.wp[pattern].steps[pos] |=  1 << (y-4);
-				else if(scroll) {
+				else if(key_meta) {
 					w.wp[pattern].step_choice ^= (1<<x);
 				}
 				else
@@ -951,11 +957,22 @@ static void handler_MonomeGridKey(s32 data) {
 						else						
 							delta = 34;
 
-						// saturate
-						if(w.wp[pattern].cv_curves[edit_cv_ch][x] + delta < 4092)
-							w.wp[pattern].cv_curves[edit_cv_ch][x] += delta;
-						else
-							w.wp[pattern].cv_curves[edit_cv_ch][x] = 4092;
+						if(key_meta == 0) {
+							// saturate
+							if(w.wp[pattern].cv_curves[edit_cv_ch][x] + delta < 4092)
+								w.wp[pattern].cv_curves[edit_cv_ch][x] += delta;
+							else
+								w.wp[pattern].cv_curves[edit_cv_ch][x] = 4092;
+						}
+						else {
+							for(i1=0;i1<16;i1++) {
+								// saturate
+								if(w.wp[pattern].cv_curves[edit_cv_ch][i1] + delta < 4092)
+									w.wp[pattern].cv_curves[edit_cv_ch][i1] += delta;
+								else
+									w.wp[pattern].cv_curves[edit_cv_ch][i1] = 4092;
+							}
+						}
 					}
 					else if(y == 6 && z) {
 						if(center)
@@ -965,17 +982,30 @@ static void handler_MonomeGridKey(s32 data) {
 						else
 							delta = 34;
 
-						// saturate
-						if(w.wp[pattern].cv_curves[edit_cv_ch][x] > delta)
-							w.wp[pattern].cv_curves[edit_cv_ch][x] -= delta;
-						else
-							w.wp[pattern].cv_curves[edit_cv_ch][x] = 0;
+						if(key_meta == 0) {
+							// saturate
+							if(w.wp[pattern].cv_curves[edit_cv_ch][x] > delta)
+								w.wp[pattern].cv_curves[edit_cv_ch][x] -= delta;
+							else
+								w.wp[pattern].cv_curves[edit_cv_ch][x] = 0;
+						}
+						else {
+							for(i1=0;i1<16;i1++) {
+								// saturate
+								if(w.wp[pattern].cv_curves[edit_cv_ch][i1] > delta)
+									w.wp[pattern].cv_curves[edit_cv_ch][i1] -= delta;
+								else
+									w.wp[pattern].cv_curves[edit_cv_ch][i1] = 0;
+							}
+						}
 
 					}
 					else if(y == 5) {
 						if(z == 1) {
 	 						center = 1;
-	 						if(key_alt)
+	 						if(quantize_in)
+	 							quantize_in = 0;
+	 						else if(key_alt)
 								w.wp[pattern].cv_curves[edit_cv_ch][x] = clip;
 							else
 								clip = w.wp[pattern].cv_curves[edit_cv_ch][x];
@@ -986,17 +1016,29 @@ static void handler_MonomeGridKey(s32 data) {
 					else if(y == 7) {
 						if(key_alt && z) {
 							param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][pos];
-							w.wp[pattern].cv_curves[edit_cv_ch][pos] = adc[1];
+							w.wp[pattern].cv_curves[edit_cv_ch][pos] = (adc[1] / 34) * 34;
+							quantize_in = 1;
 							param_accept = 1;
 							live_in = 1;
 						}
 						else if(center && z) {
-							w.wp[pattern].cv_curves[edit_cv_ch][x] = rand() % 4092;
+							if(key_meta == 0) 
+								w.wp[pattern].cv_curves[edit_cv_ch][x] = rand() % ((adc[1] / 34) * 34 + 1);
+							else {
+								for(i1=0;i1<16;i1++) {
+									w.wp[pattern].cv_curves[edit_cv_ch][i1] = rand() % ((adc[1] / 34) * 34 + 1);
+								}
+							}
 						}
 						else {
 							param_accept = z;
 							param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][x];
-							if(z) w.wp[pattern].cv_curves[edit_cv_ch][x] = adc[1];
+							if(z) {
+								w.wp[pattern].cv_curves[edit_cv_ch][x] = (adc[1] / 34) * 34;
+								quantize_in = 1;
+							}
+							else
+								quantize_in = 0;
 						}
 						monomeFrameDirty++;
 					}
@@ -1213,7 +1255,7 @@ static void refresh() {
 	if(key_alt) monomeLedBuffer[LENGTH] = 11;
 
 	// show mutes or on steps
-	if(scroll) {
+	if(key_meta) {
 		if(w.tr_mute[0]) monomeLedBuffer[0] = 11;
 		if(w.tr_mute[1]) monomeLedBuffer[1] = 11;
 		if(w.tr_mute[2]) monomeLedBuffer[2] = 11;
@@ -1227,7 +1269,7 @@ static void refresh() {
 	}
 
 	// cv indication
-	if(scroll) {
+	if(key_meta) {
 		if(SIZE==16) {
 			if(w.cv_mute[0]) {
 				monomeLedBuffer[4] = 11;
@@ -1483,7 +1525,7 @@ static void refresh_mono() {
 		monomeLedBuffer[LENGTH-1] = 11;
 	}
 
-	if(scroll) {
+	if(key_meta) {
 		monomeLedBuffer[0] = 11 * w.tr_mute[0];
 		monomeLedBuffer[1] = 11 * w.tr_mute[1];
 		monomeLedBuffer[2] = 11 * w.tr_mute[2];
@@ -1644,7 +1686,7 @@ static void refresh_mono() {
 		for(i1 = 0;i1<6;i1++) {
 			for(i2=0;i2<SIZE;i2++) {
 				// start/end bars, clear
-				if((scroll || key_alt) && (i1+scroll_pos == w.series_start || i1+scroll_pos == w.series_end)) monomeLedBuffer[32+i1*16+i2] = 11;
+				if((key_meta || key_alt) && (i1+scroll_pos == w.series_start || i1+scroll_pos == w.series_end)) monomeLedBuffer[32+i1*16+i2] = 11;
 				else monomeLedBuffer[32+i1*16+i2] = 0;
 			}
 
@@ -1652,7 +1694,7 @@ static void refresh_mono() {
 			// monomeLedBuffer[32+i1*16+((scroll_pos+i1)/(64/SIZE))] = 4;
 			
 			// sidebar selection indicators
-			if((scroll || key_alt) && i1+scroll_pos > w.series_start && i1+scroll_pos < w.series_end) {
+			if((key_meta || key_alt) && i1+scroll_pos > w.series_start && i1+scroll_pos < w.series_end) {
 				monomeLedBuffer[32+i1*16] = 11;
 				monomeLedBuffer[32+i1*16+LENGTH] = 11;
 			}
