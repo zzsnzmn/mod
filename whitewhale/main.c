@@ -203,8 +203,11 @@ void clock(u8 phase) {
 			series_pos = series_next;
 			if(series_pos == w.series_end)
 				series_next = w.series_start;
-			else
+			else {
 				series_next++;
+				if(series_next>63)
+					series_next = w.series_start;
+			}
 
 			// print_dbg("\r\nSERIES next ");
 			// print_dbg_ulong(series_next);
@@ -608,7 +611,8 @@ static void handler_PollADC(s32 data) {
 	}
 	else if(key_meta) {
 		i = adc[1]>>6;
-		if(i > 58) i = 58;
+		if(i > 58)
+			i = 58;
 		if(i != scroll_pos) {
 			scroll_pos = i;
 			monomeFrameDirty++;
@@ -786,9 +790,11 @@ static void handler_MonomeGridKey(s32 data) {
 
 			if(keycount_pos == 1 && z) {
 				if(key_alt == 0) {
-					next_pos = x;
-					cut_pos++;
-					monomeFrameDirty++;
+					if(key_meta != 1) {
+						next_pos = x;
+						cut_pos++;
+						monomeFrameDirty++;
+					}
 					keyfirst_pos = x;
 				}
 				else if(key_alt == 1) {
