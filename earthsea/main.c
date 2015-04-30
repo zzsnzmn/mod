@@ -108,6 +108,8 @@ typedef struct {
 	u16 cv[8][3];
 	u16 slew[8][3];
 
+	u8 help[16][8];
+
 	pattern_t p[16];
 } es_set;
 
@@ -1048,6 +1050,10 @@ static void handler_MonomeGridKey(s32 data) {
 				all_edit = 0;
 			}
 
+			if(mode == mSlew) {
+				es.help[x][y] ^= 1;
+			}
+
 			// EDGE MODE
 			if(mode == mEdge) {
 				shape_counter = 0;
@@ -1328,7 +1334,12 @@ static void refresh() {
 	u8 i1, i2, i3;
 
 	// CLEAR // FIXME: optimize? 
-	for(i1=0;i1<128;i1++) monomeLedBuffer[i1] = 0;
+	// for(i1=0;i1<128;i1++) monomeLedBuffer[i1] = 0;
+	for(i1=0;i1<8;i1++) {
+		for(i2=0;i2<16;i2++)
+			monomeLedBuffer[i1*16+i2] = es.help[i2][i1] << 2;
+	}
+	
 
 	// REC STATUS
 	if(r_status == rArm) monomeLedBuffer[32] = 7;
@@ -1689,6 +1700,9 @@ void flash_read(void) {
 			es.cv[i1][i2] = flashy.es[preset_select].cv[i1][i2];
 			es.slew[i1][i2] = flashy.es[preset_select].slew[i1][i2];;
 		}
+		for(i2=0;i2<16;i2++) {
+			es.help[i2][i1] = flashy.es[preset_select].help[i2][i1];;
+		}
 	}
 
 	for(i1=0;i1<16;i1++) {
@@ -1769,6 +1783,10 @@ int main(void)
 			for(i2=0;i2<8;i2++) {
 				es.cv[i1][i2] = 0;
 				es.slew[i1][i2] = 0;
+			}
+
+			for(i2=0;i2<16;i2++) {
+				es.help[i2][i1] = 0;
 			}
 		}
 
