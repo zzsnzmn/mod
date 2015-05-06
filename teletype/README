@@ -1,0 +1,154 @@
+README  // teletype
+
+
+microfont:
+http://www.timetrap.se/articles/freetajp.php
+
+VALUE = a number (several types)
+OPERATOR = a function. may need value(s) as argument(s). may return value.
+VARIABLE = named memory storage
+MOD = condition/rule that applies to rest of COMMAND, ie delay, prob, if, q
+WORD = VALUE/VAR/OP/MOD
+COMMAND = a series of WORDS, one line. (max length fit on screen?)
+SCRIPT = multiple commands (8 max currently?)
+
+
+
+RESOLUTION.
+	should full cv range be 14 bit then squished to 12 bit? right now is 15 bit. (1 bit for negative)
+
+
+SYNTAX
+
+// parse
+	//analyze text, convert into list of struct
+	//	type: function, value
+	//	data: function id, value
+	// on error.
+		// bad token
+		// too long?
+	// left vs. right
+	// 	get/set
+	// ARRAY
+
+// validate? according to params required?
+	// check for correct number of args
+		// array needs at least 1
+
+// process/execute
+	// prefix stack. theoretically the stack is just values, but we need to know the data type.
+	// function pointers? simplifies process code. use param count for pop()
+	// command length stored in struct?
+	// execute arbitrary command
+
+
+// abstraction
+// MOD (segmented processing, error detection, etc)
+DATA TYPES
+@ system
+	LIST
+PATTERN
+// MAP A-D
+error description detail
+HELP?
+
+sprintf optimizations
+	itoa
+
+E_OK is getting smashed up
+
+
+screen refresh method
+	// fast key refresh
+	---- cursor?
+// interrupts for digital inputs
+// assign scripts to inputs
+
+break out key handler?
+	lookup table for quick keys?
+	spawn new event to process new key
+
+// make mod pointers instead
+maybe optimize refresh_outputs()
+	have array_set push a stack. handler empties stack using function table.
+cv system with slew (slew code is bad)
+
+
+
+----- METRO
+
+metro time.
+	preset/metro/m.act
+	metro reset?
+
+
+((((((((((((((((funcs)))))))))
+
+TR.PULSE 1-4
+	interaction with manual set high/low?
+--- DELAY.FLUSH
+
+INIT (clears all vars and runs script) == PRESET PRESET
+PRESET
+
+--- M.ACT
+
+
+(((pattern funcs))) N = four possible patterns
+
+P.ADD N X		
+P.REMOVE N X	
+P.INSERT N Y X
+P.WRAP N
+P.HERE	N
+P.NEXT	N
+P.PREV	N
+P.START N
+P.END N	
+P.INDEX N
+P.PUSH N X
+P.POP N X
+
+PP....
+
+
+
+((((((((((((((vars))))))))))))))
+
+TR.TIME 1-4
+CV.SLEW 1-4
+CV.OFFSET 1-4
+CV.TIME 1-4
+CV.NOW 1-4
+
+
+(patterns get/set)
+
+P N I
+P.WRAP N
+P.HERE	N
+P.NEXT	N
+P.PREV	N
+P.INDEX N
+P.START N
+P.END N	
+
+PP.N
+PP....
+
+
+
+
+
+
+
+///////
+
+use static for "local" functions, optimizes jump distance and may inline
+const for pointer args that don't change.
+division by constant has optimized shortcut, see google
+use speed optimization on compiler
+pre-increment
+pre-mask counters on wrap
+use unsigned for bit shifting optimization
+count down for simple loops
