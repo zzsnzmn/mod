@@ -15,8 +15,8 @@
 #endif
 
 
-const char * errordesc[] = {
-	"EVERYTHING IS OK",
+static const char * errordesc[] = {
+	"OK",
 	"UNKOWN WORD",
 	"COMMAND TOO LONG",
 	"NOT ENOUGH PARAMS",
@@ -30,16 +30,16 @@ const char * tele_error(error_t e) {
 	return errordesc[e];
 }
 
-char dbg[64];
+static char dbg[64];
 
 uint8_t odirty;
 int output;
 
 tele_command_t temp;
-char condition;
+static char condition;
 
-tele_command_t q[Q_SIZE];
-uint8_t q_top;
+static tele_command_t q[Q_SIZE];
+static uint8_t q_top;
 
 
 volatile update_metro_t update_metro;
@@ -48,20 +48,18 @@ volatile update_metro_t update_metro;
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
 
-struct {
-	tele_command_t c;
-	unsigned int t;
-} d[D_SIZE];
+static tele_command_t delay_c[D_SIZE];
+static uint delay_t[D_SIZE];
 
 static void process_delays(void);
 
 static void process_delays() {
 	for(int i=0;i<D_SIZE;i++) {
-		if(d[i].t) {
- 			if(--d[i].t == 0) {
+		if(delay_t[i]) {
+ 			if(--delay_t[i] == 0) {
  				sprintf(dbg,"\r\ndelay %d", i);
 				DBG
-				process(&d[i].c);
+				process(&delay_c[i]);
 			}
 		}
 	}
@@ -71,7 +69,7 @@ void clear_delays(void);
 
 void clear_delays(void) {
 	for(int i=0;i<D_SIZE;i++) {
-		d[i].t = 0;
+		delay_t[i] = 0;
 	}
 }
 
@@ -103,17 +101,22 @@ void push(int data) {
 
 // {NAME,VAL}
 
-#define VARS 13
-tele_var_t tele_vars[VARS] = {
+// ENUM IN HEADER
+
+#define VARS 16
+static tele_var_t tele_vars[VARS] = {
 	{"I",0},	// gets overwritten by ITER
 	{"TIME",0},
 	{"TIME.ACT",1},
+	{"IN",0},
+	{"PARAM",0},
+	{"PRESET",0},
+	{"M",1000},
+	{"M.ACT",1},
 	{"X",0},
 	{"Y",0},
 	{"Z",0},
 	{"T",0},
-	{"IN",0},
-	{"PARAM",0},
 	{"A",1},
 	{"B",2},
 	{"C",3},
@@ -123,7 +126,7 @@ tele_var_t tele_vars[VARS] = {
 
 #define MAKEARRAY(name) {#name, {0,0,0,0}}
 #define ARRAYS 6
-tele_array_t tele_arrays[ARRAYS] = {
+static tele_array_t tele_arrays[ARRAYS] = {
 	MAKEARRAY(TR),
 	MAKEARRAY(CV),
 	MAKEARRAY(CV.SLEW),
@@ -160,16 +163,16 @@ void mod_DELAY(tele_command_t *c) {
 	int a = pop();
 
 	int i = 0;
-	while(d[i].t != 0 && i != D_SIZE)
+	while(delay_t[i] != 0 && i != D_SIZE)
 		i++;
 
 	if(i < D_SIZE) {
-		d[i].t = a;
+		delay_t[i] = a;
 
-		d[i].c.l = c->l - c->separator - 1;
-		d[i].c.separator = -1;
+		delay_c[i].l = c->l - c->separator - 1;
+		delay_c[i].separator = -1;
 
-		memcpy(d[i].c.data, &c->data[c->separator+1], d[i].c.l * sizeof(tele_data_t));
+		memcpy(delay_c[i].data, &c->data[c->separator+1], delay_c[i].l * sizeof(tele_data_t));
 	}	
 }
 void mod_Q(tele_command_t *c) {
@@ -225,7 +228,7 @@ void mod_ITER(tele_command_t *c) {
 	if(a < b) {
 		d = b - a + 1;
 		for(i = 0; i<d; i++) {
-			tele_vars[0].v = a + i;
+			tele_vars[V_I].v = a + i;
 			cc.l = c->l - c->separator - 1;
 			cc.separator = -1;
 			memcpy(cc.data, &c->data[c->separator+1], cc.l * sizeof(tele_data_t));
@@ -236,7 +239,7 @@ void mod_ITER(tele_command_t *c) {
 	else {
 		d = a - b + 1;
 		for(i = 0; i<d; i++) {
-			tele_vars[0].v = a - i;
+			tele_vars[V_I].v = a - i;
 			cc.l = c->l - c->separator - 1;
 			cc.separator = -1;
 			memcpy(cc.data, &c->data[c->separator+1], cc.l * sizeof(tele_data_t));
@@ -248,7 +251,7 @@ void mod_ITER(tele_command_t *c) {
 
 #define MAKEMOD(name, params, doc) {#name, mod_ ## name, params, doc}
 #define MODS 7
-tele_mod_t tele_mods[MODS] = {
+static const tele_mod_t tele_mods[MODS] = {
 	MAKEMOD(PROB, 1, "PROBABILITY TO CONTINUE EXECUTING LINE"),
 	MAKEMOD(DELAY, 1, "DELAY THIS COMMAND"),
 	MAKEMOD(Q, 0, "ADD COMMAND TO QUEUE"),
@@ -286,7 +289,7 @@ static void op_Q_ALL(void);
 static void op_Q_POP(void);
 static void op_Q_FLUSH(void);
 static void op_DELAY_FLUSH(void);
-static void op_M_ACT(void);
+static void op_M_RESET(void);
 
 void op_ADD() { push(pop() + pop()); }
 void op_SUB() { push(pop() - pop()); }
@@ -411,15 +414,14 @@ void op_Q_FLUSH() {
 void op_DELAY_FLUSH() {
 	clear_delays();
 }
-void op_M_ACT() {
-	int a = pop();
-	(*update_metro)(a);
+void op_M_RESET() {
+	(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 1);
 }
 
 
 #define MAKEOP(name, params, doc) {#name, op_ ## name, params, doc}
 #define OPS 24
-tele_op_t tele_ops[OPS] = {
+static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, "[A B] ADD A TO B"),
 	MAKEOP(SUB, 2, "[A B] SUBTRACT B FROM A"),
 	MAKEOP(MUL, 2, "[A B] MULTIPLY TWO VALUES"),
@@ -443,7 +445,7 @@ tele_op_t tele_ops[OPS] = {
 	{"Q.POP", op_Q_POP, 0, "Q: POP LAST"},
 	{"Q.FLUSH", op_Q_FLUSH, 0, "Q: FLUSH"},
 	{"DELAY.FLUSH", op_DELAY_FLUSH, 0, "DELAY: FLUSH"},
-	{"M.ACT", op_M_ACT, 1, "METRO: ACTIVE"}
+	{"M.RESET", op_M_RESET, 0, "METRO: RESET"}
 };
 
 
@@ -471,22 +473,30 @@ error_t parse(char *cmd) {
 			temp.data[n].t = SEP;
 		else {
 			// CHECK AGAINST VARS
-			int i = VARS;
+			int i = VARS - 1;
 
-			while(i--) {
+			do {
+				// print_dbg("\r\nvar '");
+				// print_dbg(tele_vars[i].name);
+				// print_dbg("'");
+
 				if(!strcmp(s,tele_vars[i].name)) {
 					temp.data[n].t = VAR;
 					temp.data[n].v = i;
 					// sprintf(dbg,"v(%d) ", temp.data[n].v);
 		            break;
 				}
-			}
+			} while(i--);
 
 			if(i == -1) {
 				// CHECK AGAINST ARRAYS
 			    i = ARRAYS;
 
 			    while(i--) {
+			  //   	print_dbg("\r\narrays '");
+					// print_dbg(tele_arrays[i].name);
+					// print_dbg("'");
+
 			        if(!strcmp(s,tele_arrays[i].name)) {
 	 					temp.data[n].t = ARRAY;
 						temp.data[n].v = i;
@@ -501,6 +511,10 @@ error_t parse(char *cmd) {
 			    i = OPS;
 
 			    while(i--) {
+			  //   	print_dbg("\r\nops '");
+					// print_dbg(tele_ops[i].name);
+					// print_dbg("'");
+
 			        if(!strcmp(s,tele_ops[i].name)) {
 	 					temp.data[n].t = OP;
 						temp.data[n].v = i;
@@ -515,6 +529,10 @@ error_t parse(char *cmd) {
 			    i = MODS;
 
 			    while(i--) {
+			  //   	print_dbg("\r\nmods '");
+					// print_dbg(tele_mods[i].name);
+					// print_dbg("'");
+
 			        if(!strcmp(s,tele_mods[i].name)) {
 	 					temp.data[n].t = MOD;
 						temp.data[n].v = i;
@@ -688,6 +706,16 @@ void process(tele_command_t *c) {
 					tele_vars[c->data[n].v].v = pop();
 					sprintf(dbg,"\r\nset var %s to %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
 					DBG
+
+					if(c->data[n].v == V_PRESET) {
+						;;
+					}
+					else if(c->data[n].v == V_M) {
+						(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+					} 
+					else if(c->data[n].v == V_M_ACT) {
+						(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+					}
 				}
 			}
 			else if(c->data[n].t == ARRAY) {

@@ -14,72 +14,54 @@ SCRIPT = multiple commands (8 max currently?)
 
 
 
+(((((((((((((((((((((((((tele)))))))))))))))))))))))))
+
+DATA TYPES
+@ system
+PATTERN
+	extern
+
+HELP?
+error description detail
+
+
 RESOLUTION.
 	should full cv range be 14 bit then squished to 12 bit? right now is 15 bit. (1 bit for negative)
 
 
-SYNTAX
-
-// parse
-	//analyze text, convert into list of struct
-	//	type: function, value
-	//	data: function id, value
-	// on error.
-		// bad token
-		// too long?
-	// left vs. right
-	// 	get/set
-	// ARRAY
-
-// validate? according to params required?
-	// check for correct number of args
-		// array needs at least 1
-
-// process/execute
-	// prefix stack. theoretically the stack is just values, but we need to know the data type.
-	// function pointers? simplifies process code. use param count for pop()
-	// command length stored in struct?
-	// execute arbitrary command
-
-
-// abstraction
-// MOD (segmented processing, error detection, etc)
-DATA TYPES
-@ system
-	LIST
-PATTERN
-// MAP A-D
-error description detail
-HELP?
-
-sprintf optimizations
-	itoa
-
-E_OK is getting smashed up
-
+((((((((((((((((((((hardware))))))))))))))))))))
 
 screen refresh method
-	// fast key refresh
-	---- cursor?
-// interrupts for digital inputs
-// assign scripts to inputs
+	dirty flag per region?
+	cursor
+
+
+delays need a way to update odirty
 
 break out key handler?
 	lookup table for quick keys?
 	spawn new event to process new key
 
-// make mod pointers instead
-maybe optimize refresh_outputs()
-	have array_set push a stack. handler empties stack using function table.
 cv system with slew (slew code is bad)
 
+sprintf optimizations
+	itoa
 
+maybe optimize refresh_outputs()
+	have array_set push a stack. handler empties stack using function table.
 
------ METRO
+// ----- METRO
 
 metro time.
 	preset/metro/m.act
 	metro reset?
+
+i2c
+
+comment out grid stuff
+
+tr.toggle needs init??
+
 
 
 ((((((((((((((((funcs)))))))))

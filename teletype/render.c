@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 
 #include "screen.h"
 #include "region.h"
@@ -41,11 +40,8 @@ void render_edit(int i) {
 }
 
 void render_in(char *s) {
-	char str[32];
-	strcpy(str, s);
-	strcat(str, "_");
 	region_fill(&in, 0);
-	region_string(&in, str, 4, 4, 0xf, 0, 0);
+	region_string(&in, s, 4, 4, 0xf, 0, 0);
 }
 
 void render_update(void) {

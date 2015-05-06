@@ -22,9 +22,9 @@ typedef enum {
   kEventFtdiDisconnect,
   /// monome protocol
   kEventMonomeConnect,
-  kEventMonomeDisconnect,
-  kEventMonomePoll,	
-  kEventMonomeRefresh, 	
+  // kEventMonomeDisconnect,
+  // kEventMonomePoll,	
+  // kEventMonomeRefresh, 	
   kEventMonomeGridKey, 
   kEventMonomeRingEnc,
   // HID

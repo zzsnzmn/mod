@@ -4,11 +4,13 @@
 #define SCRIPT_MAX_COMMANDS 8
 #define COMMAND_MAX_LENGTH 10
 #define STACK_SIZE 10
-#define Q_SIZE 16
-#define D_SIZE 16
+#define Q_SIZE 2
+#define D_SIZE 2
 
 #define TRUE 1
 #define FALSE 0
+
+enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D};
 
 typedef enum { 
 	E_OK, 
@@ -81,7 +83,7 @@ const char * tele_error(error_t);
 
 extern tele_command_t temp;
 
-typedef void(*update_metro_t)(uint8_t);
+typedef void(*update_metro_t)(int, int, uint8_t);
 extern volatile update_metro_t update_metro;
 
 extern int output;

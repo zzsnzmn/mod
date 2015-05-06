@@ -20,11 +20,11 @@
 #include "interrupts.h"
 #include "i2c.h"
 #include "kbd.h"
-#include "monome.h"
+// #include "monome.h"
 #include "timers.h"
 #include "adc.h"
 #include "util.h"
-#include "ftdi.h"
+// #include "ftdi.h"
 #include "hid.h"
 #include "screen.h"
 
@@ -36,9 +36,6 @@
 #define FIRSTRUN_KEY 0x22
 
 #define METRO_SCRIPT 8
-
-extern volatile u8 refresh;
-
 
 u8 preset_mode, preset_select, front_timer;
 u8 glyph[8];
@@ -64,6 +61,9 @@ error_t status;
 
 tele_script_t script[10];
 uint8_t edit;
+
+uint8_t metro_act;
+unsigned int metro_time;
 
 // typedef const struct {
 // } nvram_data_t;
@@ -100,7 +100,7 @@ static void flash_read(void);
 static void refresh_outputs(void);
 
 
-static void tele_metro(uint8_t i);
+static void tele_metro(int, int, uint8_t);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -208,11 +208,16 @@ static void hidTimer_callback(void* o) {
 }
 
 static void metroTimer_callback(void* o) {
+	print_dbg("*");
+
 	if(script[METRO_SCRIPT].l) {
 		process(&script[METRO_SCRIPT].c[0]);
 		refresh_outputs();
 	}
 }
+
+
+
 
 
 
@@ -231,14 +236,14 @@ static void handler_Front(s32 data) {
 		front_timer = 0;
 	}
 
-	monomeFrameDirty++;
+	// monomeFrameDirty++;
 }
 
 static void handler_PollADC(s32 data) {
 	adc_convert(&adc);
 
-	tele_set_val(5,adc[0]);
-	tele_set_val(6,adc[1]);
+	tele_set_val(3,adc[0]);	// IN
+	tele_set_val(4,adc[1]);	// PARAM
 
 	// print_dbg("\r\nadc:\t"); print_dbg_ulong(adc[0]);
 	// print_dbg("\t"); print_dbg_ulong(adc[1]);
@@ -291,11 +296,12 @@ static void handler_HidTimer(s32 data) {
      			switch(frame[i]) {
      				case 0x30:
      					edit++;
-     					edit &= 0x7;
+     					if(edit==10) edit = 0;
+     					// edit &= 0x7;
      					break;
      				case 0x2F:
      					if(edit) edit--;
-     					else edit = 7;
+     					else edit = 9;
      					break;
      				case BACKSPACE:
      					if(pos) {
@@ -371,18 +377,18 @@ static void handler_Trigger(s32 data) {
 
 
 
+
 // assign event handlers
 static inline void assign_main_event_handlers(void) {
 	app_event_handlers[ kEventFront ]	= &handler_Front;
 	app_event_handlers[ kEventPollADC ]	= &handler_PollADC;
 	app_event_handlers[ kEventKeyTimer ] = &handler_KeyTimer;
 	app_event_handlers[ kEventSaveFlash ] = &handler_SaveFlash;
-	app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect ;
-	app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect ;
-	app_event_handlers[ kEventHidPacket ]	= &handler_HidPacket ;
-	app_event_handlers[ kEventHidTimer ]	= &handler_HidTimer ;
-	app_event_handlers[ kEventTrigger ]	= &handler_Trigger ;
-
+	app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect;
+	app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect;
+	app_event_handlers[ kEventHidPacket ]	= &handler_HidPacket;
+	app_event_handlers[ kEventHidTimer ]	= &handler_HidTimer;
+	app_event_handlers[ kEventTrigger ]	= &handler_Trigger;
 }
 
 // app event loop
@@ -459,8 +465,24 @@ void refresh_outputs() {
 
 
 
-static void tele_metro(uint8_t i) {
+static void tele_metro(int m, int m_act, uint8_t m_reset) {
 	print_dbg("\r\nupdate");
+
+	metro_time = m;
+	if(m_act && !metro_act) {
+		print_dbg("\r\nTURN ON METRO");
+		metro_act = 1;
+		timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
+	}
+	else if(!m_act && metro_act) {
+		print_dbg("\r\nTURN OFF METRO");
+		metro_act = 0;
+		timer_remove(&metroTimer);
+	}
+	else {
+		print_dbg("\r\nSET METRO");
+		timer_set(&metroTimer, metro_time);
+	}
 }
 
 
@@ -487,7 +509,7 @@ int main(void)
 	cpu_irq_enable();
 
 	init_usb_host();
-	init_monome();
+	// init_monome();
 
 	init_oled();
 
@@ -541,8 +563,11 @@ int main(void)
 	timer_add(&cvTimer,6,&cvTimer_callback, NULL);
 	timer_add(&keyTimer,51,&keyTimer_callback, NULL);
 	timer_add(&adcTimer,61,&adcTimer_callback, NULL);
-	timer_add(&metroTimer,1000,&metroTimer_callback, NULL);
-	clock_temp = 10000; // out of ADC range to force tempo
+	
+	metro_act = 1;
+	metro_time = 1000;
+	timer_add(&metroTimer, metro_time ,&metroTimer_callback, NULL);
+
 
 	render_init();
 
