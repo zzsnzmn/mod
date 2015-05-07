@@ -175,13 +175,27 @@ static void refreshTimer_callback(void* o) {
 	// event_post(&e);
 	// print_dbg("\r\ntimer.");
 
-	if(sdirty) {
-		render_in(input);
-		sdirty = 0;
-		render(output);
-		render_edit(edit);
-		render_update();
+	uint8_t sdirty = 0;
+
+	if(dirties[R_ACTIVITY]) {
+		render_activity(output);
+		sdirty++;
 	}
+	if(dirties[R_INPUT]) {
+		render_input(input);
+		sdirty++;
+	}
+	if(dirties[R_EDIT]) {
+		render_edit(edit);
+		sdirty++;
+	}
+	if(dirties[R_LIST]) {
+		render_list();
+		sdirty++;
+	}
+
+	if(sdirty)	
+		render();
 }
 
 
@@ -298,10 +312,12 @@ static void handler_HidTimer(s32 data) {
      					edit++;
      					if(edit==10) edit = 0;
      					// edit &= 0x7;
+     					dirties[R_EDIT]++;
      					break;
      				case 0x2F:
      					if(edit) edit--;
      					else edit = 9;
+     					dirties[R_EDIT]++;
      					break;
      				case BACKSPACE:
      					if(pos) {
@@ -343,7 +359,7 @@ static void handler_HidTimer(s32 data) {
      					pos++;
      			}
 
-     			sdirty++;
+     			dirties[R_INPUT]++;
      		}
      	}
 
@@ -466,22 +482,25 @@ void refresh_outputs() {
 
 
 static void tele_metro(int m, int m_act, uint8_t m_reset) {
-	print_dbg("\r\nupdate");
-
 	metro_time = m;
+
 	if(m_act && !metro_act) {
-		print_dbg("\r\nTURN ON METRO");
+		// print_dbg("\r\nTURN ON METRO");
 		metro_act = 1;
 		timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
 	}
 	else if(!m_act && metro_act) {
-		print_dbg("\r\nTURN OFF METRO");
+		// print_dbg("\r\nTURN OFF METRO");
 		metro_act = 0;
 		timer_remove(&metroTimer);
 	}
-	else {
-		print_dbg("\r\nSET METRO");
+	else if(!m_reset) {
+		// print_dbg("\r\nSET METRO");
 		timer_set(&metroTimer, metro_time);
+	}
+	else {
+		// print_dbg("\r\nRESET METRO");
+		timer_reset(&metroTimer);
 	}
 }
 
@@ -573,7 +592,10 @@ int main(void)
 
 	clear_delays();
 
-	sdirty++;
+	dirties[R_ACTIVITY] = 1;
+	dirties[R_EDIT] = 1;
+	dirties[R_INPUT] = 1;
+	dirties[R_LIST] = 1;
 
 	update_metro = &tele_metro;
 

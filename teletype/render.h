@@ -2,11 +2,13 @@
 #define _RENDER_H_
 
 extern void render_init(void);
-extern void render(int);
-extern void render_in(char *);
+extern void render_activity(int);
 extern void render_edit(int);
-extern void render_update(void);
+extern void render_input(char *);
+extern void render_list(void);
+extern void render(void);
 
-extern uint8_t sdirty;
+enum {R_ACTIVITY, R_INPUT, R_EDIT, R_LIST};
+extern uint8_t dirties[4];
 
 #endif

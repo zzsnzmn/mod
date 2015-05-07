@@ -17,12 +17,12 @@ SCRIPT = multiple commands (8 max currently?)
 (((((((((((((((((((((((((tele)))))))))))))))))))))))))
 
 DATA TYPES
-@ system
 PATTERN
 	extern
+@ system
 
 HELP?
-error description detail
+error description detail?
 
 
 RESOLUTION.
@@ -32,11 +32,7 @@ RESOLUTION.
 ((((((((((((((((((((hardware))))))))))))))))))))
 
 screen refresh method
-	dirty flag per region?
 	cursor
-
-
-delays need a way to update odirty
 
 break out key handler?
 	lookup table for quick keys?
@@ -44,23 +40,23 @@ break out key handler?
 
 cv system with slew (slew code is bad)
 
+SRAM check?
+
 sprintf optimizations
-	itoa
 
 maybe optimize refresh_outputs()
 	have array_set push a stack. handler empties stack using function table.
-
-// ----- METRO
-
-metro time.
-	preset/metro/m.act
-	metro reset?
 
 i2c
 
 comment out grid stuff
 
-tr.toggle needs init??
+///
+
+PATTERNS
+
+INIT (clears all vars and runs script) == PRESET PRESET
+PRESET
 
 
 
@@ -68,12 +64,6 @@ tr.toggle needs init??
 
 TR.PULSE 1-4
 	interaction with manual set high/low?
---- DELAY.FLUSH
-
-INIT (clears all vars and runs script) == PRESET PRESET
-PRESET
-
---- M.ACT
 
 
 (((pattern funcs))) N = four possible patterns

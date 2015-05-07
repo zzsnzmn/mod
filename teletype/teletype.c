@@ -30,7 +30,7 @@ const char * tele_error(error_t e) {
 	return errordesc[e];
 }
 
-static char dbg[64];
+static char dbg[32];
 
 uint8_t odirty;
 int output;
@@ -57,8 +57,8 @@ static void process_delays() {
 	for(int i=0;i<D_SIZE;i++) {
 		if(delay_t[i]) {
  			if(--delay_t[i] == 0) {
- 				sprintf(dbg,"\r\ndelay %d", i);
-				DBG
+ 				// sprintf(dbg,"\r\ndelay %d", i);
+				// DBG
 				process(&delay_c[i]);
 			}
 		}
@@ -291,17 +291,17 @@ static void op_Q_FLUSH(void);
 static void op_DELAY_FLUSH(void);
 static void op_M_RESET(void);
 
-void op_ADD() { push(pop() + pop()); }
-void op_SUB() { push(pop() - pop()); }
-void op_MUL() { push(pop() * pop()); }
-void op_DIV() { push(pop() / pop()); }
-void op_RAND() { 
+static void op_ADD() { push(pop() + pop()); }
+static void op_SUB() { push(pop() - pop()); }
+static void op_MUL() { push(pop() * pop()); }
+static void op_DIV() { push(pop() / pop()); }
+static void op_RAND() { 
 	int a;
 	a = pop();
 	if(a < 0) a = (a * -1);
 	push(rand() % (a+1));
 }
-void op_RRAND() { 
+static void op_RRAND() { 
 	int a,b, min, max, range;
 	a = pop();
 	b = pop();
@@ -317,22 +317,22 @@ void op_RRAND() {
 	if(range == 0) push(a);
 	else push(rand() % range + min); 
 }
-void op_TOSS() { push(rand() & 1); }
-void op_MIN() { 
+static void op_TOSS() { push(rand() & 1); }
+static void op_MIN() { 
 	int a, b;
 	a = pop();
 	b = pop();
 	if(b > a) push(a);
 	else push(b);
 }
-void op_MAX() { 
+static void op_MAX() { 
 	int a, b;
 	a = pop();
 	b = pop();
 	if(a > b) push(a);
 	else push(b);
 }
-void op_LIM() {
+static void op_LIM() {
 	int a, b, i;
 	a = pop();
 	b = pop();
@@ -341,7 +341,7 @@ void op_LIM() {
 	else if(i > b) i = b;
 	push(i);
 }
-void op_WRAP() {
+static void op_WRAP() {
 	int a, b, i, c;
 	a = pop();
 	b = pop();
@@ -362,19 +362,19 @@ void op_WRAP() {
 	}
 	push(i);
 }
-void op_QT() {
+static void op_QT() {
 	int a, b;
 	a = pop();
 	b = pop();
 
 	// HERE
 }
-void op_AVG() { push((pop() + pop()) / 2); }
-void op_EQ() { push(pop() == pop()); }
-void op_NE() { push(pop() != pop()); }
-void op_LT() { push(pop() < pop()); }
-void op_GT() { push(pop() > pop()); }
-void op_TR_TOGGLE() {
+static void op_AVG() { push((pop() + pop()) / 2); }
+static void op_EQ() { push(pop() == pop()); }
+static void op_NE() { push(pop() != pop()); }
+static void op_LT() { push(pop() < pop()); }
+static void op_GT() { push(pop() > pop()); }
+static void op_TR_TOGGLE() {
 	int a = pop();
 	// saturate and shift
 	if(a < 1) a = 1;
@@ -382,8 +382,9 @@ void op_TR_TOGGLE() {
 	a--;
 	if(tele_arrays[0].v[a]) tele_arrays[0].v[a] = 0;
 	else tele_arrays[0].v[a] = 1;
+	odirty++;
 }
-void op_N() { 
+static void op_N() { 
 	int a;
 	a = pop();
 
@@ -397,24 +398,24 @@ void op_N() {
 		push(table_n[a]);
 	}
 }
-void op_Q_ALL() {
+static void op_Q_ALL() {
 	for(int i = 0;i<q_top;i++)
 		process(&q[q_top-i-1]);
 	q_top = 0;
 }
-void op_Q_POP() {
+static void op_Q_POP() {
 	if(q_top) {
 		q_top--;
 		process(&q[q_top]);
 	}
 }
-void op_Q_FLUSH() {
+static void op_Q_FLUSH() {
 	q_top = 0;
 }
-void op_DELAY_FLUSH() {
+static void op_DELAY_FLUSH() {
 	clear_delays();
 }
-void op_M_RESET() {
+static void op_M_RESET() {
 	(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 1);
 }
 

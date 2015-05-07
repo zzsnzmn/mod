@@ -1,11 +1,11 @@
 #ifndef _TELETYPE_H_
 #define _TELETYPE_H_
 
-#define SCRIPT_MAX_COMMANDS 8
-#define COMMAND_MAX_LENGTH 10
+#define SCRIPT_MAX_COMMANDS 6
+#define COMMAND_MAX_LENGTH 8
 #define STACK_SIZE 10
-#define Q_SIZE 2
-#define D_SIZE 2
+#define Q_SIZE 8
+#define D_SIZE 8
 
 #define TRUE 1
 #define FALSE 0
