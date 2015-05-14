@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
 	char *in;
 	time_t t;
 	error_t status;
+	int i;
 
 	char *s;
 
@@ -35,6 +36,12 @@ int main(int argc, char *argv[]) {
 	do {
 		printf("\n\n> ");
 		fgets(in, 256, stdin);
+
+		i = 0;
+		while(in[i]) {
+		    in[i] = toupper(in[i]);
+		    i++;
+		 }
 
 		status = parse(in);
 		if(status == E_OK) {

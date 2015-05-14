@@ -6,6 +6,7 @@
 
 #include "teletype.h"
 #include "table.h"
+#include "util.h"
 
 #ifdef SIM
 #define DBG printf("%s",dbg);
@@ -31,6 +32,7 @@ const char * tele_error(error_t e) {
 }
 
 static char dbg[32];
+static char pcmd[32];
 
 uint8_t odirty;
 int output;
@@ -49,7 +51,7 @@ volatile update_metro_t update_metro;
 // DELAY ////////////////////////////////////////////////////////
 
 static tele_command_t delay_c[D_SIZE];
-static uint delay_t[D_SIZE];
+static uint8_t delay_t[D_SIZE];
 
 static void process_delays(void);
 
@@ -77,19 +79,19 @@ void clear_delays(void) {
 /////////////////////////////////////////////////////////////////
 // STACK ////////////////////////////////////////////////////////
 
-static int pop(void);
-static void push(int);
+static tele_data_t pop(void);
+static void push(tele_data_t);
 
 static int top;
-static int stack[STACK_SIZE];
+static tele_data_t stack[STACK_SIZE];
 
-int pop() {
+tele_data_t pop() {
 	top--;
 	// sprintf(dbg,"\r\npop %d", stack[top]);
 	return stack[top];
 }
 
-void push(int data) {
+void push(tele_data_t data) {
 	stack[top] = data;
 	// sprintf(dbg,"\r\npush %d", stack[top]);
 	top++;
@@ -149,7 +151,7 @@ static void mod_ELSE(tele_command_t *);
 static void mod_ITER (tele_command_t *);
 
 void mod_PROB(tele_command_t *c) { 
-	int a = pop();
+	int a = pop().v;
 	tele_command_t cc;
 	if(rand() % 101 < a) {
 		cc.l = c->l - c->separator - 1;
@@ -160,7 +162,7 @@ void mod_PROB(tele_command_t *c) {
 	}
 }
 void mod_DELAY(tele_command_t *c) {
-	int a = pop();
+	int a = pop().v;
 
 	int i = 0;
 	while(delay_t[i] != 0 && i != D_SIZE)
@@ -186,7 +188,7 @@ void mod_Q(tele_command_t *c) {
 void mod_IF(tele_command_t *c) {
 	condition = FALSE;
 	tele_command_t cc;
-	if(pop()) {
+	if(pop().v) {
 		condition = TRUE;
 		cc.l = c->l - c->separator - 1;
 		cc.separator = -1;
@@ -198,7 +200,7 @@ void mod_IF(tele_command_t *c) {
 void mod_ELIF(tele_command_t *c) {
 	tele_command_t cc;
 	if(!condition) {
-		if(pop()) {
+		if(pop().v) {
 			condition = TRUE;
 			cc.l = c->l - c->separator - 1;
 			cc.separator = -1;
@@ -222,8 +224,8 @@ void mod_ELSE(tele_command_t *c) {
 void mod_ITER(tele_command_t *c) {
 	tele_command_t cc;
 	int a, b, d, i;
-	a = pop();
-	b = pop();
+	a = pop().v;
+	b = pop().v;
 
 	if(a < b) {
 		d = b - a + 1;
@@ -291,20 +293,39 @@ static void op_Q_FLUSH(void);
 static void op_DELAY_FLUSH(void);
 static void op_M_RESET(void);
 
-static void op_ADD() { push(pop() + pop()); }
-static void op_SUB() { push(pop() - pop()); }
-static void op_MUL() { push(pop() * pop()); }
-static void op_DIV() { push(pop() / pop()); }
-static void op_RAND() { 
-	int a;
-	a = pop();
-	if(a < 0) a = (a * -1);
-	push(rand() % (a+1));
+static void op_ADD() {
+	static tele_data_t a;
+	a.v = pop().v + pop().v;
+	push(a);
 }
-static void op_RRAND() { 
+static void op_SUB() { 
+	static tele_data_t a;
+	a.v = pop().v - pop().v;
+	push(a);
+}
+static void op_MUL() { 
+	static tele_data_t a;
+	a.v = pop().v * pop().v;
+	push(a);
+}
+static void op_DIV() { 
+	static tele_data_t a;
+	a.v = pop().v / pop().v;
+	push(a);
+}
+static void op_RAND() { 
+	static tele_data_t a;
+	a.v = pop().v;
+	if(a.v < 0)
+		a.v = (a.v * -1);
+	a.v = rand() % (a.v+1);
+	push(a);
+}
+static void op_RRAND() {
+	static tele_data_t r;
 	int a,b, min, max, range;
-	a = pop();
-	b = pop();
+	a = pop().v;
+	b = pop().v;
 	if(a < b) {
 		min = a;
 		max = b; 
@@ -314,88 +335,118 @@ static void op_RRAND() {
 		max = a;
 	}
 	range = max - min;
-	if(range == 0) push(a);
-	else push(rand() % range + min); 
+	if(range == 0) r.v = a;
+	else
+		r.v = rand() % range + min;
+
+	push(r); 
 }
-static void op_TOSS() { push(rand() & 1); }
+static void op_TOSS() {
+	static tele_data_t a;
+	a.v = rand() & 1;
+	push(a); 
+}
 static void op_MIN() { 
-	int a, b;
-	a = pop();
-	b = pop();
-	if(b > a) push(a);
+	static tele_data_t a, b;
+	a.v = pop().v;
+	b.v = pop().v;
+	if(b.v > a.v) push(a);
 	else push(b);
 }
 static void op_MAX() { 
-	int a, b;
-	a = pop();
-	b = pop();
-	if(a > b) push(a);
+	static tele_data_t a, b;
+	a.v = pop().v;
+	b.v = pop().v;
+	if(a.v > b.v) push(a);
 	else push(b);
 }
 static void op_LIM() {
-	int a, b, i;
-	a = pop();
-	b = pop();
-	i = pop();
-	if(i < a) i = a;
-	else if(i > b) i = b;
+	static tele_data_t a, b, i;
+	a.v = pop().v;
+	b.v = pop().v;
+	i.v = pop().v;
+	if(i.v < a.v) i.v = a.v;
+	else if(i.v > b.v) i.v = b.v;
 	push(i);
 }
 static void op_WRAP() {
-	int a, b, i, c;
-	a = pop();
-	b = pop();
-	i = pop();
-	if(a < b) {
-		c = b - a;
-		while(i >= b)
-			i -= c;
-		while(i < a)
-			i += c;
+	static tele_data_t a, b, i, c;
+	a.v = pop().v;
+	b.v = pop().v;
+	i.v = pop().v;
+	if(a.v < b.v) {
+		c.v = b.v - a.v;
+		while(i.v >= b.v)
+			i.v -= c.v;
+		while(i.v < a.v)
+			i.v += c.v;
 	}
 	else {
-		c = a - b;
-		while(i >= a)
-			i -= c;
-		while(i < b)
-			i += c;
+		c.v = a.v - b.v;
+		while(i.v >= a.v)
+			i.v -= c.v;
+		while(i.v < b.v)
+			i.v += c.v;
 	}
 	push(i);
 }
 static void op_QT() {
-	int a, b;
-	a = pop();
-	b = pop();
+	static tele_data_t a, b;
+	a.v = pop().v;
+	b.v = pop().v;
 
-	// HERE
+	// TODO
 }
-static void op_AVG() { push((pop() + pop()) / 2); }
-static void op_EQ() { push(pop() == pop()); }
-static void op_NE() { push(pop() != pop()); }
-static void op_LT() { push(pop() < pop()); }
-static void op_GT() { push(pop() > pop()); }
+static void op_AVG() {
+	static tele_data_t a;
+	a.v = (pop().v + pop().v) / 2;
+	push(a); 
+}
+static void op_EQ() { 
+	static tele_data_t a;
+	a.v = pop().v == pop().v;
+	push(a); 
+}
+static void op_NE() {
+	static tele_data_t a;
+	a.v = pop().v != pop().v; 
+	push(a); 
+}
+static void op_LT() { 
+	static tele_data_t a;
+	a.v = pop().v < pop().v;
+	push(a); 
+}
+static void op_GT() { 
+	static tele_data_t a;
+	a.v = pop().v > pop().v;
+	push(a); 
+}
 static void op_TR_TOGGLE() {
-	int a = pop();
+	static tele_data_t a;
+	a.v = pop().v;
 	// saturate and shift
-	if(a < 1) a = 1;
-	else if(a > 4) a = 4;
-	a--;
-	if(tele_arrays[0].v[a]) tele_arrays[0].v[a] = 0;
-	else tele_arrays[0].v[a] = 1;
+	if(a.v < 1) a.v = 1;
+	else if(a.v > 4) a.v = 4;
+	a.v--;
+	if(tele_arrays[0].v[a.v]) tele_arrays[0].v[a.v] = 0;
+	else tele_arrays[0].v[a.v] = 1;
 	odirty++;
 }
 static void op_N() { 
-	int a;
-	a = pop();
+	static tele_data_t a;
+	a.v = pop().v;
 
-	if(a < 0) {
-		if(a < -127) a = -127;
-		a *= -1;
-		push(-1 * table_n[a]);
+	if(a.v < 0) {
+		if(a.v < -127) a.v = -127;
+		a.v *= -1;
+		a.v = -1 * table_n[a.v];
+		push(a);
 	}
 	else {
-		if(a > 127) a = 127;
-		push(table_n[a]);
+		if(a.v > 127) a.v = 127;
+		a.v = table_n[a.v];
+		push(a);
 	}
 }
 static void op_Q_ALL() {
@@ -455,8 +506,10 @@ static const tele_op_t tele_ops[OPS] = {
 // PROCESS //////////////////////////////////////////////////////
 
 error_t parse(char *cmd) {
+	char *p;
+	char a, b;
 	const char *delim = " \n";
-	const char* s = strtok(cmd,delim);
+	const char *s = strtok(cmd,delim);
 
 	uint8_t n = 0;
 	temp.l = n;
@@ -466,9 +519,31 @@ error_t parse(char *cmd) {
     while(s) {
     	// CHECK IF NUMBER
  		if(isdigit(s[0]) || s[0]=='-') {
- 			temp.data[n].t = NUMBER;
-			temp.data[n].v = strtol(s, NULL, 0);
-			// sprintf(dbg,"n:%d ", temp.data[n].v);
+ 			p = strchr(s, 'V');
+ 			if(p == NULL) {
+ 				p = strchr(s, 'N');
+ 				if(p == NULL) {
+ 					temp.data[n].t = NUMBER;
+					temp.data[n].v = strtol(s, NULL, 0);
+					// sprintf(dbg,"n:%d ", temp.data[n].v);
+ 				}
+ 				else {
+					printf("\nfound interval");
+ 					temp.data[n].t = INTERVAL;
+ 					a = strtol(s, NULL, 0);
+ 					b = strtol(p+1, NULL, 0);
+ 					printf(" %d %d", a, b);
+ 					temp.data[n].v = (a<<8) + b; //strtol(s, NULL, 0);
+ 				}
+ 			}
+ 			else {
+				printf("\nfound volt");
+				a = strtol(s, NULL, 0);
+				b = strtol(p+1, NULL, 0);
+				printf(" %d %d", a, b);
+ 				temp.data[n].t = VOLT;
+ 				temp.data[n].v = (a<<8) + b; //strtol(s, NULL, 0);
+ 			}		
 		}
 		else if(s[0]==':')
 			temp.data[n].t = SEP;
@@ -648,18 +723,19 @@ error_t validate(tele_command_t *c) {
 // PROCESS //////////////////////////////////////////////////////
 
 void process(tele_command_t *c) {
+	static tele_data_t t;
 	top = 0;
 	int i;
 	int n;
+	int a,b;
 
 	if(c->separator == -1)
 		n = c->l;
 	else
 		n = c->separator;
 
-	sprintf(dbg,"\r\r\nprocess (%d):", n);
-	DBG
-	print_command(c);
+	sprintf(dbg,"\r\r\nprocess (%d): %s", n, print_command(c));
+	DBG;
 
 	while(n--) {
 		if(c->data[n].t == OP)
@@ -671,42 +747,46 @@ void process(tele_command_t *c) {
 		// RIGHT (get)
 		else if(n) {
 			if(c->data[n].t == NUMBER)
-				push(c->data[n].v);
+				push(c->data[n]);
 			else if(c->data[n].t == VAR) {
-				sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
-				DBG
-				push(tele_vars[c->data[n].v].v);
+				// sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
+				// DBG
+				t.v = tele_vars[c->data[n].v].v;
+				push(t);
 			}
 			else if(c->data[n].t == ARRAY) {
-				i = pop();
+				i = pop().v;
 
 				// saturate for 1-4 indexing
 				if(i<1) i=0;
 				else if(i>3) i=4;
 				i--;
 
-				sprintf(dbg,"\r\nget array %s @ %d : %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
-				DBG
-				push(tele_arrays[c->data[n].v].v[i]);
+				// sprintf(dbg,"\r\nget array %s @ %d : %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
+				// DBG
+				t.v = tele_arrays[c->data[n].v].v[i];
+				push(t);
 			}
 		}
 
 		// LEFTMOST (set/get)
 		else {
-			if(c->data[n].t == NUMBER)
-				push(c->data[n].v);
+			if(c->data[n].t == NUMBER || c->data[n].t == VOLT || c->data[n].t == INTERVAL) {
+				push(c->data[n]);
+			}
 			else if(c->data[n].t == VAR) {
 				// LONE GET JUST PRINTS
 				if(top == 0) {
-					sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
-					DBG
-					push(tele_vars[c->data[n].v].v);
+					// sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
+					// DBG
+					t.v = tele_vars[c->data[n].v].v;
+					push(t);
 				}
 				// OTHERWISE SET
 				else {
-					tele_vars[c->data[n].v].v = pop();
-					sprintf(dbg,"\r\nset var %s to %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
-					DBG
+					tele_vars[c->data[n].v].v = pop().v;
+					// sprintf(dbg,"\r\nset var %s to %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
+					// DBG
 
 					if(c->data[n].v == V_PRESET) {
 						;;
@@ -720,21 +800,22 @@ void process(tele_command_t *c) {
 				}
 			}
 			else if(c->data[n].t == ARRAY) {
-				i = pop();
+				i = pop().v;
 				// saturate for 1-4 indexing
 				if(i<1) i=1;
 				else if(i>4) i=4;
 				i--;
 
 				if(top == 0) {
- 					sprintf(dbg,"\r\nget array %s @ %d : %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
- 					DBG
-					push(tele_arrays[c->data[n].v].v[i]);
+ 					// sprintf(dbg,"\r\nget array %s @ %d : %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
+ 					// DBG
+ 					t.v = tele_arrays[c->data[n].v].v[i];
+					push(t);
 				}
 				else {
-					tele_arrays[c->data[n].v].v[i] = pop();
-					sprintf(dbg,"\r\nset array %s @ %d to %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
-					DBG
+					tele_arrays[c->data[n].v].v[i] = pop().v;
+					// sprintf(dbg,"\r\nset array %s @ %d to %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
+					// DBG
 					odirty++;
 				}
 			}
@@ -743,50 +824,97 @@ void process(tele_command_t *c) {
 
 	// PRINT DEBUG OUTPUT IF VAL LEFT ON STACK
 	if(top) {
-		output = pop();
-		sprintf(dbg,"\r\n>>> %d", output);
-		DBG
+		t = pop();
+		if(t.t == NUMBER) {
+			a = t.v;
+			// sprintf(dbg,"\r\n>>> %d", a);
+			// DBG
+		}
+		else if(t.t == VOLT) {
+			a = t.v >> 8;
+			b = t.v & 0xff;
+			// sprintf(dbg,"\r\n>>> %dV%d", a,b);
+			// DBG
+		}
+		else if(t.t == INTERVAL) {
+			a = t.v >> 8;
+			b = t.v & 0xff;
+			// sprintf(dbg,"\r\n>>> %dN%d", a,b);
+			// DBG
+		}
+
+		output = t.v;
 	}
 }
 
 
 
-void print_command(const tele_command_t *c) {
+char * print_command(const tele_command_t *c) {
 	int n = 0;
+	char number[8];
+	char *p = pcmd;
+
+	*p = 0;
+
 	while(n < c->l) {
-		sprintf(dbg," ");
-		DBG
 		switch(c->data[n].t) {
 			case OP:
-				strcpy(dbg,tele_ops[c->data[n].v].name);
-				DBG
+				strcpy(p, tele_ops[c->data[n].v].name);
+				p += strlen(tele_ops[c->data[n].v].name) - 1;
 				break;
 			case MOD:
-				strcpy(dbg,tele_mods[c->data[n].v].name);
-				DBG
+				strcpy(p, tele_mods[c->data[n].v].name);
+				p += strlen(tele_mods[c->data[n].v].name) - 1;
 				break;
 			case SEP:
-				strcpy(dbg,":");
-				DBG
+				*p = ':';
 				break;
 			case NUMBER:
-				sprintf(dbg, "%d", c->data[n].v);
-				DBG
+				itoa(c->data[n].v,number,10);
+				strcpy(p, number);
+				p+=strlen(number) - 1;
+				break;
+			case INTERVAL:
+				itoa(c->data[n].v >> 8,number,10);
+				strcpy(p, number);
+				p += strlen(number);
+				*p = 'N';
+				p++;
+				itoa(c->data[n].v & 0xFF,number,10);
+				strcpy(p, number);
+				p+=strlen(number) - 1;
+				break;
+			case VOLT:
+				itoa(c->data[n].v >> 8,number,10);
+				strcpy(p, number);
+				p += strlen(number);
+				*p = 'V';
+				p++;
+				itoa(c->data[n].v & 0xFF,number,10);
+				strcpy(p, number);
+				p+=strlen(number) - 1;
 				break;
 			case VAR:
-				strcpy(dbg,tele_vars[c->data[n].v].name);
-				DBG
+				strcpy(p,tele_vars[c->data[n].v].name);
+				p += strlen(tele_vars[c->data[n].v].name) - 1;
 				break;
 			case ARRAY:
-				strcpy(dbg,tele_arrays[c->data[n].v].name);
-				DBG
+				strcpy(p,tele_arrays[c->data[n].v].name);
+				p += strlen(tele_arrays[c->data[n].v].name) - 1;
 				break;
 			default:
 				break;
 		}
 
 		n++;
+		p++;
+		*p = ' ';
+		p++; 
 	}
+	p--;
+	*p = 0;
+
+	return pcmd;
 }
 
 

@@ -10,13 +10,16 @@ VARIABLE = named memory storage
 MOD = condition/rule that applies to rest of COMMAND, ie delay, prob, if, q
 WORD = VALUE/VAR/OP/MOD
 COMMAND = a series of WORDS, one line. (max length fit on screen?)
-SCRIPT = multiple commands (8 max currently?)
+SCRIPT = multiple commands (4 max)
 
 
 
 (((((((((((((((((((((((((tele)))))))))))))))))))))))))
 
 DATA TYPES
+	simplify/optimize conversion
+	make ops do the right thing
+	scale CV out
 PATTERN
 	extern
 @ system
@@ -31,8 +34,11 @@ RESOLUTION.
 
 ((((((((((((((((((((hardware))))))))))))))))))))
 
-screen refresh method
-	cursor
+screen refresh
+	activity monitor
+	multi-line script
+	mechanism to display message/error from tele.c
+	cursor-- rewrite region_string with extra index (for b/g highlight)
 
 break out key handler?
 	lookup table for quick keys?
@@ -40,9 +46,9 @@ break out key handler?
 
 cv system with slew (slew code is bad)
 
-SRAM check?
-
 sprintf optimizations
+
+move DOC strings to flash?
 
 maybe optimize refresh_outputs()
 	have array_set push a stack. handler empties stack using function table.

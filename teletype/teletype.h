@@ -23,7 +23,7 @@ typedef enum {
 	E_NEED_SEP
 } error_t;
 
-typedef enum {MOD, SEP, OP, VAR, ARRAY, NUMBER, INTERVAL, VOLT} tele_word_t;
+typedef enum {NUMBER, INTERVAL, VOLT, MOD, SEP, OP, VAR, ARRAY} tele_word_t;
 
 typedef struct {
 	tele_word_t t;
@@ -44,11 +44,13 @@ typedef struct {
 typedef struct {
 	const char *name;
 	int v;
+	tele_word_t t;
 } tele_var_t;
 
 typedef struct {
 	const char *name;
 	int v[4];
+	tele_word_t t[4];
 } tele_array_t;
 
 typedef struct {
@@ -68,7 +70,7 @@ typedef struct {
 error_t parse(char *cmd);
 error_t validate(tele_command_t *c);
 void process(tele_command_t *c);
-void print_command(const tele_command_t *c);
+char * print_command(const tele_command_t *c);
 
 void tele_tick(void);
 

@@ -27,18 +27,25 @@
 // #include "ftdi.h"
 #include "hid.h"
 #include "screen.h"
+#include "region.h"
+#include "font.h"
 
 // this
 #include "conf_board.h"
-#include "render.h"
 #include "teletype.h"
 
 #define FIRSTRUN_KEY 0x22
 
 #define METRO_SCRIPT 8
+#define INIT_SCRIPT 9
 
-u8 preset_mode, preset_select, front_timer;
+u8 preset, preset_dirty, preset_mode, preset_select, front_timer;
+char preset_name[17] = "NAMED";
+
 u8 glyph[8];
+
+
+
 
 u8 clock_phase;
 u16 clock_time, clock_temp;
@@ -60,7 +67,7 @@ uint8_t pos;
 error_t status;
 
 tele_script_t script[10];
-uint8_t edit;
+uint8_t edit, edit_line;
 
 uint8_t metro_act;
 unsigned int metro_time;
@@ -74,6 +81,29 @@ unsigned int metro_time;
 
 
 uint8_t d[4] = {1,3,7,15};
+
+
+#define R_PRESET (1<<0)
+#define R_ACTIVITY (1<<1)
+#define R_INPUT (1<<2)
+#define R_MESSAGE (1<<3)
+#define R_LIST1 (1<<4)
+#define R_LIST2 (1<<5)
+#define R_LIST3 (1<<6)
+#define R_LIST4 (1<<7)
+#define R_LIST (0xf<<4)
+uint8_t r_edit_dirty;
+
+static region r_preset = {.w = 96, .h = 8, .x = 0, .y = 0};
+static region r_activity = {.w = 32, .h = 8, .x = 96, .y = 0};
+static region r_list1 = {.w = 128, .h = 8, .x = 0, .y = 10};
+static region r_list2 = {.w = 128, .h = 8, .x = 0, .y = 18};
+static region r_list3 = {.w = 128, .h = 8, .x = 0, .y = 26};
+static region r_list4 = {.w = 128, .h = 8, .x = 0, .y = 34};
+static region r_message = {.w = 128, .h = 8, .x = 0, .y = 46};
+static region r_input = {.w = 128, .h = 8, .x = 0, .y = 56};
+
+uint8_t sdirty;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,12 +127,17 @@ static void flash_unfresh(void);
 static void flash_write(void);
 static void flash_read(void);
 
+static void render_init(void);
+
 static void refresh_outputs(void);
-
-
 static void tele_metro(int, int, uint8_t);
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -169,33 +204,110 @@ static void clockTimer_callback(void* o) {
 }
 
 static void refreshTimer_callback(void* o) {  
-	// static event_t e;
-	// e.type = kEventTimer;
-	// e.data = 0;
-	// event_post(&e);
-	// print_dbg("\r\ntimer.");
+	static uint8_t a;
+	static char s[32];
 
 	uint8_t sdirty = 0;
+	if(r_edit_dirty & R_PRESET) {
+		strcpy(s," /  ");
 
-	if(dirties[R_ACTIVITY]) {
-		render_activity(output);
+		s[0] = preset + 48;
+		s[2] = preset + 48; // PATTERN
+
+		strcat(s,preset_name);
+
+		region_fill(&r_preset, 0);
+		if(preset_dirty)
+			region_string(&r_preset, s, 0, 0, 0xa, 0, 0);
+		else
+			region_string(&r_preset, s, 0, 0, 0x4, 0, 0);
 		sdirty++;
+		r_edit_dirty &= ~R_PRESET;
 	}
-	if(dirties[R_INPUT]) {
-		render_input(input);
+	if(r_edit_dirty & R_ACTIVITY) {
+		region_fill(&r_activity, 0);
 		sdirty++;
+		r_edit_dirty &= ~R_ACTIVITY;
 	}
-	if(dirties[R_EDIT]) {
-		render_edit(edit);
+	if(r_edit_dirty & R_INPUT) {
+ 		s[1] = ' ';
+		s[3] = ' ';
+		s[2] = '>';
+		s[4] = 0;
+
+		if(edit == 8) s[0] = 'M';
+		else if(edit == 9) s[0] = 'I';
+		else s[0] = edit+49;
+
+		strcat(s,input);
+		strcat(s,"_");
+
+		region_fill(&r_input, 0);
+		region_string(&r_input, s, 0, 0, 0xf, 0, 0);
 		sdirty++;
+		r_edit_dirty &= ~R_INPUT;
 	}
-	if(dirties[R_LIST]) {
-		render_list();
+	if(r_edit_dirty & R_MESSAGE) {
+		itoa(output, s, 10);
+		region_fill(&r_message, 0);
+		region_string(&r_message, s, 0, 0, 0x4, 0, 0);
 		sdirty++;
+		r_edit_dirty &= ~R_MESSAGE;
+	}
+	if(r_edit_dirty & R_LIST1) {
+		a = edit_line == 0;
+		region_fill(&r_list1, a);
+		if(script[edit].l > 0) {
+			strcpy(s,print_command(&script[edit].c[0]));
+			region_string(&r_list1, s, 2, 0, 0xf, a, 0);
+		}
+		sdirty++;
+		r_edit_dirty &= ~R_LIST1;
+	}
+	if(r_edit_dirty & R_LIST2) {
+		a = edit_line == 1;
+		region_fill(&r_list2, a);
+		if(script[edit].l > 1) {
+			strcpy(s,print_command(&script[edit].c[1]));
+			region_string(&r_list2, s, 2, 0, 0xf, a, 0);
+		}
+		// region_string(&in, s, 4, 4, 0xf, a, 0);
+		sdirty++;
+		r_edit_dirty &= ~R_LIST2;
+	}
+	if(r_edit_dirty & R_LIST3) {
+		a = edit_line == 2;
+		region_fill(&r_list3, a);
+		if(script[edit].l > 2) {
+			strcpy(s,print_command(&script[edit].c[2]));
+			region_string(&r_list3, s, 2, 0, 0xf, a, 0);
+		}
+		// region_string(&in, s, 4, 4, 0xf, a, 0);
+		sdirty++;
+		r_edit_dirty &= ~R_LIST3;
+	}
+	if(r_edit_dirty & R_LIST4) {
+		a = edit_line == 3;
+		region_fill(&r_list4, a);
+		if(script[edit].l > 3) {
+			strcpy(s,print_command(&script[edit].c[3]));
+			region_string(&r_list4, s, 2, 0, 0xf, a, 0);
+		}
+		// region_string(&in, s, 4, 4, 0xf, a, 0);
+		sdirty++;
+		r_edit_dirty &= ~R_LIST4;
 	}
 
-	if(sdirty)	
-		render();
+	if(sdirty) {
+		region_draw(&r_preset);
+		region_draw(&r_activity);
+		region_draw(&r_message);
+		region_draw(&r_input);
+		region_draw(&r_list1);
+		region_draw(&r_list2);
+		region_draw(&r_list3);
+		region_draw(&r_list4);
+	}	
 }
 
 
@@ -222,12 +334,14 @@ static void hidTimer_callback(void* o) {
 }
 
 static void metroTimer_callback(void* o) {
-	print_dbg("*");
+	// print_dbg("*");
+	uint8_t i;
 
-	if(script[METRO_SCRIPT].l) {
-		process(&script[METRO_SCRIPT].c[0]);
-		refresh_outputs();
+	for(i=0;i<script[METRO_SCRIPT].l;i++) {
+		process(&script[METRO_SCRIPT].c[i]);
 	}
+	
+	refresh_outputs();
 }
 
 
@@ -295,7 +409,7 @@ static void handler_HidDisconnect(s32 data) {
 }
 
 static void handler_HidTimer(s32 data) {
-	u8 i, n;
+	u8 i;
 
 	const s8* frame;
 	if(hid_get_frame_dirty()) {
@@ -306,24 +420,61 @@ static void handler_HidTimer(s32 data) {
      			break;
 
      		if(frame_compare(frame[i]) == false) {
-     			// print_dbg_hex(frame[i]);
+     			print_dbg("\r\nk: ");
+     			print_dbg_hex(frame[i]);
      			switch(frame[i]) {
-     				case 0x30:
+
+     				case 0x51: // down
+     					if(script[edit].l > edit_line) {
+	     					if(edit_line < 3) {
+	     						edit_line++;
+	     						strcpy(input,print_command(&script[edit].c[edit_line]));
+	     						pos = strlen(input);
+	 							r_edit_dirty |= R_LIST;
+	 						}
+	 					}
+     					break;
+
+     				case 0x52: // up
+     					if(edit_line) {
+     						edit_line--;
+     						strcpy(input,print_command(&script[edit].c[edit_line]));
+     						pos = strlen(input);
+ 							r_edit_dirty |= R_LIST;
+ 						}
+     					break;
+
+     				case 0x30: // ]
      					edit++;
-     					if(edit==10) edit = 0;
-     					// edit &= 0x7;
-     					dirties[R_EDIT]++;
+     					if(edit==10)
+     						edit = 0;
+     					if(edit_line > script[edit].l)
+     						edit_line = script[edit].l;
+     					strcpy(input,print_command(&script[edit].c[edit_line]));
+ 						pos = strlen(input);
+
+     					r_edit_dirty |= R_INPUT | R_LIST;
      					break;
-     				case 0x2F:
-     					if(edit) edit--;
-     					else edit = 9;
-     					dirties[R_EDIT]++;
+
+     				case 0x2F: // [
+     					if(edit) 
+     						edit--;
+     					else 
+     						edit = 9;
+     					if(edit_line > script[edit].l)
+     						edit_line = script[edit].l;
+     					strcpy(input,print_command(&script[edit].c[edit_line]));
+ 						pos = strlen(input);
+     					r_edit_dirty |= R_INPUT | R_LIST;
      					break;
+
      				case BACKSPACE:
      					if(pos) {
      						input[--pos] = 0;
 	     				}
+	     				r_edit_dirty |= R_INPUT;
      					break;
+
      				case RETURN:
      					// print_dbg("\n\r");
      					status = parse(input);
@@ -334,8 +485,15 @@ static void handler_HidTimer(s32 data) {
 							if(status == E_OK) {
 								process(&temp);
 								refresh_outputs();
-								memcpy(&script[edit].c[0], &temp, sizeof(tele_command_t));
-								script[edit].l = 1;
+								memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
+								if((edit_line == script[edit].l) && (script[edit].l < 4))
+									script[edit].l++;
+								r_edit_dirty |= R_LIST;
+								if(edit_line < 3) {
+									edit_line++;
+									strcpy(input,print_command(&script[edit].c[edit_line]));
+	     							pos = strlen(input);
+	     						}
 							}
 							else {
 								print_dbg("\r\nvalidate: ");
@@ -349,17 +507,21 @@ static void handler_HidTimer(s32 data) {
 
 						// print_dbg("\r\n\n> ");
 
-     					for(n = 0;n < 32;n++)
-     						input[n] = 0;
+     					// for(n = 0;n < 32;n++)
+     					// 	input[n] = 0;
      					pos = 0;
+
+     					r_edit_dirty |= R_MESSAGE;
      					break;
+
  					default:
      					// print_dbg_char(hid_to_ascii(frame[i], frame[0]));
      					input[pos] = hid_to_ascii(frame[i], frame[0]);
      					pos++;
+     					input[pos] = 0;
      			}
 
-     			dirties[R_INPUT]++;
+     			r_edit_dirty |= R_INPUT;
      		}
      	}
 
@@ -382,13 +544,15 @@ static void handler_HidPacket(s32 data) {
 
 
 static void handler_Trigger(s32 data) {
+	uint8_t i;
 	// print_dbg("*");
 
 	// for(int n=0;n<script.l;n++)
-	if(script[data].l) {
-		process(&script[data].c[0]);
-		refresh_outputs();
+	for(i=0;i<script[data].l;i++) {
+		process(&script[data].c[i]);
 	}
+
+	refresh_outputs();
 }
 
 
@@ -415,7 +579,12 @@ void check_events(void) {
 	}
 }
 
-// flash commands
+
+
+////////////////////////////////////////////////////////////////////////////////
+// funcs
+
+
 u8 flash_is_fresh(void) {
   // return (flashy.fresh != FIRSTRUN_KEY);
 	return 0;
@@ -443,6 +612,18 @@ void flash_read(void) {
 	// print_dbg_ulong(preset_select);
 }
 
+
+
+void render_init(void) {
+	region_alloc(&r_preset);
+	region_alloc(&r_activity);
+	region_alloc(&r_input);
+	region_alloc(&r_message);
+	region_alloc(&r_list1);
+	region_alloc(&r_list2);
+	region_alloc(&r_list3);
+	region_alloc(&r_list4);
+}
 
 
 void refresh_outputs() {
@@ -505,6 +686,18 @@ static void tele_metro(int m, int m_act, uint8_t m_reset) {
 }
 
 
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -592,10 +785,7 @@ int main(void)
 
 	clear_delays();
 
-	dirties[R_ACTIVITY] = 1;
-	dirties[R_EDIT] = 1;
-	dirties[R_INPUT] = 1;
-	dirties[R_LIST] = 1;
+	r_edit_dirty = 0xff;
 
 	update_metro = &tele_metro;
 
