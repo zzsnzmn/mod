@@ -1,11 +1,13 @@
 #ifndef _TELETYPE_H_
 #define _TELETYPE_H_
 
-#define SCRIPT_MAX_COMMANDS 6
+#define SCRIPT_MAX_COMMANDS 4
 #define COMMAND_MAX_LENGTH 8
-#define STACK_SIZE 10
+#define STACK_SIZE 8
 #define Q_SIZE 8
 #define D_SIZE 8
+
+#define WELCOME "TELETYPE 1.0"
 
 #define TRUE 1
 #define FALSE 0
@@ -13,7 +15,8 @@
 enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D};
 
 typedef enum { 
-	E_OK, 
+	E_OK,
+	E_WELCOME, 
 	E_PARSE, 
 	E_LENGTH,
 	E_NEED_PARAMS,
@@ -23,7 +26,7 @@ typedef enum {
 	E_NEED_SEP
 } error_t;
 
-typedef enum {NUMBER, INTERVAL, VOLT, MOD, SEP, OP, VAR, ARRAY} tele_word_t;
+typedef enum {NUMBER, MOD, SEP, OP, VAR, ARRAY} tele_word_t;
 
 typedef struct {
 	tele_word_t t;
@@ -88,6 +91,7 @@ extern tele_command_t temp;
 typedef void(*update_metro_t)(int, int, uint8_t);
 extern volatile update_metro_t update_metro;
 
+extern char error_detail[16];
 extern int output;
 extern uint8_t odirty;
 

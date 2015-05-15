@@ -4,10 +4,10 @@ README  // teletype
 microfont:
 http://www.timetrap.se/articles/freetajp.php
 
-VALUE = a number (several types)
+VALUE = a NUMBER
 OPERATOR = a function. may need value(s) as argument(s). may return value.
 VARIABLE = named memory storage
-MOD = condition/rule that applies to rest of COMMAND, ie delay, prob, if, q
+(PRE) = MOD = condition/rule that applies to rest of COMMAND, ie delay, prob, if, q
 WORD = VALUE/VAR/OP/MOD
 COMMAND = a series of WORDS, one line. (max length fit on screen?)
 SCRIPT = multiple commands (4 max)
@@ -16,16 +16,15 @@ SCRIPT = multiple commands (4 max)
 
 (((((((((((((((((((((((((tele)))))))))))))))))))))))))
 
-DATA TYPES
-	simplify/optimize conversion
-	make ops do the right thing
-	scale CV out
+V, VOLT
+
+scale cv
+
 PATTERN
 	extern
 @ system
 
 HELP?
-error description detail?
 
 
 RESOLUTION.
@@ -36,17 +35,10 @@ RESOLUTION.
 
 screen refresh
 	activity monitor
-	multi-line script
-	mechanism to display message/error from tele.c
 	cursor-- rewrite region_string with extra index (for b/g highlight)
-
-break out key handler?
-	lookup table for quick keys?
-	spawn new event to process new key
+	optimize list to single region?
 
 cv system with slew (slew code is bad)
-
-sprintf optimizations
 
 move DOC strings to flash?
 
@@ -55,14 +47,14 @@ maybe optimize refresh_outputs()
 
 i2c
 
-comment out grid stuff
+remove grid stuff
 
 ///
 
 PATTERNS
 
-INIT (clears all vars and runs script) == PRESET PRESET
 PRESET
+INIT (clears all vars and runs script) == PRESET PRESET
 
 
 
