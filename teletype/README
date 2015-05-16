@@ -16,19 +16,12 @@ SCRIPT = multiple commands (4 max)
 
 (((((((((((((((((((((((((tele)))))))))))))))))))))))))
 
-V, VOLT
-
-scale cv
-
 PATTERN
 	extern
 @ system
 
 HELP?
 
-
-RESOLUTION.
-	should full cv range be 14 bit then squished to 12 bit? right now is 15 bit. (1 bit for negative)
 
 
 ((((((((((((((((((((hardware))))))))))))))))))))
@@ -66,21 +59,39 @@ TR.PULSE 1-4
 
 (((pattern funcs))) N = four possible patterns
 
-P.ADD N X		
-P.REMOVE N X	
-P.INSERT N Y X
-P.WRAP N
-P.HERE	N
-P.NEXT	N
-P.PREV	N
-P.START N
-P.END N	
-P.INDEX N
-P.PUSH N X
-P.POP N X
+P.ADD X (after INDEX)
+P.REMOVE X	
+P.PUSH X
+1,1 : 0,0
+P.INSERT I X
+2,2 : 0 0
 
-PP....
+P.POP
+0,0 : 1,1 (like num)
 
+get/set
+
+P.N
+P.INDEX
+P.WRAP
+P.START
+P.END
+
+1,0 : 0,1 (like var)
+
+dynamic get/set?
+
+P I
+2,1 : 0,1 (like array)
+
+P.HERE
+P.NEXT
+P.PREV
+1,0 : 0,1
+
+
+
+PP...
 
 
 ((((((((((((((vars))))))))))))))
@@ -90,21 +101,6 @@ CV.SLEW 1-4
 CV.OFFSET 1-4
 CV.TIME 1-4
 CV.NOW 1-4
-
-
-(patterns get/set)
-
-P N I
-P.WRAP N
-P.HERE	N
-P.NEXT	N
-P.PREV	N
-P.INDEX N
-P.START N
-P.END N	
-
-PP.N
-PP....
 
 
 

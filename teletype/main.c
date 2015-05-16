@@ -811,7 +811,7 @@ int main(void)
 
 	init_oled();
 
-	init_i2c();
+	// init_i2c();
 
 	print_dbg("\r\n\n// teletype! //////////////////////////////// ");
 	// print_dbg_ulong(sizeof(flashy));

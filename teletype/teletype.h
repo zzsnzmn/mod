@@ -2,7 +2,7 @@
 #define _TELETYPE_H_
 
 #define SCRIPT_MAX_COMMANDS 4
-#define COMMAND_MAX_LENGTH 8
+#define COMMAND_MAX_LENGTH 10
 #define STACK_SIZE 8
 #define Q_SIZE 8
 #define D_SIZE 8
@@ -26,7 +26,7 @@ typedef enum {
 	E_NEED_SEP
 } error_t;
 
-typedef enum {NUMBER, MOD, SEP, OP, VAR, ARRAY} tele_word_t;
+typedef enum {NUMBER, MOD, SEP, OP, VAR, ARRAY, PAT} tele_word_t;
 
 typedef struct {
 	tele_word_t t;
@@ -46,6 +46,7 @@ typedef struct {
 
 typedef struct {
 	const char *name;
+	void (*func)(uint8_t);
 	int v;
 	tele_word_t t;
 } tele_var_t;
@@ -70,6 +71,24 @@ typedef struct {
 	const char* doc;
 } tele_op_t;
 
+typedef struct {
+	const char *name;
+	void (*func)(uint8_t);
+	char lparams;
+	char rparams;
+	char lreturns;
+	char rreturns;
+} tele_pat_t;
+
+typedef struct {
+	int8_t i;
+	uint8_t l;
+	uint8_t wrap;
+	int8_t start, end;
+	int v[64];
+} tele_pattern_t;
+
+
 error_t parse(char *cmd);
 error_t validate(tele_command_t *c);
 void process(tele_command_t *c);
@@ -87,6 +106,8 @@ void tele_set_val(uint8_t i, uint16_t v);
 const char * tele_error(error_t);
 
 extern tele_command_t temp;
+
+extern tele_pattern_t tele_patterns[4];
 
 typedef void(*update_metro_t)(int, int, uint8_t);
 extern volatile update_metro_t update_metro;

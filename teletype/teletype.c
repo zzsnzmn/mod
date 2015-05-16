@@ -41,6 +41,10 @@ int output;
 char error_detail[16];
 
 tele_command_t temp;
+tele_pattern_t tele_patterns[4];
+
+static uint8_t pn;
+
 static char condition;
 
 static tele_command_t q[Q_SIZE];
@@ -107,25 +111,65 @@ void push(int data) {
 
 // ENUM IN HEADER
 
-#define VARS 16
+static void v_P_N(uint8_t);
+static void v_M(uint8_t);
+static void v_M_ACT(uint8_t);
+
+#define VARS 17
 static tele_var_t tele_vars[VARS] = {
-	{"I",0},	// gets overwritten by ITER
-	{"TIME",0},
-	{"TIME.ACT",1},
-	{"IN",0},
-	{"PARAM",0},
-	{"PRESET",0},
-	{"M",1000},
-	{"M.ACT",1},
-	{"X",0},
-	{"Y",0},
-	{"Z",0},
-	{"T",0},
-	{"A",1},
-	{"B",2},
-	{"C",3},
-	{"D",4}
+	{"I",NULL,0},	// gets overwritten by ITER
+	{"TIME",NULL,0},
+	{"TIME.ACT",NULL,1},
+	{"IN",NULL,0},
+	{"PARAM",NULL,0},
+	{"PRESET",NULL,0},
+	{"M",v_M,1000},
+	{"M.ACT",v_M_ACT,1},
+	{"X",NULL,0},
+	{"Y",NULL,0},
+	{"Z",NULL,0},
+	{"T",NULL,0},
+	{"A",NULL,1},
+	{"B",NULL,2},
+	{"C",NULL,3},
+	{"D",NULL,4},
+	{"P.N",v_P_N,0}
 };
+
+static void v_P_N(uint8_t n) {
+	int a;
+	printf("\r\np.n!! n:%d ",n);
+	// get
+	if(n || top == 0) {
+		printf("get");
+		push(pn);
+	}
+	else {
+		printf("set");
+		a = pop();
+		if(a < 0) pn = 0;
+		else if(a > 3) pn = 3;
+		else pn = a;
+	}
+}
+
+static void v_M(uint8_t n) {
+	// if(n)
+	// 	push(tele_vars[V_M].v);
+	// else
+		// tele_vars[V_M].v = pop();
+	// (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+}
+
+static void v_M_ACT(uint8_t n) {
+	// if(n)
+	// 	push(tele_vars[V_M_ACT].v);
+	// else
+	// 	tele_vars[V_M_ACT].v = pop();
+	// (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+}
+
+
 
 
 #define MAKEARRAY(name) {#name, {0,0,0,0}}
@@ -296,7 +340,7 @@ static void op_Q_FLUSH(void);
 static void op_DELAY_FLUSH(void);
 static void op_M_RESET(void);
 static void op_V(void);
-static void op_VOLT(void);
+static void op_VV(void);
 
 static void op_ADD() {
 	push(pop() + pop());
@@ -447,18 +491,18 @@ static void op_M_RESET() {
 }
 static void op_V() {
 	int a = pop();
+	if(a < 0) a = 0;
+	else if(a > 10) a = 10;
+	push(table_v[a]);
+}
+static void op_VV() {
+	int a = pop();
 	int b = pop();
 	if(a < 0) a = 0;
 	else if(a > 10) a = 10;
 	if(b < 0) b = 0;
 	else if(b > 99) b = 99;
 	push(table_v[a] + table_vv[b]);
-}
-static void op_VOLT() {
-	int a = pop();
-	if(a < 0) a = 0;
-	else if(a > 10) a = 10;
-	push(table_v[a]);
 }
 
 
@@ -489,10 +533,9 @@ static const tele_op_t tele_ops[OPS] = {
 	{"Q.FLUSH", op_Q_FLUSH, 0, "Q: FLUSH"},
 	{"DELAY.FLUSH", op_DELAY_FLUSH, 0, "DELAY: FLUSH"},
 	{"M.RESET", op_M_RESET, 0, "METRO: RESET"},
-	MAKEOP(V, 2, "TO VOLT"),
-	MAKEOP(VOLT, 1, "TO VOLT WITH PRECISION")
+	MAKEOP(V, 1, "TO VOLT"),
+	MAKEOP(VV, 2, "TO VOLT WITH PRECISION")
 };
-
 
 
 /////////////////////////////////////////////////////////////////
@@ -651,7 +694,7 @@ error_t validate(tele_command_t *c) {
 				h++;
 			}
 			else if(c->data[n].t == ARRAY) {
-				if(h < 0)
+				if(h < 1)
 					return E_NEED_PARAMS;
 				// h-- then h++
 			}
@@ -663,22 +706,19 @@ error_t validate(tele_command_t *c) {
 			}
 			else if(c->data[n].t == VAR) {
 				if(h == 0) h++;
-				else { 
-					h--;
-					if(h > 0)
-						return E_EXTRA_PARAMS;
-				}
+				// else { 
+				// 	h--;
+				// 	if(h > 0)
+				// 		return E_EXTRA_PARAMS;
+				// }
 			}
 			else if(c->data[n].t == ARRAY) {
-				h--;
-				if(h < 0)
+				if(h < 1)
 					return E_NEED_PARAMS;
+				h--;
 				if(h == 0) h++;
-				else {
-					h--;
-					if(h > 0)
-						return E_EXTRA_PARAMS;
-				}
+				// else if(h > 1)
+					// return E_EXTRA_PARAMS;
 			}
 		}
 	}
@@ -721,7 +761,10 @@ void process(tele_command_t *c) {
 			else if(c->data[n].t == VAR) {
 				// sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
 				// DBG
-				push(tele_vars[c->data[n].v].v);
+				if(tele_vars[c->data[n].v].func == NULL)
+					push(tele_vars[c->data[n].v].v);
+				else
+					tele_vars[c->data[n].v].func(1);
 			}
 			else if(c->data[n].t == ARRAY) {
 				i = pop();
@@ -740,30 +783,27 @@ void process(tele_command_t *c) {
 		// LEFTMOST (set/get)
 		else {
 			if(c->data[n].t == NUMBER) {
-				push(c->data[n].v);
+ 				push(c->data[n].v);
 			}
 			else if(c->data[n].t == VAR) {
+				/// OPTIMIZE THIS-- do func check before top check
 				// LONE GET JUST PRINTS
 				if(top == 0) {
 					// sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
 					// DBG
-					push(tele_vars[c->data[n].v].v);
+					if(tele_vars[c->data[n].v].func == NULL)
+						push(tele_vars[c->data[n].v].v);
+					else
+						tele_vars[c->data[n].v].func(0);
 				}
 				// OTHERWISE SET
 				else {
-					tele_vars[c->data[n].v].v = pop();
+					if(tele_vars[c->data[n].v].func == NULL)
+						tele_vars[c->data[n].v].v = pop();
+					else
+						tele_vars[c->data[n].v].func(0);
 					// sprintf(dbg,"\r\nset var %s to %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
 					// DBG
-
-					if(c->data[n].v == V_PRESET) {
-						;;
-					}
-					else if(c->data[n].v == V_M) {
-						(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
-					} 
-					else if(c->data[n].v == V_M_ACT) {
-						(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
-					}
 				}
 			}
 			else if(c->data[n].t == ARRAY) {
