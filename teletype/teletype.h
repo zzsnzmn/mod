@@ -68,6 +68,7 @@ typedef struct {
 	const char *name;
 	void (*func)(void);
 	char params;
+	char returns;
 	const char* doc;
 } tele_op_t;
 

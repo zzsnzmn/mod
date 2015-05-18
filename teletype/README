@@ -1,35 +1,26 @@
 README  // teletype
 
 
-microfont:
-http://www.timetrap.se/articles/freetajp.php
-
-VALUE = a NUMBER
-OPERATOR = a function. may need value(s) as argument(s). may return value.
-VARIABLE = named memory storage
-(PRE) = MOD = condition/rule that applies to rest of COMMAND, ie delay, prob, if, q
-WORD = VALUE/VAR/OP/MOD
-COMMAND = a series of WORDS, one line. (max length fit on screen?)
-SCRIPT = multiple commands (4 max)
-
+microfont http://www.timetrap.se/articles/freetajp.php
 
 
 (((((((((((((((((((((((((tele)))))))))))))))))))))))))
 
-PATTERN
-	extern
+PATTERNS
 @ system
-
 HELP?
 
-
+not enough params: restructure to report error_detail
+new error: non-return ops not on left
 
 ((((((((((((((((((((hardware))))))))))))))))))))
 
 screen refresh
 	activity monitor
 	cursor-- rewrite region_string with extra index (for b/g highlight)
+		(or-- making a formatting version with % interjection)
 	optimize list to single region?
+	indicate NEW message (brighter)
 
 cv system with slew (slew code is bad)
 
@@ -40,11 +31,19 @@ maybe optimize refresh_outputs()
 
 i2c
 
+SPREADSHEET
+
+preset NOTE
+
+WHAT's GOING ON screen (??)
+	preset name, number
+	more detailed information?
+
 remove grid stuff
 
-///
+flash
 
-PATTERNS
+///
 
 PRESET
 INIT (clears all vars and runs script) == PRESET PRESET
@@ -59,39 +58,32 @@ TR.PULSE 1-4
 
 (((pattern funcs))) N = four possible patterns
 
-P.ADD X (after INDEX)
-P.REMOVE X	
-P.PUSH X
-1,1 : 0,0
-P.INSERT I X
-2,2 : 0 0
+ P I (X)			ignores LENGTH
 
-P.POP
-0,0 : 1,1 (like num)
+ P.INSERT I X	insert X at position I (increases LENGTH)
+ P.DELETE I 		delete at specified I (decreases LENGTH)
 
-get/set
+ P.PUSH X 		add X to end (with respect to LENGTH)
+ P.POP			return/remove last element
 
-P.N
-P.INDEX
-P.WRAP
-P.START
-P.END
+ (add/remove just use p.insert p.i )
 
-1,0 : 0,1 (like var)
+get/set VAR
 
-dynamic get/set?
+ P.N 			N pattern to work with
 
-P I
-2,1 : 0,1 (like array)
+ P.LENGTH 		manually change length. non-destructive.
 
-P.HERE
-P.NEXT
-P.PREV
-1,0 : 0,1
+ P.I 			INDEX
+ P.WRAP
+ P.START
+ P.END
+ P.HERE
+ P.NEXT
+ P.PREV
 
 
-
-PP...
+ PN n i (x)
 
 
 ((((((((((((((vars))))))))))))))

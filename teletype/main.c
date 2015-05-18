@@ -346,6 +346,9 @@ static void handler_HidTimer(s32 data) {
      						r_edit_dirty |= R_LIST1;
      					}
      					else {
+     						for(n = 0;n < 32;n++)
+	     						input[n] = 0;
+		 					pos = 0;
      						live = 1;
      						edit_line = 4;
      						r_edit_dirty |= R_LIST;
@@ -566,9 +569,10 @@ static void handler_ScreenRefresh(s32 data) {
 	if(r_edit_dirty & R_MESSAGE) {
 		if(status) {
 			strcpy(s,tele_error(status));
-			if(status == E_PARSE) {
+			if(error_detail[0]) {
 				strcat(s, ": ");
 				strcat(s, error_detail);
+				error_detail[0] = 0;
 			}
 		}
 		else
@@ -811,7 +815,7 @@ int main(void)
 
 	init_oled();
 
-	// init_i2c();
+	init_i2c();
 
 	print_dbg("\r\n\n// teletype! //////////////////////////////// ");
 	// print_dbg_ulong(sizeof(flashy));

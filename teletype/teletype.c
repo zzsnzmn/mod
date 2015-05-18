@@ -54,6 +54,8 @@ static uint8_t q_top;
 volatile update_metro_t update_metro;
 
 
+void to_v(int);
+
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
 
@@ -80,6 +82,7 @@ void clear_delays(void) {
 		delay_t[i] = 0;
 	}
 }
+
 
 
 /////////////////////////////////////////////////////////////////
@@ -114,8 +117,17 @@ void push(int data) {
 static void v_P_N(uint8_t);
 static void v_M(uint8_t);
 static void v_M_ACT(uint8_t);
+static void v_P_L(uint8_t);
+static void v_P_I(uint8_t);
+static void v_P_HERE(uint8_t);
+static void v_P_NEXT(uint8_t);
+static void v_P_PREV(uint8_t);
+static void v_P_WRAP(uint8_t);
+static void v_P_START(uint8_t);
+static void v_P_END(uint8_t);
 
-#define VARS 17
+
+#define VARS 25
 static tele_var_t tele_vars[VARS] = {
 	{"I",NULL,0},	// gets overwritten by ITER
 	{"TIME",NULL,0},
@@ -133,19 +145,41 @@ static tele_var_t tele_vars[VARS] = {
 	{"B",NULL,2},
 	{"C",NULL,3},
 	{"D",NULL,4},
-	{"P.N",v_P_N,0}
+	{"P.N",v_P_N,0},
+	{"P.L",v_P_L,0},
+	{"P.I",v_P_I,0},
+	{"P.HERE",v_P_HERE,0},
+	{"P.NEXT",v_P_NEXT,0},
+	{"P.PREV",v_P_PREV,0},
+	{"P.WRAP",v_P_WRAP,0},
+	{"P.START",v_P_START,0},
+	{"P.END",v_P_END,0}
 };
+
+static void v_M(uint8_t n) {
+	if(top == 0)
+		push(tele_vars[V_M].v);
+	else
+		tele_vars[V_M].v = pop();
+
+	(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+}
+
+static void v_M_ACT(uint8_t n) {
+	if(top == 0)
+		push(tele_vars[V_M_ACT].v);
+	else
+		tele_vars[V_M_ACT].v = pop();
+
+	(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+}
 
 static void v_P_N(uint8_t n) {
 	int a;
-	printf("\r\np.n!! n:%d ",n);
-	// get
-	if(n || top == 0) {
-		printf("get");
+	if(top == 0) {
 		push(pn);
 	}
 	else {
-		printf("set");
 		a = pop();
 		if(a < 0) pn = 0;
 		else if(a > 3) pn = 3;
@@ -153,20 +187,116 @@ static void v_P_N(uint8_t n) {
 	}
 }
 
-static void v_M(uint8_t n) {
-	// if(n)
-	// 	push(tele_vars[V_M].v);
-	// else
-		// tele_vars[V_M].v = pop();
-	// (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+static void v_P_L(uint8_t n) {
+	int a;
+	if(top == 0) {
+		push(tele_patterns[pn].l);
+	}
+	else {
+		a = pop();
+		if(a < 0) tele_patterns[pn].l = 0;
+		else if(a > 63) tele_patterns[pn].l = 63;
+		else tele_patterns[pn].l = a;
+	}
 }
 
-static void v_M_ACT(uint8_t n) {
-	// if(n)
-	// 	push(tele_vars[V_M_ACT].v);
-	// else
-	// 	tele_vars[V_M_ACT].v = pop();
-	// (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+static void v_P_I(uint8_t n) {
+	int a;
+	if(top == 0) {
+		push(tele_patterns[pn].i);
+	}
+	else {
+		a = pop();
+		if(a < 0) tele_patterns[pn].i = 0;
+		else if(a > tele_patterns[pn].l) tele_patterns[pn].i = tele_patterns[pn].l;
+		else tele_patterns[pn].i = a;
+	}
+}
+
+static void v_P_HERE(uint8_t n) {
+	int a;
+	if(top == 0) {
+		push(tele_patterns[pn].v[tele_patterns[pn].i]);
+	}
+	else {
+		a = pop();
+		tele_patterns[pn].v[tele_patterns[pn].i] = a;
+	}
+}
+
+static void v_P_NEXT(uint8_t n) {
+	int a;
+	if((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) || (tele_patterns[pn].i == tele_patterns[pn].end)) {
+		if(tele_patterns[pn].wrap)
+			tele_patterns[pn].i = tele_patterns[pn].start;
+	}
+	else
+		tele_patterns[pn].i++;
+
+	if(top == 0) {
+		push(tele_patterns[pn].v[tele_patterns[pn].i]);
+	}
+	else {
+		a = pop();
+		tele_patterns[pn].v[tele_patterns[pn].i] = a;
+	}
+}
+
+static void v_P_PREV(uint8_t n) {
+	int a;
+	if((tele_patterns[pn].i == 0) || (tele_patterns[pn].i == tele_patterns[pn].start)) {
+		if(tele_patterns[pn].wrap)
+			tele_patterns[pn].i = tele_patterns[pn].end;
+	}
+	else
+		tele_patterns[pn].i--;
+	
+	if(top == 0) {
+		push(tele_patterns[pn].v[tele_patterns[pn].i]);
+	}
+	else {
+		a = pop();
+		tele_patterns[pn].v[tele_patterns[pn].i] = a;
+	}
+}
+
+static void v_P_WRAP(uint8_t n) {
+	int a;
+	if(top == 0) {
+		push(tele_patterns[pn].wrap);
+	}
+	else {
+		a = pop();
+		if(a < 0) tele_patterns[pn].wrap = 0;
+		else if(a > 1) tele_patterns[pn].wrap = 1;
+		else tele_patterns[pn].wrap = a;
+	}
+}
+
+static void v_P_START(uint8_t n) {
+	int a;
+	if(top == 0) {
+		push(tele_patterns[pn].start);
+	}
+	else {
+		a = pop();
+		if(a < 0) tele_patterns[pn].start = 0;
+		else if(a > 63) tele_patterns[pn].start = 1;
+		else tele_patterns[pn].start = a;
+	}
+}
+
+static void v_P_END(uint8_t n) {
+	int a;
+	if(top == 0) {
+		push(tele_patterns[pn].end);
+	}
+	else {
+		a = pop();
+		if(a < 0) tele_patterns[pn].end = 0;
+		else if(a > 63) tele_patterns[pn].end = 1;
+		else tele_patterns[pn].end = a;
+	}
 }
 
 
@@ -341,6 +471,49 @@ static void op_DELAY_FLUSH(void);
 static void op_M_RESET(void);
 static void op_V(void);
 static void op_VV(void);
+static void op_P(void);
+static void op_P_INSERT(void);
+static void op_P_DELETE(void);
+static void op_P_PUSH(void);
+static void op_P_POP(void);
+static void op_PN(void);
+
+#define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
+#define OPS 32
+static const tele_op_t tele_ops[OPS] = {
+	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
+	MAKEOP(SUB, 2, 1,"[A B] SUBTRACT B FROM A"),
+	MAKEOP(MUL, 2, 1,"[A B] MULTIPLY TWO VALUES"),
+	MAKEOP(DIV, 2, 1,"[A B] DIVIDE FIRST BY SECOND"),
+	MAKEOP(RAND, 1, 1,"[A] RETURN RANDOM NUMBER UP TO A"),
+	MAKEOP(RRAND, 2, 1,"[A B] RETURN RANDOM NUMBER BETWEEN A AND B"),
+	MAKEOP(TOSS, 0, 1,"RETURN RANDOM STATE"),
+	MAKEOP(MIN, 2, 1,"RETURN LESSER OF TWO VALUES"),
+	MAKEOP(MAX, 2, 1,"RETURN GREATER OF TWO VALUES"),
+	MAKEOP(LIM, 3, 1,"[A B C] LIMIT C TO RANGE A TO B"),
+	MAKEOP(WRAP, 3, 1,"[A B C] WRAP C WITHIN RANGE A TO B"),
+	MAKEOP(QT, 2, 1,"[A B] QUANTIZE A TO STEP SIZE B"),
+	MAKEOP(AVG, 2, 1,"AVERAGE TWO VALUES"),
+	MAKEOP(EQ, 2, 1,"LOGIC: EQUAL"),
+	MAKEOP(NE, 2, 1,"LOGIC: NOT EQUAL"),
+	MAKEOP(LT, 2, 1,"LOGIC: LESS THAN"),
+	MAKEOP(GT, 2, 1,"LOGIC: GREATER THAN"),
+	{"TR.TOGGLE", op_TR_TOGGLE, 1, 0, "[A] TOGGLE TRIGGER A"},
+	MAKEOP(N, 1, 1, "TABLE FOR NOTE VALUES"),
+	{"Q.ALL", op_Q_ALL, 0, 0, "Q: EXECUTE ALL"},
+	{"Q.POP", op_Q_POP, 0, 0, "Q: POP LAST"},
+	{"Q.FLUSH", op_Q_FLUSH, 0, 0, "Q: FLUSH"},
+	{"DELAY.FLUSH", op_DELAY_FLUSH, 0, 0, "DELAY: FLUSH"},
+	{"M.RESET", op_M_RESET, 0, 0, "METRO: RESET"},
+	MAKEOP(V, 1, 1, "TO VOLT"),
+	MAKEOP(VV, 2, 1, "TO VOLT WITH PRECISION"),
+	{"P", op_P, 1, 1, "PATTERN: GET/SET"},
+	{"P.INSERT", op_P_INSERT, 2, 0, "PATTERN: INSERT"},
+	{"P.DELETE", op_P_DELETE, 1, 0, "PATTERN: DELETE"},
+	{"P.PUSH", op_P_PUSH, 1, 0, "PATTERN: PUSH"},
+	{"P.POP", op_P_POP, 0, 1, "PATTERN: POP"},
+	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"}
+};
 
 static void op_ADD() {
 	push(pop() + pop());
@@ -504,40 +677,94 @@ static void op_VV() {
 	else if(b > 99) b = 99;
 	push(table_v[a] + table_vv[b]);
 }
+static void op_P() {
+	int a, b;
+	a = pop();
+	if(a < 0) a = 0;
+	else if(a > 63) a = 63;
+
+	if(top == 0) {
+		push(tele_patterns[pn].v[a]);
+	}
+	else if(top == 1) {
+		b = pop();
+		tele_patterns[pn].v[a] = b;
+	}
+}
+static void op_P_INSERT() {
+	int a, b, i;
+	a = pop();
+	b = pop();
+
+	if(a<0) a = 0;
+	else if(a>63) a =63;
+
+	if(tele_patterns[pn].l >= a) {
+		for(i = tele_patterns[pn].l;i>a;i--)
+			tele_patterns[pn].v[i] = tele_patterns[pn].v[i-1];
+		if(tele_patterns[pn].l < 63)
+			tele_patterns[pn].l++;
+	}
+
+	tele_patterns[pn].v[a] = b;
+}
+static void op_P_DELETE() {
+	int a, i;
+	a = pop();
+
+	if(a < 0) a = 0;
+	else if(a > tele_patterns[pn].l) a = tele_patterns[pn].l;
+
+	if(tele_patterns[pn].l > 0) {
+		for(i = a;i<tele_patterns[pn].l;i++)
+			tele_patterns[pn].v[i] = tele_patterns[pn].v[i+1];
+
+		tele_patterns[pn].l--;
+	}
+}
+static void op_P_PUSH() {
+	int a;
+	a = pop();
+
+	if(tele_patterns[pn].l < 63) {
+		tele_patterns[pn].v[tele_patterns[pn].l] = a;
+		tele_patterns[pn].l++;
+	}
+}
+static void op_P_POP() {
+	if(tele_patterns[pn].l > 0) {
+		tele_patterns[pn].l--;
+ 		push(tele_patterns[pn].v[tele_patterns[pn].l]);
+	}
+	else push(0);
+}
+static void op_PN() {
+	int a, b, c;
+	a = pop();
+	b = pop();
+
+	if(a < 0) a = 0;
+	else if(a > 3) a = 33;
+	if(a < 0) a = 0;
+	else if(a > 63) a = 63;
+
+	if(top == 0) {
+		push(tele_patterns[a].v[b]);
+	}
+	else if(top == 1) {
+		c = pop();
+		tele_patterns[a].v[b] = c;
+	}
+}
 
 
-#define MAKEOP(name, params, doc) {#name, op_ ## name, params, doc}
-#define OPS 26
-static const tele_op_t tele_ops[OPS] = {
-	MAKEOP(ADD, 2, "[A B] ADD A TO B"),
-	MAKEOP(SUB, 2, "[A B] SUBTRACT B FROM A"),
-	MAKEOP(MUL, 2, "[A B] MULTIPLY TWO VALUES"),
-	MAKEOP(DIV, 2, "[A B] DIVIDE FIRST BY SECOND"),
-	MAKEOP(RAND, 1, "[A] RETURN RANDOM NUMBER UP TO A"),
-	MAKEOP(RRAND, 2, "[A B] RETURN RANDOM NUMBER BETWEEN A AND B"),
-	MAKEOP(TOSS, 0, "RETURN RANDOM STATE"),
-	MAKEOP(MIN, 2, "RETURN LESSER OF TWO VALUES"),
-	MAKEOP(MAX, 2, "RETURN GREATER OF TWO VALUES"),
-	MAKEOP(LIM, 3, "[A B C] LIMIT C TO RANGE A TO B"),
-	MAKEOP(WRAP, 3, "[A B C] WRAP C WITHIN RANGE A TO B"),
-	MAKEOP(QT, 2, "[A B] QUANTIZE A TO STEP SIZE B"),
-	MAKEOP(AVG, 2, "AVERAGE TWO VALUES"),
-	MAKEOP(EQ, 2, "LOGIC: EQUAL"),
-	MAKEOP(NE, 2, "LOGIC: NOT EQUAL"),
-	MAKEOP(LT, 2, "LOGIC: LESS THAN"),
-	MAKEOP(GT, 2, "LOGIC: GREATER THAN"),
-	{"TR.TOGGLE", op_TR_TOGGLE, 1, "[A] TOGGLE TRIGGER A"},
-	MAKEOP(N, 1, "TABLE FOR NOTE VALUES"),
-	{"Q.ALL", op_Q_ALL, 0, "Q: EXECUTE ALL"},
-	{"Q.POP", op_Q_POP, 0, "Q: POP LAST"},
-	{"Q.FLUSH", op_Q_FLUSH, 0, "Q: FLUSH"},
-	{"DELAY.FLUSH", op_DELAY_FLUSH, 0, "DELAY: FLUSH"},
-	{"M.RESET", op_M_RESET, 0, "METRO: RESET"},
-	MAKEOP(V, 1, "TO VOLT"),
-	MAKEOP(VV, 2, "TO VOLT WITH PRECISION")
-};
 
 
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 // PROCESS //////////////////////////////////////////////////////
 
@@ -663,11 +890,18 @@ error_t validate(tele_command_t *c) {
 	while(n--) {
 		if(c->data[n].t == OP) {
 			h -= tele_ops[c->data[n].v].params;
-			if(h < 0)
+			
+			if(h < 0) {
+				strcpy(error_detail, tele_ops[c->data[n].v].name);
 				return E_NEED_PARAMS;
-			h++;
+			}
+			h += tele_ops[c->data[n].v].returns;
+			// hack for var-length params for P
+			if((c->data[n].v == 26 || c->data[n].v == 31) && !n)
+				h--;
 		}
 		else if(c->data[n].t == MOD) {
+			strcpy(error_detail, tele_mods[c->data[n].v].name);
 			if(n != 0)
 				return E_NO_MOD_HERE;
 			else if(c->separator == -1)
@@ -694,8 +928,10 @@ error_t validate(tele_command_t *c) {
 				h++;
 			}
 			else if(c->data[n].t == ARRAY) {
-				if(h < 1)
+				if(h < 1) {
+					strcpy(error_detail, tele_arrays[c->data[n].v].name);
 					return E_NEED_PARAMS;
+				}
 				// h-- then h++
 			}
 		}
@@ -713,8 +949,10 @@ error_t validate(tele_command_t *c) {
 				// }
 			}
 			else if(c->data[n].t == ARRAY) {
-				if(h < 1)
+				if(h < 1) {
+					strcpy(error_detail, tele_arrays[c->data[n].v].name);
 					return E_NEED_PARAMS;
+				}
 				h--;
 				if(h == 0) h++;
 				// else if(h > 1)
@@ -744,86 +982,44 @@ void process(tele_command_t *c) {
 	else
 		n = c->separator;
 
-	sprintf(dbg,"\r\r\nprocess (%d): %s", n, print_command(c));
-	DBG;
+	// sprintf(dbg,"\r\r\nprocess (%d): %s", n, print_command(c));
+	// DBG;
 
 	while(n--) {
-		if(c->data[n].t == OP)
+		if(c->data[n].t == NUMBER)
+			push(c->data[n].v);
+		else if(c->data[n].t == OP)
 			tele_ops[c->data[n].v].func();
-		// MODS
-		else if(c->data[n].t == MOD) {
+		else if(c->data[n].t == MOD)
 			tele_mods[c->data[n].v].func(c);
-		}
-		// RIGHT (get)
-		else if(n) {
-			if(c->data[n].t == NUMBER)
-				push(c->data[n].v);
-			else if(c->data[n].t == VAR) {
-				// sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
-				// DBG
-				if(tele_vars[c->data[n].v].func == NULL)
+		else if(c->data[n].t == VAR) {
+			if(tele_vars[c->data[n].v].func == NULL) {
+				if(n || top == 0 )
 					push(tele_vars[c->data[n].v].v);
 				else
-					tele_vars[c->data[n].v].func(1);
+					tele_vars[c->data[n].v].v = pop();
 			}
-			else if(c->data[n].t == ARRAY) {
-				i = pop();
+			else
+				tele_vars[c->data[n].v].func(0);
+		}
+ 		else if(c->data[n].t == ARRAY) {
+			i = pop();
 
-				// saturate for 1-4 indexing
-				if(i<1) i=0;
-				else if(i>3) i=4;
-				i--;
+			// saturate for 1-4 indexing
+			if(i<1) i=0;
+			else if(i>3) i=4;
+			i--;
 
-				// sprintf(dbg,"\r\nget array %s @ %d : %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
-				// DBG
+			if(n || top == 0) {
+					// sprintf(dbg,"\r\nget array %s @ %d : %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
+					// DBG
 				push(tele_arrays[c->data[n].v].v[i]);
 			}
-		}
-
-		// LEFTMOST (set/get)
-		else {
-			if(c->data[n].t == NUMBER) {
- 				push(c->data[n].v);
-			}
-			else if(c->data[n].t == VAR) {
-				/// OPTIMIZE THIS-- do func check before top check
-				// LONE GET JUST PRINTS
-				if(top == 0) {
-					// sprintf(dbg,"\r\nget var %s : %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
-					// DBG
-					if(tele_vars[c->data[n].v].func == NULL)
-						push(tele_vars[c->data[n].v].v);
-					else
-						tele_vars[c->data[n].v].func(0);
-				}
-				// OTHERWISE SET
-				else {
-					if(tele_vars[c->data[n].v].func == NULL)
-						tele_vars[c->data[n].v].v = pop();
-					else
-						tele_vars[c->data[n].v].func(0);
-					// sprintf(dbg,"\r\nset var %s to %d", tele_vars[c->data[n].v].name, tele_vars[c->data[n].v].v);
-					// DBG
-				}
-			}
-			else if(c->data[n].t == ARRAY) {
-				i = pop();
-				// saturate for 1-4 indexing
-				if(i<1) i=1;
-				else if(i>4) i=4;
-				i--;
-
-				if(top == 0) {
- 					// sprintf(dbg,"\r\nget array %s @ %d : %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
- 					// DBG
-					push(tele_arrays[c->data[n].v].v[i]);
-				}
-				else {
-					tele_arrays[c->data[n].v].v[i] = pop();
-					// sprintf(dbg,"\r\nset array %s @ %d to %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
-					// DBG
-					odirty++;
-				}
+			else {
+				tele_arrays[c->data[n].v].v[i] = pop();
+				// sprintf(dbg,"\r\nset array %s @ %d to %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
+				// DBG
+				odirty++;
 			}
 		}
 	}
@@ -833,6 +1029,7 @@ void process(tele_command_t *c) {
 		output = pop();
 		sprintf(dbg,"\r\n>>> %d", output);
 		DBG
+		// to_v(output);
 	}
 }
 
@@ -908,4 +1105,68 @@ void tele_tick() {
 	// inc time
 	if(tele_vars[2].v)
 		tele_vars[1].v++;
+}
+
+
+void to_v(int i) {
+	int a, b;
+
+	if(i > table_v[8]) {
+		i -= table_v[8];
+		a += 8;
+	}
+
+	if(i > table_v[4]) {
+		i -= table_v[4];
+		a += 4;
+	}
+
+	if(i > table_v[2]) {
+		i -= table_v[2];
+		a += 2;
+	}
+
+	if(i > table_v[1]) {
+		i -= table_v[1];
+		a += 1;
+	}
+
+	if(i > table_vv[64]) {
+		i -= table_vv[64];
+		b += 64;
+	}
+
+	if(i > table_vv[32]) {
+		i -= table_vv[32];
+		b += 32;
+	}
+
+	if(i > table_vv[16]) {
+		i -= table_vv[16];
+		b += 16;
+	}
+
+	if(i > table_vv[8]) {
+		i -= table_vv[8];
+		b += 8;
+	}
+
+	if(i > table_vv[4]) {
+		i -= table_vv[4];
+		b += 4;
+	}
+
+	if(i > table_vv[2]) {
+		i -= table_vv[2];
+		b++;
+	}
+
+	if(i > table_vv[1]) {
+		i -= table_vv[1];
+		b++;
+	}
+
+	b++;
+
+	printf(" (VV %d %d)",a,b);
 }

@@ -47,11 +47,17 @@ int main(int argc, char *argv[]) {
 		if(status == E_OK) {
 			status = validate(&temp);
 			printf("\nvalidate: %s", tele_error(status));
+			if(error_detail[0])
+				printf(": %s",error_detail);
+			error_detail[0] = 0;
 			if(status == E_OK)
 				process(&temp);
 		}
 		else {
 			printf("\nERROR: %s", tele_error(status));
+			if(error_detail[0])
+				printf(": %s",error_detail);
+			error_detail[0] = 0;
 		}
 
 		tele_tick();
