@@ -16,7 +16,7 @@ enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V
 
 typedef enum { 
 	E_OK,
-	E_WELCOME, 
+	E_WELCOME,
 	E_PARSE, 
 	E_LENGTH,
 	E_NEED_PARAMS,
@@ -54,6 +54,7 @@ typedef struct {
 typedef struct {
 	const char *name;
 	int v[4];
+	void (*func)(uint8_t);
 	tele_word_t t[4];
 } tele_array_t;
 
@@ -105,6 +106,7 @@ void tele_set_array(uint8_t a, uint8_t i, uint16_t v);
 void tele_set_val(uint8_t i, uint16_t v);
 
 const char * tele_error(error_t);
+const char * to_v(int);
 
 extern tele_command_t temp;
 
@@ -113,8 +115,16 @@ extern tele_pattern_t tele_patterns[4];
 typedef void(*update_metro_t)(int, int, uint8_t);
 extern volatile update_metro_t update_metro;
 
+typedef void (*update_tr_t)(uint8_t, int);
+extern volatile update_tr_t update_tr;
+
+typedef void (*update_cv_t)(uint8_t, int);
+extern volatile update_cv_t update_cv;
+
+typedef void (*update_cv_slew_t)(uint8_t, int);
+extern volatile update_cv_slew_t update_cv_slew;
+
 extern char error_detail[16];
-extern int output;
-extern uint8_t odirty;
+extern int output, output_new;
 
 #endif

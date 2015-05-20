@@ -36,7 +36,7 @@ static char dbg[32];
 static char pcmd[32];
 
 uint8_t odirty;
-int output;
+int output, output_new;
 
 char error_detail[16];
 
@@ -52,9 +52,12 @@ static uint8_t q_top;
 
 
 volatile update_metro_t update_metro;
+volatile update_tr_t update_tr;
+volatile update_cv_t update_cv;
+volatile update_cv_slew_t update_cv_slew;
 
 
-void to_v(int);
+const char * to_v(int);
 
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
@@ -300,18 +303,41 @@ static void v_P_END(uint8_t n) {
 }
 
 
+static void a_TR(uint8_t);
+static void a_CV(uint8_t);
+static void a_CV_SLEW(uint8_t);
 
-
-#define MAKEARRAY(name) {#name, {0,0,0,0}}
-#define ARRAYS 6
+#define MAKEARRAY(name, func) {#name, {0,0,0,0}, func}
+#define ARRAYS 4
 static tele_array_t tele_arrays[ARRAYS] = {
-	MAKEARRAY(TR),
-	MAKEARRAY(CV),
-	MAKEARRAY(CV.SLEW),
-	MAKEARRAY(CV.OFFSET),
-	MAKEARRAY(CV.TIME),
-	MAKEARRAY(CV.NOW)
+	MAKEARRAY(TR,a_TR),
+	MAKEARRAY(CV,a_CV),
+	MAKEARRAY(CV.SLEW,a_CV_SLEW),
+	MAKEARRAY(CV.OFFSET,NULL)
 };
+
+static void a_TR(uint8_t i) {
+	int a = pop();
+	a = (a != 0);
+	tele_arrays[0].v[i] = a;
+	(*update_tr)(i, a);
+}
+static void a_CV(uint8_t i) {
+	int a = pop();
+	if(a<0) a = 0;
+	else if(a > 16383) a = 16383;
+	tele_arrays[1].v[i] = a;
+	(*update_cv)(i, a);
+}
+static void a_CV_SLEW(uint8_t i) {
+	int a = pop();
+	if(a<1) a = 1;	// min slew = 1
+	else if(a > 16383) a = 16383;
+	tele_arrays[2].v[i] = a;
+	(*update_cv_slew)(i, a);
+}
+
+
 
 
 
@@ -462,7 +488,7 @@ static void op_EQ(void);
 static void op_NE(void);
 static void op_LT(void);
 static void op_GT(void);
-static void op_TR_TOGGLE(void);
+static void op_TR_TOG(void);
 static void op_N(void);
 static void op_Q_ALL(void);
 static void op_Q_POP(void);
@@ -472,8 +498,8 @@ static void op_M_RESET(void);
 static void op_V(void);
 static void op_VV(void);
 static void op_P(void);
-static void op_P_INSERT(void);
-static void op_P_DELETE(void);
+static void op_P_INS(void);
+static void op_P_DEL(void);
 static void op_P_PUSH(void);
 static void op_P_POP(void);
 static void op_PN(void);
@@ -498,7 +524,7 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(NE, 2, 1,"LOGIC: NOT EQUAL"),
 	MAKEOP(LT, 2, 1,"LOGIC: LESS THAN"),
 	MAKEOP(GT, 2, 1,"LOGIC: GREATER THAN"),
-	{"TR.TOGGLE", op_TR_TOGGLE, 1, 0, "[A] TOGGLE TRIGGER A"},
+	{"TR.TOG", op_TR_TOG, 1, 0, "[A] TOGGLE TRIGGER A"},
 	MAKEOP(N, 1, 1, "TABLE FOR NOTE VALUES"),
 	{"Q.ALL", op_Q_ALL, 0, 0, "Q: EXECUTE ALL"},
 	{"Q.POP", op_Q_POP, 0, 0, "Q: POP LAST"},
@@ -508,8 +534,8 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(V, 1, 1, "TO VOLT"),
 	MAKEOP(VV, 2, 1, "TO VOLT WITH PRECISION"),
 	{"P", op_P, 1, 1, "PATTERN: GET/SET"},
-	{"P.INSERT", op_P_INSERT, 2, 0, "PATTERN: INSERT"},
-	{"P.DELETE", op_P_DELETE, 1, 0, "PATTERN: DELETE"},
+	{"P.INS", op_P_INS, 2, 0, "PATTERN: INSERT"},
+	{"P.DEL", op_P_DEL, 1, 0, "PATTERN: DELETE"},
 	{"P.PUSH", op_P_PUSH, 1, 0, "PATTERN: PUSH"},
 	{"P.POP", op_P_POP, 0, 1, "PATTERN: POP"},
 	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"}
@@ -619,7 +645,7 @@ static void op_LT() {
 static void op_GT() { 
 	push(pop() > pop());
 }
-static void op_TR_TOGGLE() {
+static void op_TR_TOG() {
 	int a = pop();
 	// saturate and shift
 	if(a < 1) a = 1;
@@ -627,7 +653,7 @@ static void op_TR_TOGGLE() {
 	a--;
 	if(tele_arrays[0].v[a]) tele_arrays[0].v[a] = 0;
 	else tele_arrays[0].v[a] = 1;
-	odirty++;
+	update_tr(a,tele_arrays[0].v[a]);
 }
 static void op_N() { 
 	int a = pop();
@@ -691,7 +717,7 @@ static void op_P() {
 		tele_patterns[pn].v[a] = b;
 	}
 }
-static void op_P_INSERT() {
+static void op_P_INS() {
 	int a, b, i;
 	a = pop();
 	b = pop();
@@ -708,7 +734,7 @@ static void op_P_INSERT() {
 
 	tele_patterns[pn].v[a] = b;
 }
-static void op_P_DELETE() {
+static void op_P_DEL() {
 	int a, i;
 	a = pop();
 
@@ -897,8 +923,13 @@ error_t validate(tele_command_t *c) {
 			}
 			h += tele_ops[c->data[n].v].returns;
 			// hack for var-length params for P
-			if((c->data[n].v == 26 || c->data[n].v == 31) && !n)
-				h--;
+			if(c->data[n].v == 26 || c->data[n].v == 31) {
+				if(n==0) 
+					h--;
+				else if(c->data[n-1].t == SEP)
+					h--;
+			}
+					
 		}
 		else if(c->data[n].t == MOD) {
 			strcpy(error_detail, tele_mods[c->data[n].v].name);
@@ -1016,10 +1047,12 @@ void process(tele_command_t *c) {
 				push(tele_arrays[c->data[n].v].v[i]);
 			}
 			else {
-				tele_arrays[c->data[n].v].v[i] = pop();
 				// sprintf(dbg,"\r\nset array %s @ %d to %d", tele_arrays[c->data[n].v].name, i, tele_arrays[c->data[n].v].v[i]);
 				// DBG
-				odirty++;
+				if(tele_arrays[c->data[n].v].func)
+					tele_arrays[c->data[n].v].func(i);
+				else
+					tele_arrays[c->data[n].v].v[i] = pop();
 			}
 		}
 	}
@@ -1027,6 +1060,7 @@ void process(tele_command_t *c) {
 	// PRINT DEBUG OUTPUT IF VAL LEFT ON STACK
 	if(top) {
 		output = pop();
+		output_new++;
 		sprintf(dbg,"\r\n>>> %d", output);
 		DBG
 		// to_v(output);
@@ -1108,8 +1142,9 @@ void tele_tick() {
 }
 
 
-void to_v(int i) {
-	int a, b;
+const char * to_v(int i) {
+	static char n[3], v[7];
+	int a=0, b=0;
 
 	if(i > table_v[8]) {
 		i -= table_v[8];
@@ -1168,5 +1203,13 @@ void to_v(int i) {
 
 	b++;
 
-	printf(" (VV %d %d)",a,b);
+	itoa(a,n,10);
+	strcpy(v, n);
+	strcat(v,".");
+	itoa(b,n,10);
+	strcat(v, n);
+	strcat(v,"V");
+
+	return v;
+	// printf(" (VV %d %d)",a,b);
 }

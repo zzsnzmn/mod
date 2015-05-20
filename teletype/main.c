@@ -39,6 +39,12 @@
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
 
+#define A_METRO 0x1
+#define A_TR 0x2
+#define A_SLEW 0x4
+#define A_DELAY 0x8
+#define A_Q 0xf
+
 u8 preset, preset_dirty, preset_mode, preset_select, front_timer;
 char preset_name[17] = "NAMED";
 
@@ -51,10 +57,12 @@ u16 clock_time, clock_temp;
 u16 adc[4];
 
 typedef struct {
-	s16 now;
+	u16 now;
 	u16 target;
 	u16 slew;
-	s16 step;
+	u16 step;
+	s32 delta;
+	u32 a;
 } aout_t;
 
 aout_t aout[4];
@@ -68,6 +76,10 @@ tele_script_t script[10];
 tele_script_t history;
 uint8_t edit, edit_line;
 uint8_t live;
+
+uint8_t activity;
+uint8_t activity_prev;
+
 
 uint8_t metro_act;
 unsigned int metro_time;
@@ -130,8 +142,10 @@ static void flash_read(void);
 
 static void render_init(void);
 
-static void refresh_outputs(void);
 static void tele_metro(int, int, uint8_t);
+static void tele_tr(uint8_t i, int v);
+static void tele_cv(uint8_t i, int v);
+static void tele_cv_slew(uint8_t i, int v);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,31 +173,51 @@ static softTimer_t metroTimer = { .next = NULL, .prev = NULL };
 
 
 static void cvTimer_callback(void* o) { 
-	u8 i;
+	u8 i, r=0;
+	u16 a;
+
+	activity &= ~A_SLEW;
 
 	for(i=0;i<4;i++)
-		if(aout[i].now != aout[i].target) {
-			aout[i].now += (aout[i].target - aout[i].now) / aout[i].step;
+		if(aout[i].step) {
 			aout[i].step--;
+
+			if(aout[i].step == 0) {
+				aout[i].now = aout[i].target;
+				r_edit_dirty |= R_ACTIVITY;
+			}
+			else {
+				aout[i].a += aout[i].delta;
+				aout[i].now = aout[i].a >> 16;
+				activity |= A_SLEW;
+			}
+
+			r++;
 		}
 
-	spi_selectChip(SPI,DAC_SPI);
-	spi_write(SPI,0x31);
-	spi_write(SPI,aout[2].now>>4);
-	spi_write(SPI,aout[2].now<<4);
-	spi_write(SPI,0x31);
-	spi_write(SPI,aout[0].now>>4);
-	spi_write(SPI,aout[0].now<<4);
-	spi_unselectChip(SPI,DAC_SPI);
+	if(r) {
+		spi_selectChip(SPI,DAC_SPI);
+		spi_write(SPI,0x31);
+		a = aout[2].now >> 2;
+		spi_write(SPI,a>>4);
+		spi_write(SPI,a<<4);
+		spi_write(SPI,0x31);
+		a = aout[0].now >> 2;
+		spi_write(SPI,a>>4);
+		spi_write(SPI,a<<4);
+		spi_unselectChip(SPI,DAC_SPI);
 
-	spi_selectChip(SPI,DAC_SPI);
-	spi_write(SPI,0x38);
-	spi_write(SPI,aout[3].now>>4);
-	spi_write(SPI,aout[3].now<<4);
-	spi_write(SPI,0x38);
-	spi_write(SPI,aout[1].now>>4);
-	spi_write(SPI,aout[1].now<<4);
-	spi_unselectChip(SPI,DAC_SPI);
+		spi_selectChip(SPI,DAC_SPI);
+		spi_write(SPI,0x38);
+		a = aout[3].now >> 2;
+		spi_write(SPI,a>>4);
+		spi_write(SPI,a<<4);
+		spi_write(SPI,0x38);
+		a = aout[1].now >> 2;
+		spi_write(SPI,a>>4);
+		spi_write(SPI,a<<4);
+		spi_unselectChip(SPI,DAC_SPI);
+	}
 }
 
 static void clockTimer_callback(void* o) {  
@@ -252,8 +286,6 @@ static void metroTimer_callback(void* o) {
 	for(i=0;i<script[METRO_SCRIPT].l;i++) {
 		process(&script[METRO_SCRIPT].c[i]);
 	}
-	
-	refresh_outputs();
 }
 
 
@@ -343,15 +375,15 @@ static void handler_HidTimer(s32 data) {
 	     						edit_line = script[edit].l;
 	     					strcpy(input,print_command(&script[edit].c[edit_line]));
 	 						pos = strlen(input);
-     						r_edit_dirty |= R_LIST1;
+	 						for(n = pos;n < 32;n++) input[n] = 0;
+     						r_edit_dirty |= R_LIST | R_MESSAGE;
      					}
      					else {
-     						for(n = 0;n < 32;n++)
-	     						input[n] = 0;
+     						for(n = 0;n < 32;n++) input[n] = 0;
 		 					pos = 0;
      						live = 1;
      						edit_line = 4;
-     						r_edit_dirty |= R_LIST;
+     						r_edit_dirty |= R_LIST | R_MESSAGE;
      					}
      					break;
 
@@ -361,12 +393,14 @@ static void handler_HidTimer(s32 data) {
      							edit_line++;
      							strcpy(input,print_command(&script[edit].c[edit_line]));
      							pos = strlen(input);
+     							for(n = pos;n < 32;n++) input[n] = 0;
 	 							r_edit_dirty |= R_LIST;
 	 						}
      						else if(live) {
      							edit_line++;
      							strcpy(input,print_command(&history.c[edit_line]));
      							pos = strlen(input);
+     							for(n = pos;n < 32;n++) input[n] = 0;
 	 							r_edit_dirty |= R_LIST;
 	 						}
 	 					}
@@ -381,6 +415,7 @@ static void handler_HidTimer(s32 data) {
      							strcpy(input,print_command(&script[edit].c[edit_line]));
 
      						pos = strlen(input);
+	     					for(n = pos;n < 32;n++) input[n] = 0;
  							r_edit_dirty |= R_LIST;
  						}
      					break;
@@ -394,6 +429,8 @@ static void handler_HidTimer(s32 data) {
      						edit_line = script[edit].l;
      					strcpy(input,print_command(&script[edit].c[edit_line]));
  						pos = strlen(input);
+     					for(n = pos;n < 32;n++) input[n] = 0;
+
 
      					r_edit_dirty |= R_LIST;
      					break;
@@ -408,6 +445,7 @@ static void handler_HidTimer(s32 data) {
      						edit_line = script[edit].l;
      					strcpy(input,print_command(&script[edit].c[edit_line]));
  						pos = strlen(input);
+     					for(n = pos;n < 32;n++) input[n] = 0;
      					r_edit_dirty |= R_LIST;
      					break;
      				case 0x4C:
@@ -439,7 +477,6 @@ static void handler_HidTimer(s32 data) {
 									memcpy(&history.c[3], &temp, sizeof(tele_command_t));
 
 									process(&temp);
-									refresh_outputs();
 
 									for(n = 0;n < 32;n++)
 			     						input[n] = 0;
@@ -453,7 +490,10 @@ static void handler_HidTimer(s32 data) {
 										edit_line++;
 										strcpy(input,print_command(&script[edit].c[edit_line]));
 		     							pos = strlen(input);
+		     							for(n = pos;n < 32;n++) input[n] = 0;
 		     						}
+
+			     					r_edit_dirty |= R_MESSAGE;
 		     					}
 		     					r_edit_dirty |= R_LIST;
 							}
@@ -514,8 +554,6 @@ static void handler_Trigger(s32 data) {
 	for(i=0;i<script[data].l;i++) {
 		process(&script[data].c[i]);
 	}
-
-	refresh_outputs();
 }
 
 static void handler_ScreenRefresh(s32 data) {
@@ -538,8 +576,43 @@ static void handler_ScreenRefresh(s32 data) {
 		sdirty++;
 		r_edit_dirty &= ~R_PRESET;
 	}
-	if(r_edit_dirty & R_ACTIVITY) {
+	// if(r_edit_dirty & R_ACTIVITY) {
+	if(activity != activity_prev) {
+
 		region_fill(&r_activity, 0);
+		
+	/*	a = 1;
+
+		r_activity.data[ 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 0 + 1 * r_activity.w ] = a;
+		r_activity.data[ 1 + 3 * r_activity.w ] = a;
+		r_activity.data[ 1 + 4 * r_activity.w ] = a;
+		r_activity.data[ 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 2 + 1 * r_activity.w ] = a;
+		r_activity.data[ 3 + 3 * r_activity.w ] = a;
+		r_activity.data[ 3 + 4 * r_activity.w ] = a;
+		r_activity.data[ 4 + 0 * r_activity.w ] = a;
+		r_activity.data[ 4 + 1 * r_activity.w ] = a;
+		r_activity.data[ 5 + 3 * r_activity.w ] = a;
+		r_activity.data[ 5 + 4 * r_activity.w ] = a;
+		r_activity.data[ 6 + 0 * r_activity.w ] = a;
+		r_activity.data[ 6 + 1 * r_activity.w ] = a;
+		r_activity.data[ 7 + 3 * r_activity.w ] = a;
+		r_activity.data[ 7 + 4 * r_activity.w ] = a;
+*/
+		if(activity & A_SLEW) a = 15;
+		else a = 1;
+
+		r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
+		r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
+		r_activity.data[ 16 + 2 + 2 * r_activity.w ] = a;
+		r_activity.data[ 16 + 3 + 1 * r_activity.w ] = a;
+		r_activity.data[ 16 + 4 + 0 * r_activity.w ] = a;
+
+
+		activity_prev = activity;
+
+			
 		sdirty++;
 		r_edit_dirty &= ~R_ACTIVITY;
 	}
@@ -562,7 +635,8 @@ static void handler_ScreenRefresh(s32 data) {
 		strcat(s,"_");
 
 		region_fill(&r_input, 0);
-		region_string(&r_input, s, 0, 0, 0xf, 0, 0);
+		// region_string(&r_input, s, 0, 0, 0xf, 0, 0);
+		font_string_region_clip(&r_input, s, 0, 0, 0xf, 0);
 		sdirty++;
 		r_edit_dirty &= ~R_INPUT;
 	}
@@ -574,11 +648,22 @@ static void handler_ScreenRefresh(s32 data) {
 				strcat(s, error_detail);
 				error_detail[0] = 0;
 			}
+			status = E_OK;
 		}
-		else
-			itoa(output, s, 10);
+		else if(output_new) {
+			output_new = 0;
+			if(live)
+				itoa(output, s, 10);
+			// strcat(s, " ");
+			// strcat(s, to_v(output));
+			else
+				s[0] = 0;
+		}
+		else {
+			s[0] = 0;
+		}
 		region_fill(&r_message, 0);
-		region_string(&r_message, s, 0, 0, 0x4, 0, 0);
+		font_string_region_clip(&r_message, s, 0, 0, 0x4, 0);
 		sdirty++;
 		r_edit_dirty &= ~R_MESSAGE;
 	}
@@ -716,41 +801,6 @@ void render_init(void) {
 }
 
 
-void refresh_outputs() {
-	if(odirty) {
-		if(tele_get_array(0,0))
-			gpio_set_pin_high(B08);
-		else
-			gpio_set_pin_low(B08);
-
-		if(tele_get_array(0,1))
-			gpio_set_pin_high(B09);
-		else
-			gpio_set_pin_low(B09);
-
-		if(tele_get_array(0,2))
-			gpio_set_pin_high(B10);
-		else
-			gpio_set_pin_low(B10);
-
-		if(tele_get_array(0,3))
-			gpio_set_pin_high(B11);
-		else
-			gpio_set_pin_low(B11);
-
-		aout[0].target = tele_get_array(1,0) >> 2;
-		aout[1].target = tele_get_array(1,1) >> 2;
-		aout[2].target = tele_get_array(1,2) >> 2;
-		aout[3].target = tele_get_array(1,3) >> 2;
-
-		aout[0].step = 1;
-		aout[1].step = 1;
-		aout[2].step = 1;
-		aout[3].step = 1;
-	}
-}
-
-
 
 static void tele_metro(int m, int m_act, uint8_t m_reset) {
 	metro_time = m;
@@ -775,6 +825,24 @@ static void tele_metro(int m, int m_act, uint8_t m_reset) {
 	}
 }
 
+static void tele_tr(uint8_t i, int v) {
+	if(v)
+		gpio_set_pin_high(B08+i);
+	else
+		gpio_set_pin_low(B08+i);
+}
+
+static void tele_cv(uint8_t i, int v) {
+	aout[i].target = v;
+	aout[i].step = aout[i].slew;
+	aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
+	aout[i].a = aout[i].now<<16;
+	r_edit_dirty |= R_ACTIVITY;
+}
+
+static void tele_cv_slew(uint8_t i, int v) {
+	aout[i].slew = v;
+}
 
 
 
@@ -863,6 +931,7 @@ int main(void)
 	timer_add(&clockTimer,10,&clockTimer_callback, NULL);
 	timer_add(&refreshTimer,63,&refreshTimer_callback, NULL);
 	timer_add(&cvTimer,6,&cvTimer_callback, NULL);
+	timer_add(&cvTimer,100,&cvTimer_callback, NULL);
 	timer_add(&keyTimer,51,&keyTimer_callback, NULL);
 	timer_add(&adcTimer,61,&adcTimer_callback, NULL);
 	
@@ -875,11 +944,21 @@ int main(void)
 
 	clear_delays();
 
+	aout[0].slew = 1;
+	aout[1].slew = 1;
+	aout[2].slew = 1;
+	aout[3].slew = 1;
+
 	status = 1;
 	live = 1; edit_line = 4;
 	r_edit_dirty = 0xff;
+	activity = 0;
+	activity_prev = 0xff;
 
 	update_metro = &tele_metro;
+	update_tr = &tele_tr;
+	update_cv = &tele_cv;
+	update_cv_slew = &tele_cv_slew;
 
 	while (true) {
 		check_events();

@@ -6,14 +6,16 @@ microfont http://www.timetrap.se/articles/freetajp.php
 
 (((((((((((((((((((((((((tele)))))))))))))))))))))))))
 
-PATTERNS
 @ system
 HELP?
 
-not enough params: restructure to report error_detail
+too many params: restructure to report error_detail
 new error: non-return ops not on left
+new error: sep in wrong place (index 0)
 
 ((((((((((((((((((((hardware))))))))))))))))))))
+
+script edit: proper deletion of line
 
 screen refresh
 	activity monitor
@@ -22,31 +24,22 @@ screen refresh
 	optimize list to single region?
 	indicate NEW message (brighter)
 
-cv system with slew (slew code is bad)
+time based systems
+	normalize param values (make units of slew readable, delay, etc)
 
-move DOC strings to flash?
-
-maybe optimize refresh_outputs()
-	have array_set push a stack. handler empties stack using function table.
 
 i2c
 
 SPREADSHEET
 
-preset NOTE
-
-WHAT's GOING ON screen (??)
-	preset name, number
-	more detailed information?
-
-remove grid stuff
+preset
+	note?
+	init
 
 flash
 
-///
+move DOC strings to flash?
 
-PRESET
-INIT (clears all vars and runs script) == PRESET PRESET
 
 
 
@@ -60,8 +53,8 @@ TR.PULSE 1-4
 
  P I (X)			ignores LENGTH
 
- P.INSERT I X	insert X at position I (increases LENGTH)
- P.DELETE I 		delete at specified I (decreases LENGTH)
+ P.INS I X	insert X at position I (increases LENGTH)
+ P.DEL I 		delete at specified I (decreases LENGTH)
 
  P.PUSH X 		add X to end (with respect to LENGTH)
  P.POP			return/remove last element
@@ -72,7 +65,7 @@ get/set VAR
 
  P.N 			N pattern to work with
 
- P.LENGTH 		manually change length. non-destructive.
+ P.L 		manually change length. non-destructive.
 
  P.I 			INDEX
  P.WRAP
@@ -89,10 +82,7 @@ get/set VAR
 ((((((((((((((vars))))))))))))))
 
 TR.TIME 1-4
-CV.SLEW 1-4
 CV.OFFSET 1-4
-CV.TIME 1-4
-CV.NOW 1-4
 
 
 
