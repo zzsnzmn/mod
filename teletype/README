@@ -16,17 +16,25 @@ new error: sep in wrong place (index 0)
 ((((((((((((((((((((hardware))))))))))))))))))))
 
 
-script edit: proper deletion of line
-shift-enter to insert command
+editing
+	proper deletion of line
+	shift-enter to insert command
+	copy-paste
+	knob-read insertion
+
+hotkeys
+	manual TR
+	kill timers/slew
+	tr mute?
 
 screen refresh
-	activity monitor
+	activity monitor: implement X for event overrun
 	cursor-- rewrite region_string with extra index (for b/g highlight)
-		(or-- making a formatting version with % interjection)
-	optimize list to single region?
+	optimize list to single region
 
 
 i2c
+	CONST vals
 
 SPREADSHEET
 
@@ -37,23 +45,6 @@ preset
 flash
 
 move DOC strings to flash?
-
-param insertion
-
-
-
-
-((((((((((((((((funcs)))))))))
-
-TR.PULSE 1-4
-	interaction with manual set high/low?
-
-
-((((((((((((((vars))))))))))))))
-
-TR.TIME 1-4
-CV.OFFSET 1-4
-
 
 
 

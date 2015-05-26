@@ -35,7 +35,7 @@ const char * tele_error(error_t e) {
 static char dbg[32];
 static char pcmd[32];
 
-uint8_t odirty;
+
 int output, output_new;
 
 char error_detail[16];
@@ -55,38 +55,12 @@ volatile update_metro_t update_metro;
 volatile update_tr_t update_tr;
 volatile update_cv_t update_cv;
 volatile update_cv_slew_t update_cv_slew;
+volatile update_delay_t update_delay;
+volatile update_q_t update_q;
+volatile update_cv_off_t update_cv_off;
 
 
 const char * to_v(int);
-
-/////////////////////////////////////////////////////////////////
-// DELAY ////////////////////////////////////////////////////////
-
-static tele_command_t delay_c[D_SIZE];
-static int delay_t[D_SIZE];
-
-static void process_delays(uint8_t);
-void clear_delays(void);
-
-static void process_delays(uint8_t v) {
-	for(int i=0;i<D_SIZE;i++) {
-		if(delay_t[i]) {
-			delay_t[i] -= v;
- 			if(delay_t[i] <= 0) {
- 				// sprintf(dbg,"\r\ndelay %d", i);
-				// DBG
-				process(&delay_c[i]);
-				delay_t[i] = 0;
-			}
-		}
-	}
-}
-
-void clear_delays(void) {
-	for(int i=0;i<D_SIZE;i++) {
-		delay_t[i] = 0;
-	}
-}
 
 
 
@@ -311,14 +285,17 @@ static void v_P_END(uint8_t n) {
 static void a_TR(uint8_t);
 static void a_CV(uint8_t);
 static void a_CV_SLEW(uint8_t);
+static void a_CV_OFF(uint8_t);
+static void a_TR_TIME(uint8_t);
 
 #define MAKEARRAY(name, func) {#name, {0,0,0,0}, func}
-#define ARRAYS 4
+#define ARRAYS 5
 static tele_array_t tele_arrays[ARRAYS] = {
 	MAKEARRAY(TR,a_TR),
 	MAKEARRAY(CV,a_CV),
 	MAKEARRAY(CV.SLEW,a_CV_SLEW),
-	MAKEARRAY(CV.OFFSET,NULL)
+	MAKEARRAY(CV.OFF,a_CV_OFF),
+	{"TR.TIME", {100,100,100,100}, a_TR_TIME}
 };
 
 static void a_TR(uint8_t i) {
@@ -341,7 +318,68 @@ static void a_CV_SLEW(uint8_t i) {
 	tele_arrays[2].v[i] = a;
 	(*update_cv_slew)(i, a);
 }
+static void a_CV_OFF(uint8_t i) {
+	int a = pop();
+	tele_arrays[3].v[i] = a;
+	(*update_cv_off)(i, a);
+	(*update_cv)(i, tele_arrays[1].v[i]);
 
+}
+static void a_TR_TIME(uint8_t i) {
+	int a = pop();
+	if(a<1) a = 1;
+	tele_arrays[4].v[i] = a;
+}
+
+
+
+/////////////////////////////////////////////////////////////////
+// DELAY ////////////////////////////////////////////////////////
+
+static tele_command_t delay_c[D_SIZE];
+static int delay_t[D_SIZE];
+static uint8_t delay_count;
+static uint16_t tr_pulse[4];
+
+static void process_delays(uint8_t);
+void clear_delays(void);
+
+static void process_delays(uint8_t v) {
+	for(int i=0;i<D_SIZE;i++) {
+		if(delay_t[i]) {
+			delay_t[i] -= v;
+ 			if(delay_t[i] <= 0) {
+ 				// sprintf(dbg,"\r\ndelay %d", i);
+				// DBG
+				process(&delay_c[i]);
+				delay_t[i] = 0;
+				delay_count--;
+				if(delay_count == 0)
+					(*update_delay)(0);
+			}
+		}
+	}
+
+	for(int i=0;i<4;i++) {
+		if(tr_pulse[i]) {
+			tr_pulse[i] -= v;
+			if(tr_pulse[i] <= 0) {
+				tr_pulse[i] = 0;
+				if(tele_arrays[0].v[i]) tele_arrays[0].v[i] = 0;
+				else tele_arrays[0].v[i] = 1;
+				(*update_tr)(i,tele_arrays[0].v[i]);
+			}
+		}
+	}
+}
+
+void clear_delays(void) {
+	for(int i=0;i<D_SIZE;i++) {
+		delay_t[i] = 0;
+	}
+
+	delay_count = 0;
+}
 
 
 
@@ -390,6 +428,9 @@ void mod_DEL(tele_command_t *c) {
 		i++;
 
 	if(i < D_SIZE) {
+		delay_count++;
+		if(delay_count == 1)
+			(*update_delay)(1);
 		delay_t[i] = a;
 
 		delay_c[i].l = c->l - c->separator - 1;
@@ -404,6 +445,8 @@ void mod_Q(tele_command_t *c) {
 		memcpy(q[q_top].data, &c->data[c->separator+1], q[q_top].l * sizeof(tele_data_t));
 		q[q_top].separator = -1;
 		q_top++;
+		if(q_top == 1)
+			(*update_q)(1);
 	}
 }
 void mod_IF(tele_command_t *c) {
@@ -510,9 +553,10 @@ static void op_P_RM(void);
 static void op_P_PUSH(void);
 static void op_P_POP(void);
 static void op_PN(void);
+static void op_TR_PULSE(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 32
+#define OPS 33
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
 	MAKEOP(SUB, 2, 1,"[A B] SUBTRACT B FROM A"),
@@ -535,8 +579,8 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(N, 1, 1, "TABLE FOR NOTE VALUES"),
 	{"Q.ALL", op_Q_ALL, 0, 0, "Q: EXECUTE ALL"},
 	{"Q.POP", op_Q_POP, 0, 0, "Q: POP LAST"},
-	{"Q.FLUSH", op_Q_CLR, 0, 0, "Q: FLUSH"},
-	{"DELAY.FLUSH", op_DEL_CLR, 0, 0, "DELAY: FLUSH"},
+	{"Q.CLR", op_Q_CLR, 0, 0, "Q: FLUSH"},
+	{"DEL.CLR", op_DEL_CLR, 0, 0, "DELAY: FLUSH"},
 	{"M.RESET", op_M_RESET, 0, 0, "METRO: RESET"},
 	MAKEOP(V, 1, 1, "TO VOLT"),
 	MAKEOP(VV, 2, 1, "TO VOLT WITH PRECISION"),
@@ -545,7 +589,9 @@ static const tele_op_t tele_ops[OPS] = {
 	{"P.RM", op_P_RM, 1, 0, "PATTERN: REMOVE"},
 	{"P.PUSH", op_P_PUSH, 1, 0, "PATTERN: PUSH"},
 	{"P.POP", op_P_POP, 0, 1, "PATTERN: POP"},
-	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"}
+	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"},
+	{"TR.PULSE", op_TR_PULSE, 1, 0, "PULSE TRIGGER"}
+
 };
 
 static void op_ADD() {
@@ -679,15 +725,19 @@ static void op_Q_ALL() {
 	for(int i = 0;i<q_top;i++)
 		process(&q[q_top-i-1]);
 	q_top = 0;
+	(*update_q)(0);
 }
 static void op_Q_POP() {
 	if(q_top) {
 		q_top--;
 		process(&q[q_top]);
+		if(q_top == 0)
+			(*update_q)(0);
 	}
 }
 static void op_Q_CLR() {
 	q_top = 0;
+	(*update_q)(0);
 }
 static void op_DEL_CLR() {
 	clear_delays();
@@ -789,7 +839,17 @@ static void op_PN() {
 		tele_patterns[a].v[b] = c;
 	}
 }
-
+static void op_TR_PULSE() {
+	int a = pop();
+	// saturate and shift
+	if(a < 1) a = 1;
+	else if(a > 4) a = 4;
+	a--;
+	if(tele_arrays[0].v[a]) tele_arrays[0].v[a] = 0;
+	else tele_arrays[0].v[a] = 1;
+	tr_pulse[a] = tele_arrays[4].v[a]; // set time
+	update_tr(a,tele_arrays[0].v[a]);
+}
 
 
 
@@ -1132,7 +1192,6 @@ int tele_get_array(uint8_t a, uint8_t i) {
 
 void tele_set_array(uint8_t a, uint8_t i, uint16_t v) {
 	tele_arrays[a].v[i] = v;
-	odirty++;
 }
 
 void tele_set_val(uint8_t i, uint16_t v) {

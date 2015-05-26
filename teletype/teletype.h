@@ -125,6 +125,15 @@ extern volatile update_cv_t update_cv;
 typedef void (*update_cv_slew_t)(uint8_t, int);
 extern volatile update_cv_slew_t update_cv_slew;
 
+typedef void (*update_delay_t)(uint8_t);
+extern volatile update_delay_t update_delay;
+
+typedef void (*update_q_t)(uint8_t);
+extern volatile update_q_t update_q;
+
+typedef void (*update_cv_off_t)(uint8_t, int v);
+extern volatile update_cv_off_t update_cv_off;
+
 extern char error_detail[16];
 extern int output, output_new;
 

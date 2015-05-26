@@ -63,6 +63,7 @@ u16 adc[4];
 
 typedef struct {
 	u16 now;
+	u16 off;
 	u16 target;
 	u16 slew;
 	u16 step;
@@ -97,9 +98,6 @@ unsigned int metro_time;
 // static nvram_data_t flashy;
 
 
-uint8_t d[4] = {1,3,7,15};
-
-
 #define R_PRESET (1<<0)
 #define R_ACTIVITY (1<<1)
 #define R_INPUT (1<<2)
@@ -112,7 +110,7 @@ uint8_t d[4] = {1,3,7,15};
 uint8_t r_edit_dirty;
 
 static region r_preset = {.w = 96, .h = 8, .x = 0, .y = 0};
-static region r_activity = {.w = 22, .h = 8, .x = 106, .y = 0};
+static region r_activity = {.w = 32, .h = 3, .x = 96, .y = 0};
 static region r_list1 = {.w = 128, .h = 8, .x = 0, .y = 8};
 static region r_list2 = {.w = 128, .h = 8, .x = 0, .y = 16};
 static region r_list3 = {.w = 128, .h = 8, .x = 0, .y = 24};
@@ -151,6 +149,9 @@ static void tele_metro(int, int, uint8_t);
 static void tele_tr(uint8_t i, int v);
 static void tele_cv(uint8_t i, int v);
 static void tele_cv_slew(uint8_t i, int v);
+static void tele_delay(uint8_t i);
+static void tele_q(uint8_t i);
+static void tele_cv_off(uint8_t i, int v);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -290,6 +291,7 @@ static void metroTimer_callback(void* o) {
 
 	for(i=0;i<script[METRO_SCRIPT].l;i++) {
 		process(&script[METRO_SCRIPT].c[i]);
+		activity |= A_METRO;
 	}
 }
 
@@ -586,86 +588,85 @@ static void handler_ScreenRefresh(s32 data) {
 
 		region_fill(&r_activity, 0);
 		
-	/*	a = 1;
+/*		a = 1;
 
 		r_activity.data[ 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 0 + 1 * r_activity.w ] = a;
-		r_activity.data[ 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 1 + 4 * r_activity.w ] = a;
+		r_activity.data[ 1 + 2 * r_activity.w ] = a;
 		r_activity.data[ 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 2 + 1 * r_activity.w ] = a;
-		r_activity.data[ 3 + 3 * r_activity.w ] = a;
-		r_activity.data[ 3 + 4 * r_activity.w ] = a;
+		r_activity.data[ 3 + 2 * r_activity.w ] = a;
 		r_activity.data[ 4 + 0 * r_activity.w ] = a;
-		r_activity.data[ 4 + 1 * r_activity.w ] = a;
-		r_activity.data[ 5 + 3 * r_activity.w ] = a;
-		r_activity.data[ 5 + 4 * r_activity.w ] = a;
+		r_activity.data[ 5 + 2 * r_activity.w ] = a;
 		r_activity.data[ 6 + 0 * r_activity.w ] = a;
-		r_activity.data[ 6 + 1 * r_activity.w ] = a;
-		r_activity.data[ 7 + 3 * r_activity.w ] = a;
-		r_activity.data[ 7 + 4 * r_activity.w ] = a;
+		r_activity.data[ 7 + 2 * r_activity.w ] = a;
+
+		if(activity & A_METRO) a = 15;
+		else a = 1;
+
+		r_activity.data[ 9 + 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 9 + 0 + 1 * r_activity.w ] = a;
+		r_activity.data[ 9 + 0 + 2 * r_activity.w ] = a;
+
 */
 		if(activity & A_SLEW) a = 15;
 		else a = 1;
 
 		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
 		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 0 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 0 + 1 + 1 * r_activity.w ] = a;
-		r_activity.data[ 0 + 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 16 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 16 + 1 + 1 * r_activity.w ] = a;
+		r_activity.data[ 16 + 2 + 0 * r_activity.w ] = a;
 
 		if(activity & A_DELAY) a = 15;
 		else a = 1;
 
 		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
 		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 6 + 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 6 + 1 + 0 * r_activity.w ] = a;
-		r_activity.data[ 6 + 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 6 + 0 + 1 * r_activity.w ] = a;
-		r_activity.data[ 6 + 2 + 1 * r_activity.w ] = a;
-		r_activity.data[ 6 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 6 + 2 + 2 * r_activity.w ] = a;
+		r_activity.data[ 20 + 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 20 + 1 + 0 * r_activity.w ] = a;
+		r_activity.data[ 20 + 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 20 + 0 + 1 * r_activity.w ] = a;
+		r_activity.data[ 20 + 2 + 1 * r_activity.w ] = a;
+		r_activity.data[ 20 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 20 + 2 + 2 * r_activity.w ] = a;
 
 		if(activity & A_Q) a = 15;
 		else a = 1;
 
 		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
 		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 12 + 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 12 + 1 + 0 * r_activity.w ] = a;
-		r_activity.data[ 12 + 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 12 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 12 + 1 + 2 * r_activity.w ] = a;
-		r_activity.data[ 12 + 2 + 2 * r_activity.w ] = a;
+		r_activity.data[ 24 + 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 24 + 1 + 0 * r_activity.w ] = a;
+		r_activity.data[ 24 + 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 24 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 24 + 1 + 2 * r_activity.w ] = a;
+		r_activity.data[ 24 + 2 + 2 * r_activity.w ] = a;
 
 		if(activity & A_X) a = 15;
 		else a = 1;
 
 		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
 		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 18 + 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 18 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 18 + 1 + 1 * r_activity.w ] = a;
-		r_activity.data[ 18 + 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 18 + 2 + 2 * r_activity.w ] = a;
+		r_activity.data[ 28 + 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 28 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 28 + 1 + 1 * r_activity.w ] = a;
+		r_activity.data[ 28 + 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 28 + 2 + 2 * r_activity.w ] = a;
 
 		activity_prev = activity;
+
+		activity &= ~A_METRO;
+		// activity &= ~A_X;
 
 			
 		sdirty++;
 		r_edit_dirty &= ~R_ACTIVITY;
 	}
 	if(r_edit_dirty & R_INPUT) {
+		s[0] = '>';
  		s[1] = ' ';
-		s[3] = ' ';
-		s[2] = '>';
-		s[4] = 0;
+		s[2] = 0;
 
-		if(live) {
-			s[0] = s[1] = '>';
-		}
-		else {
+		if(!live) {
 			if(edit == 8) s[0] = 'M';
 			else if(edit == 9) s[0] = 'I';
 			else s[0] = edit+49;
@@ -873,7 +874,11 @@ static void tele_tr(uint8_t i, int v) {
 }
 
 static void tele_cv(uint8_t i, int v) {
-	aout[i].target = v;
+	aout[i].target = v + aout[i].off;
+	if(aout[i].target < 0)
+		aout[i].target = 0;
+	else if(aout[i].target > 16383)
+		aout[i].target = 16383;
 	aout[i].step = aout[i].slew;
 	aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
 	aout[i].a = aout[i].now<<16;
@@ -886,6 +891,25 @@ static void tele_cv_slew(uint8_t i, int v) {
 		aout[i].slew = 1;
 }
 
+static void tele_delay(uint8_t i) {
+	if(i) {
+		activity |= A_DELAY;
+	}
+	else
+		activity &= ~A_DELAY;
+}
+
+static void tele_q(uint8_t i) {
+	if(i) {
+		activity |= A_Q;
+	}
+	else
+		activity &= ~A_Q;
+}
+
+static void tele_cv_off(uint8_t i, int v) {
+	aout[i].off = v;
+}
 
 
 
@@ -1002,6 +1026,9 @@ int main(void)
 	update_tr = &tele_tr;
 	update_cv = &tele_cv;
 	update_cv_slew = &tele_cv_slew;
+	update_delay = &tele_delay;
+	update_q = &tele_q;
+	update_cv_off = &tele_cv_off;
 
 	while (true) {
 		check_events();
