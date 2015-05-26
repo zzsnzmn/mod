@@ -76,6 +76,7 @@ aout_t aout[4];
 error_t status;
 
 char input[32];
+char input_buffer[32];
 uint8_t pos;
 
 tele_script_t script[10];
@@ -376,11 +377,10 @@ static void handler_HidTimer(s32 data) {
      			// ALT = 4
      			// META = 8
 
-     			// print_dbg("\r\nk: ");
-     			// print_dbg_hex(frame[i])
-     			// print_dbg("\r\nmod: ");
-     			// print_dbg_hex(frame[0]);
-     			
+     			print_dbg("\r\nk: ");
+     			print_dbg_hex(frame[i]);
+     			print_dbg("\r\nmod: ");
+     			print_dbg_hex(frame[0]);
      			switch(frame[i]) {
      				case 0x2B: // tab
      					if(live) {
@@ -487,7 +487,6 @@ static void handler_HidTimer(s32 data) {
      					if(pos < strlen(input)) {
      						pos++;
      					}
-     					
 
      					break;
 
@@ -501,26 +500,67 @@ static void handler_HidTimer(s32 data) {
 								if(live) {
 									edit_line = 4;
 
-									memcpy(&history.c[0], &history.c[1], sizeof(tele_command_t));
-									memcpy(&history.c[1], &history.c[2], sizeof(tele_command_t));
-									memcpy(&history.c[2], &history.c[3], sizeof(tele_command_t));
-									memcpy(&history.c[3], &temp, sizeof(tele_command_t));
+									if(temp.l) {
+										memcpy(&history.c[0], &history.c[1], sizeof(tele_command_t));
+										memcpy(&history.c[1], &history.c[2], sizeof(tele_command_t));
+										memcpy(&history.c[2], &history.c[3], sizeof(tele_command_t));
+										memcpy(&history.c[3], &temp, sizeof(tele_command_t));
 
-									process(&temp);
+										process(&temp);
+									}
 
 									for(n = 0;n < 32;n++)
 			     						input[n] = 0;
 			     					pos = 0;
 								}
 								else {
-									memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
-									if((edit_line == script[edit].l) && (script[edit].l < 4))
-										script[edit].l++;
-									if(edit_line < 3) {
-										edit_line++;
-										strcpy(input,print_command(&script[edit].c[edit_line]));
-		     							pos = strlen(input);
-		     							for(n = pos;n < 32;n++) input[n] = 0;
+									if(temp.l == 0) {	// BLANK LINE
+										if(script[edit].l && script[edit].c[edit_line].l) {
+											print_dbg("\r\nl ");
+											print_dbg_ulong(script[edit].l);
+
+											script[edit].l--;
+
+		     								for(n=edit_line;n<script[edit].l;n++)
+		     									memcpy(&script[edit].c[n], &script[edit].c[n+1], sizeof(tele_command_t));
+
+		     								script[edit].c[script[edit].l].l = 0;
+		     								
+		     								if(edit_line > script[edit].l)
+		     									edit_line = script[edit].l;
+		     								strcpy(input,print_command(&script[edit].c[edit_line]));
+					 						pos = strlen(input);
+					 						// print_dbg(" -> ");
+											// print_dbg_ulong(script[edit].l);
+		     							}
+									}
+									else if(frame[0] == 2 || frame[0] == 0x20) { // SHIFT = INSERT
+										for(n=script[edit].l;n>edit_line;n--) 
+	     									memcpy(&script[edit].c[n], &script[edit].c[n-1], sizeof(tele_command_t));
+
+	     								if(script[edit].l < 4)
+	     									script[edit].l++;
+
+										memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
+										if((edit_line == script[edit].l) && (script[edit].l < 4))
+											script[edit].l++;
+										if(edit_line < 3) {
+											edit_line++;
+											strcpy(input,print_command(&script[edit].c[edit_line]));
+			     							pos = strlen(input);
+			     							for(n = pos;n < 32;n++) input[n] = 0;
+			     						}
+			     					}
+		     						else {
+										memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
+										if((edit_line == script[edit].l) && (script[edit].l < 4))
+											script[edit].l++;
+										if(edit_line < 3) {
+											edit_line++;
+											strcpy(input,print_command(&script[edit].c[edit_line]));
+			     							pos = strlen(input);
+			     							for(n = pos;n < 32;n++) input[n] = 0;
+			     						}
 		     						}
 
 			     					r_edit_dirty |= R_MESSAGE;
@@ -543,19 +583,54 @@ static void handler_HidTimer(s32 data) {
      					break;
 
  					default:
- 						if(pos<31) {
-	     					// print_dbg_char(hid_to_ascii(frame[i], frame[0]));
-	     					n = hid_to_ascii(frame[i], frame[0]);
-	     					if(n) {
-	     						for(int x = 31; x > pos; x--)
-	     							input[x] = input[x-1];
+ 						if(frame[0] == 0) {
+	 						if(pos<31) {
+		     					// print_dbg_char(hid_to_ascii(frame[i], frame[0]));
+		     					n = hid_to_ascii(frame[i], frame[0]);
+		     					if(n) {
+		     						for(int x = 31; x > pos; x--)
+		     							input[x] = input[x-1];
 
-	     						input[pos] = n;
-	     						pos++;
+		     						input[pos] = n;
+		     						pos++;
+		     					}
+		     					// pos++;
+		     					// input[pos] = 0;
 	     					}
-	     					// pos++;
-	     					// input[pos] = 0;
-     					}
+	     				}
+	     				else if(frame[0] == 4 || frame[0] == 0x40) {	// ALT
+	     					if(frame[i] == 0x1b) {	// x CUT
+	     						memcpy(&input_buffer, &input, sizeof(input));
+	     						if(live) {
+	     							for(n = 0;n < 32;n++)
+			     						input[n] = 0;
+			     					pos = 0;
+	     						}
+	     						else {
+	     							if(script[edit].l) {
+	     								script[edit].l--;
+	     								for(n=edit_line;n<script[edit].l;n++)
+	     									memcpy(&script[edit].c[n], &script[edit].c[n+1], sizeof(tele_command_t));
+
+	     								script[edit].c[script[edit].l].l = 0;
+	     								if(edit_line > script[edit].l)
+	     									edit_line = script[edit].l;
+	     								strcpy(input,print_command(&script[edit].c[edit_line]));
+				 						pos = strlen(input);
+	     							}
+
+	     							r_edit_dirty |= R_LIST;
+	     						}
+	     					}
+	     					else if(frame[i] == 0x06) { // c COPY
+	     						memcpy(&input_buffer, &input, sizeof(input));
+	     					}
+	     					else if(frame[i] == 0x19) { // v PASTE
+	     						memcpy(&input, &input_buffer, sizeof(input));
+	     						pos = strlen(input);
+	     					}
+	     				}
+
      					break;
      			}
 

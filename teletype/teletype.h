@@ -34,13 +34,13 @@ typedef struct {
 } tele_data_t;
 
 typedef struct {
-	char l;
+	uint8_t l;
 	signed char separator;
 	tele_data_t data[COMMAND_MAX_LENGTH];
 } tele_command_t;
 
 typedef struct {
-	char l;
+	uint8_t l;
 	tele_command_t c[SCRIPT_MAX_COMMANDS];
 } tele_script_t;
 
