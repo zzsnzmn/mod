@@ -29,7 +29,6 @@ hotkeys
 
 screen refresh
 	activity monitor: implement X for event overrun
-	cursor-- rewrite region_string with extra index (for b/g highlight)
 	optimize list to single region
 
 

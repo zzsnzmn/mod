@@ -371,10 +371,17 @@ static void handler_HidTimer(s32 data) {
      			break;
 
      		if(frame_compare(frame[i]) == false) {
-     			// print_dbg("\r\nk: ");
-     			// print_dbg_hex(frame[i]);
-     			switch(frame[i]) {
+     			// CTRL = 1
+     			// SHIFT = 2
+     			// ALT = 4
+     			// META = 8
 
+     			// print_dbg("\r\nk: ");
+     			// print_dbg_hex(frame[i])
+     			// print_dbg("\r\nmod: ");
+     			// print_dbg_hex(frame[0]);
+     			
+     			switch(frame[i]) {
      				case 0x2B: // tab
      					if(live) {
      						live = 0;
@@ -463,12 +470,28 @@ static void handler_HidTimer(s32 data) {
 
      				case BACKSPACE:
      					if(pos) {
-     						input[--pos] = 0;
+     						pos--;
+     						// input[pos] = ' ';
+     						for(int x = pos; x < 31; x++)
+     							input[x] = input[x+1];
 	     				}
      					break;
 
+     				case 0x50: // back
+     					if(pos) {
+     						pos--;
+     					}
+     					break;
+
+     				case 0x4f: // forward
+     					if(pos < strlen(input)) {
+     						pos++;
+     					}
+     					
+
+     					break;
+
      				case RETURN:
-     					// print_dbg("\n\r");
      					status = parse(input);
 
      					if(status == E_OK) {
@@ -523,8 +546,13 @@ static void handler_HidTimer(s32 data) {
  						if(pos<31) {
 	     					// print_dbg_char(hid_to_ascii(frame[i], frame[0]));
 	     					n = hid_to_ascii(frame[i], frame[0]);
-	     					if(n)
-	     						input[pos++] = n;
+	     					if(n) {
+	     						for(int x = 31; x > pos; x--)
+	     							input[x] = input[x-1];
+
+	     						input[pos] = n;
+	     						pos++;
+	     					}
 	     					// pos++;
 	     					// input[pos] = 0;
      					}
@@ -673,11 +701,12 @@ static void handler_ScreenRefresh(s32 data) {
 		}
 
 		strcat(s,input);
-		strcat(s,"_");
+		strcat(s," ");
 
 		region_fill(&r_input, 0);
 		// region_string(&r_input, s, 0, 0, 0xf, 0, 0);
-		font_string_region_clip(&r_input, s, 0, 0, 0xf, 0);
+		// font_string_region_clip(&r_input, s, 0, 0, 0xf, 0);
+		font_string_region_clip_hi(&r_input, s, 0, 0, 0xf, 0, pos+2);
 		sdirty++;
 		r_edit_dirty &= ~R_INPUT;
 	}
