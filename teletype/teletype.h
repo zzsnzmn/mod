@@ -96,13 +96,14 @@ error_t validate(tele_command_t *c);
 void process(tele_command_t *c);
 char * print_command(const tele_command_t *c);
 
-void tele_tick(void);
+void tele_tick(uint8_t);
 
 void clear_delays(void);
 
+void tele_init(void);
+
 int tele_get_array(uint8_t a, uint8_t i);
 void tele_set_array(uint8_t a, uint8_t i, uint16_t v);
-
 void tele_set_val(uint8_t i, uint16_t v);
 
 const char * tele_error(error_t);

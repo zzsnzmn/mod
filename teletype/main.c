@@ -39,11 +39,16 @@
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
 
+#define RATE_CLOCK 10
+#define RATE_CV 6
+
 #define A_METRO 0x1
 #define A_TR 0x2
 #define A_SLEW 0x4
 #define A_DELAY 0x8
-#define A_Q 0xf
+#define A_Q 0x10
+#define A_X 0x20
+
 
 u8 preset, preset_dirty, preset_mode, preset_select, front_timer;
 char preset_name[17] = "NAMED";
@@ -51,8 +56,8 @@ char preset_name[17] = "NAMED";
 u8 glyph[8];
 
 
-u8 clock_phase;
-u16 clock_time, clock_temp;
+// u8 clock_phase;
+// u16 clock_time, clock_temp;
 
 u16 adc[4];
 
@@ -107,7 +112,7 @@ uint8_t d[4] = {1,3,7,15};
 uint8_t r_edit_dirty;
 
 static region r_preset = {.w = 96, .h = 8, .x = 0, .y = 0};
-static region r_activity = {.w = 32, .h = 8, .x = 96, .y = 0};
+static region r_activity = {.w = 22, .h = 8, .x = 106, .y = 0};
 static region r_list1 = {.w = 128, .h = 8, .x = 0, .y = 8};
 static region r_list2 = {.w = 128, .h = 8, .x = 0, .y = 16};
 static region r_list3 = {.w = 128, .h = 8, .x = 0, .y = 24};
@@ -227,13 +232,13 @@ static void clockTimer_callback(void* o) {
 	// event_post(&e);
 	// print_dbg("\r\ntimer.");
 
-	clock_phase++;
-	if(clock_phase>1) clock_phase=0;
+	// clock_phase++;
+	// if(clock_phase>1) clock_phase=0;
 	// (*clock_pulse)(clock_phase);
 
-	clock_time++;
+	// clock_time++;
 
-	tele_tick();
+	tele_tick(RATE_CLOCK);
 
 	// i2c_master_tx(d);
 }
@@ -314,8 +319,8 @@ static void handler_Front(s32 data) {
 static void handler_PollADC(s32 data) {
 	adc_convert(&adc);
 
-	tele_set_val(3,adc[0]);	// IN
-	tele_set_val(4,adc[1]);	// PARAM
+	tele_set_val(V_IN,adc[0]<<2);	// IN
+	tele_set_val(V_PARAM,adc[1]<<2);	// PARAM
 
 	// print_dbg("\r\nadc:\t"); print_dbg_ulong(adc[0]);
 	// print_dbg("\t"); print_dbg_ulong(adc[1]);
@@ -603,12 +608,47 @@ static void handler_ScreenRefresh(s32 data) {
 		if(activity & A_SLEW) a = 15;
 		else a = 1;
 
-		r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
-		r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 16 + 2 + 2 * r_activity.w ] = a;
-		r_activity.data[ 16 + 3 + 1 * r_activity.w ] = a;
-		r_activity.data[ 16 + 4 + 0 * r_activity.w ] = a;
+		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
+		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
+		r_activity.data[ 0 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 0 + 1 + 1 * r_activity.w ] = a;
+		r_activity.data[ 0 + 2 + 0 * r_activity.w ] = a;
 
+		if(activity & A_DELAY) a = 15;
+		else a = 1;
+
+		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
+		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
+		r_activity.data[ 6 + 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 6 + 1 + 0 * r_activity.w ] = a;
+		r_activity.data[ 6 + 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 6 + 0 + 1 * r_activity.w ] = a;
+		r_activity.data[ 6 + 2 + 1 * r_activity.w ] = a;
+		r_activity.data[ 6 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 6 + 2 + 2 * r_activity.w ] = a;
+
+		if(activity & A_Q) a = 15;
+		else a = 1;
+
+		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
+		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
+		r_activity.data[ 12 + 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 12 + 1 + 0 * r_activity.w ] = a;
+		r_activity.data[ 12 + 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 12 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 12 + 1 + 2 * r_activity.w ] = a;
+		r_activity.data[ 12 + 2 + 2 * r_activity.w ] = a;
+
+		if(activity & A_X) a = 15;
+		else a = 1;
+
+		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
+		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
+		r_activity.data[ 18 + 0 + 0 * r_activity.w ] = a;
+		r_activity.data[ 18 + 0 + 2 * r_activity.w ] = a;
+		r_activity.data[ 18 + 1 + 1 * r_activity.w ] = a;
+		r_activity.data[ 18 + 2 + 0 * r_activity.w ] = a;
+		r_activity.data[ 18 + 2 + 2 * r_activity.w ] = a;
 
 		activity_prev = activity;
 
@@ -841,7 +881,9 @@ static void tele_cv(uint8_t i, int v) {
 }
 
 static void tele_cv_slew(uint8_t i, int v) {
-	aout[i].slew = v;
+	aout[i].slew = v / RATE_CV;
+	if(aout[i].slew == 0)
+		aout[i].slew = 1;
 }
 
 
@@ -928,12 +970,11 @@ int main(void)
 	spi_write(SPI,0xff);
 	spi_unselectChip(SPI,DAC_SPI);
 
-	timer_add(&clockTimer,10,&clockTimer_callback, NULL);
-	timer_add(&refreshTimer,63,&refreshTimer_callback, NULL);
-	timer_add(&cvTimer,6,&cvTimer_callback, NULL);
-	timer_add(&cvTimer,100,&cvTimer_callback, NULL);
-	timer_add(&keyTimer,51,&keyTimer_callback, NULL);
-	timer_add(&adcTimer,61,&adcTimer_callback, NULL);
+	timer_add(&clockTimer, RATE_CLOCK, &clockTimer_callback, NULL);
+	timer_add(&refreshTimer, 63, &refreshTimer_callback, NULL);
+	timer_add(&cvTimer, RATE_CV, &cvTimer_callback, NULL);
+	timer_add(&keyTimer, 51, &keyTimer_callback, NULL);
+	timer_add(&adcTimer, 61, &adcTimer_callback, NULL);
 	
 	metro_act = 1;
 	metro_time = 1000;
@@ -943,6 +984,8 @@ int main(void)
 	render_init();
 
 	clear_delays();
+
+	tele_init();
 
 	aout[0].slew = 1;
 	aout[1].slew = 1;

@@ -63,18 +63,20 @@ const char * to_v(int);
 // DELAY ////////////////////////////////////////////////////////
 
 static tele_command_t delay_c[D_SIZE];
-static uint8_t delay_t[D_SIZE];
+static int delay_t[D_SIZE];
 
-static void process_delays(void);
+static void process_delays(uint8_t);
 void clear_delays(void);
 
-static void process_delays() {
+static void process_delays(uint8_t v) {
 	for(int i=0;i<D_SIZE;i++) {
 		if(delay_t[i]) {
- 			if(--delay_t[i] == 0) {
+			delay_t[i] -= v;
+ 			if(delay_t[i] <= 0) {
  				// sprintf(dbg,"\r\ndelay %d", i);
 				// DBG
 				process(&delay_c[i]);
+				delay_t[i] = 0;
 			}
 		}
 	}
@@ -162,19 +164,22 @@ static tele_var_t tele_vars[VARS] = {
 static void v_M(uint8_t n) {
 	if(top == 0)
 		push(tele_vars[V_M].v);
-	else
+	else {
 		tele_vars[V_M].v = pop();
-
-	(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+		if(tele_vars[V_M].v < 10) tele_vars[V_M].v = 10;
+		(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+	}
 }
 
 static void v_M_ACT(uint8_t n) {
 	if(top == 0)
 		push(tele_vars[V_M_ACT].v);
-	else
+	else {
 		tele_vars[V_M_ACT].v = pop();
-
-	(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+		if(tele_vars[V_M_ACT].v != 0)
+			tele_vars[V_M_ACT].v = 1;
+		(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
+	}
 }
 
 static void v_P_N(uint8_t n) {
@@ -345,12 +350,25 @@ static void a_CV_SLEW(uint8_t i) {
 // MOD //////////////////////////////////////////////////////////
 
 static void mod_PROB(tele_command_t *);
-static void mod_DELAY(tele_command_t *);
+static void mod_DEL(tele_command_t *);
 static void mod_Q(tele_command_t *);
 static void mod_IF(tele_command_t *);
 static void mod_ELIF(tele_command_t *);
 static void mod_ELSE(tele_command_t *);
 static void mod_ITER (tele_command_t *);
+
+#define MAKEMOD(name, params, doc) {#name, mod_ ## name, params, doc}
+#define MODS 7
+static const tele_mod_t tele_mods[MODS] = {
+	MAKEMOD(PROB, 1, "PROBABILITY TO CONTINUE EXECUTING LINE"),
+	MAKEMOD(DEL, 1, "DELAY THIS COMMAND"),
+	MAKEMOD(Q, 0, "ADD COMMAND TO QUEUE"),
+	MAKEMOD(IF, 1, "IF CONDITION FOR COMMAND"),
+	MAKEMOD(ELIF, 1, "ELSE IF"),
+	MAKEMOD(ELSE, 0, "ELSE"),
+	MAKEMOD(ITER, 2, "LOOPED COMMAND WITH ITERATION")
+};
+
 
 void mod_PROB(tele_command_t *c) { 
 	int a = pop();
@@ -364,7 +382,7 @@ void mod_PROB(tele_command_t *c) {
 		process(&cc);
 	}
 }
-void mod_DELAY(tele_command_t *c) {
+void mod_DEL(tele_command_t *c) {
 	int i = 0;
 	int a = pop();
 
@@ -454,17 +472,6 @@ void mod_ITER(tele_command_t *c) {
 	}
 }
 
-#define MAKEMOD(name, params, doc) {#name, mod_ ## name, params, doc}
-#define MODS 7
-static const tele_mod_t tele_mods[MODS] = {
-	MAKEMOD(PROB, 1, "PROBABILITY TO CONTINUE EXECUTING LINE"),
-	MAKEMOD(DELAY, 1, "DELAY THIS COMMAND"),
-	MAKEMOD(Q, 0, "ADD COMMAND TO QUEUE"),
-	MAKEMOD(IF, 1, "IF CONDITION FOR COMMAND"),
-	MAKEMOD(ELIF, 1, "ELSE IF"),
-	MAKEMOD(ELSE, 0, "ELSE"),
-	MAKEMOD(ITER, 2, "LOOPED COMMAND WITH ITERATION")
-};
 
 
 
@@ -492,14 +499,14 @@ static void op_TR_TOG(void);
 static void op_N(void);
 static void op_Q_ALL(void);
 static void op_Q_POP(void);
-static void op_Q_FLUSH(void);
-static void op_DELAY_FLUSH(void);
+static void op_Q_CLR(void);
+static void op_DEL_CLR(void);
 static void op_M_RESET(void);
 static void op_V(void);
 static void op_VV(void);
 static void op_P(void);
 static void op_P_INS(void);
-static void op_P_DEL(void);
+static void op_P_RM(void);
 static void op_P_PUSH(void);
 static void op_P_POP(void);
 static void op_PN(void);
@@ -528,14 +535,14 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(N, 1, 1, "TABLE FOR NOTE VALUES"),
 	{"Q.ALL", op_Q_ALL, 0, 0, "Q: EXECUTE ALL"},
 	{"Q.POP", op_Q_POP, 0, 0, "Q: POP LAST"},
-	{"Q.FLUSH", op_Q_FLUSH, 0, 0, "Q: FLUSH"},
-	{"DELAY.FLUSH", op_DELAY_FLUSH, 0, 0, "DELAY: FLUSH"},
+	{"Q.FLUSH", op_Q_CLR, 0, 0, "Q: FLUSH"},
+	{"DELAY.FLUSH", op_DEL_CLR, 0, 0, "DELAY: FLUSH"},
 	{"M.RESET", op_M_RESET, 0, 0, "METRO: RESET"},
 	MAKEOP(V, 1, 1, "TO VOLT"),
 	MAKEOP(VV, 2, 1, "TO VOLT WITH PRECISION"),
 	{"P", op_P, 1, 1, "PATTERN: GET/SET"},
 	{"P.INS", op_P_INS, 2, 0, "PATTERN: INSERT"},
-	{"P.DEL", op_P_DEL, 1, 0, "PATTERN: DELETE"},
+	{"P.RM", op_P_RM, 1, 0, "PATTERN: REMOVE"},
 	{"P.PUSH", op_P_PUSH, 1, 0, "PATTERN: PUSH"},
 	{"P.POP", op_P_POP, 0, 1, "PATTERN: POP"},
 	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"}
@@ -572,7 +579,7 @@ static void op_RRAND() {
 		min = b;
 		max = a;
 	}
-	range = max - min;
+	range = max - min + 1;
 	if(range == 0) push(a);
 	else
 		push(rand() % range + min);
@@ -679,10 +686,10 @@ static void op_Q_POP() {
 		process(&q[q_top]);
 	}
 }
-static void op_Q_FLUSH() {
+static void op_Q_CLR() {
 	q_top = 0;
 }
-static void op_DELAY_FLUSH() {
+static void op_DEL_CLR() {
 	clear_delays();
 }
 static void op_M_RESET() {
@@ -734,7 +741,7 @@ static void op_P_INS() {
 
 	tele_patterns[pn].v[a] = b;
 }
-static void op_P_DEL() {
+static void op_P_RM() {
 	int a, i;
 	a = pop();
 
@@ -1133,12 +1140,24 @@ void tele_set_val(uint8_t i, uint16_t v) {
 }
 
 
-void tele_tick() {
-	process_delays();
+void tele_tick(uint8_t i) {
+	process_delays(i);
 
 	// inc time
-	if(tele_vars[2].v)
-		tele_vars[1].v++;
+	if(tele_vars[V_TIME_ACT].v)
+		tele_vars[V_TIME].v += i;
+}
+
+void tele_init() {
+	u8 i;
+
+	for(i=0;i<4;i++) {
+		tele_patterns[i].i = 0;
+		tele_patterns[i].l = 0;
+		tele_patterns[i].wrap = 1;
+		tele_patterns[i].start = 0;
+		tele_patterns[i].end = 63;
+	}
 }
 
 

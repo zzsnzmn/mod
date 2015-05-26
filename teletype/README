@@ -15,17 +15,15 @@ new error: sep in wrong place (index 0)
 
 ((((((((((((((((((((hardware))))))))))))))))))))
 
+
 script edit: proper deletion of line
+shift-enter to insert command
 
 screen refresh
 	activity monitor
 	cursor-- rewrite region_string with extra index (for b/g highlight)
 		(or-- making a formatting version with % interjection)
 	optimize list to single region?
-	indicate NEW message (brighter)
-
-time based systems
-	normalize param values (make units of slew readable, delay, etc)
 
 
 i2c
@@ -40,6 +38,8 @@ flash
 
 move DOC strings to flash?
 
+param insertion
+
 
 
 
@@ -47,36 +47,6 @@ move DOC strings to flash?
 
 TR.PULSE 1-4
 	interaction with manual set high/low?
-
-
-(((pattern funcs))) N = four possible patterns
-
- P I (X)			ignores LENGTH
-
- P.INS I X	insert X at position I (increases LENGTH)
- P.DEL I 		delete at specified I (decreases LENGTH)
-
- P.PUSH X 		add X to end (with respect to LENGTH)
- P.POP			return/remove last element
-
- (add/remove just use p.insert p.i )
-
-get/set VAR
-
- P.N 			N pattern to work with
-
- P.L 		manually change length. non-destructive.
-
- P.I 			INDEX
- P.WRAP
- P.START
- P.END
- P.HERE
- P.NEXT
- P.PREV
-
-
- PN n i (x)
 
 
 ((((((((((((((vars))))))))))))))
