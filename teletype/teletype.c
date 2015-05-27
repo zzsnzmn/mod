@@ -7,6 +7,7 @@
 #include "teletype.h"
 #include "table.h"
 #include "util.h"
+#include "ii.h"
 
 #ifdef SIM
 #define DBG printf("%s",dbg);
@@ -58,6 +59,7 @@ volatile update_cv_slew_t update_cv_slew;
 volatile update_delay_t update_delay;
 volatile update_q_t update_q;
 volatile update_cv_off_t update_cv_off;
+volatile update_ii_t update_ii;
 
 
 const char * to_v(int);
@@ -87,7 +89,38 @@ void push(int data) {
 
 
 /////////////////////////////////////////////////////////////////
-// VARS ARRAYS //////////////////////////////////////////////////
+// VARS ARRAYS KEYS /////////////////////////////////////////////
+
+
+#define KEYS 25
+static tele_key_t tele_keys[KEYS] = {
+	{"WW.PRESET",WW_PRESET},
+	{"WW.POS",WW_POS},
+	{"WW.SYNC",WW_SYNC},
+	{"WW.START",WW_START},
+	{"WW.END",WW_END},
+	{"WW.PMODE",WW_PMODE},
+	{"WW.PATTERN",WW_PATTERN},
+	{"WW.QPATTERN",WW_QPATTERN},
+	{"WW.MUTE1",WW_MUTE1},
+	{"WW.MUTE2",WW_MUTE2},
+	{"WW.MUTE3",WW_MUTE3},
+	{"WW.MUTE4",WW_MUTE4},
+	{"WW.MUTEA",WW_MUTEA},
+	{"WW.MUTEB",WW_MUTEB},
+	{"MP.PRESET",MP_PRESET},
+	{"MP.RESET",MP_RESET},
+	{"ES.PRESET",ES_PRESET},
+	{"ES.RESET",ES_RESET},
+	{"ES.PATTERN",ES_PATTERN},
+	{"ES.TRANS",ES_TRANS},
+	{"ES.STOP",ES_STOP},
+	{"ES.SH1",ES_SH1},
+	{"ES.SH2",ES_SH2},
+	{"ES.SH3",ES_SH3},
+	{"ES.SH4",ES_SH4}
+};
+
 
 // {NAME,VAL}
 
@@ -554,9 +587,10 @@ static void op_P_PUSH(void);
 static void op_P_POP(void);
 static void op_PN(void);
 static void op_TR_PULSE(void);
+static void op_II(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 33
+#define OPS 34
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
 	MAKEOP(SUB, 2, 1,"[A B] SUBTRACT B FROM A"),
@@ -590,8 +624,8 @@ static const tele_op_t tele_ops[OPS] = {
 	{"P.PUSH", op_P_PUSH, 1, 0, "PATTERN: PUSH"},
 	{"P.POP", op_P_POP, 0, 1, "PATTERN: POP"},
 	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"},
-	{"TR.PULSE", op_TR_PULSE, 1, 0, "PULSE TRIGGER"}
-
+	{"TR.PULSE", op_TR_PULSE, 1, 0, "PULSE TRIGGER"},
+	{"II", op_II, 2, 0, "II"}
 };
 
 static void op_ADD() {
@@ -850,7 +884,11 @@ static void op_TR_PULSE() {
 	tr_pulse[a] = tele_arrays[4].v[a]; // set time
 	update_tr(a,tele_arrays[0].v[a]);
 }
-
+static void op_II() {
+	int a = pop();
+	int b = pop();
+	update_ii(a,b);
+}
 
 
 /////////////////////////////////////////////////////////////////
@@ -951,6 +989,24 @@ error_t parse(char *cmd) {
 			    }
 			}
 
+			if(i == -1) {
+				// CHECK AGAINST KEY
+			    i = KEYS;
+
+			    while(i--) {
+			  //   	print_dbg("\r\nmods '");
+					// print_dbg(tele_mods[i].name);
+					// print_dbg("'");
+
+			        if(!strcmp(s,tele_keys[i].name)) {
+	 					temp.data[n].t = KEY;
+						temp.data[n].v = i;
+						// sprintf(dbg,"f(%d) ", temp.data[n].v);
+			            break;
+			        }
+			    }
+			}
+
 		    if(i == -1) {
 		    	strcpy(error_detail, s);
 		    	return E_PARSE;
@@ -1022,7 +1078,7 @@ error_t validate(tele_command_t *c) {
 
 		// RIGHT (get)
 		else if(n && c->data[n-1].t != SEP) {
-			if(c->data[n].t == NUMBER || c->data[n].t == VAR) {
+			if(c->data[n].t == NUMBER || c->data[n].t == VAR ||  c->data[n].t == KEY) {
 				h++;
 			}
 			else if(c->data[n].t == ARRAY) {
@@ -1035,7 +1091,7 @@ error_t validate(tele_command_t *c) {
 		}
 		// LEFT (set)
 		else {
-			if(c->data[n].t == NUMBER) {
+			if(c->data[n].t == NUMBER || c->data[n].t == KEY) {
 				h++;
 			}
 			else if(c->data[n].t == VAR) {
@@ -1122,6 +1178,9 @@ void process(tele_command_t *c) {
 					tele_arrays[c->data[n].v].v[i] = pop();
 			}
 		}
+		else if(c->data[n].t == KEY) {
+			push(tele_keys[c->data[n].v].v);
+		}
 	}
 
 	// PRINT DEBUG OUTPUT IF VAL LEFT ON STACK
@@ -1168,6 +1227,10 @@ char * print_command(const tele_command_t *c) {
 				break;
 			case SEP:
 				*p = ':';
+				break;
+			case KEY:
+				strcpy(p,tele_keys[c->data[n].v].name);
+				p += strlen(tele_keys[c->data[n].v].name) - 1;
 				break;
 			default:
 				break;

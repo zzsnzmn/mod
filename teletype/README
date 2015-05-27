@@ -16,21 +16,9 @@ new error: sep in wrong place (index 0)
 ((((((((((((((((((((hardware))))))))))))))))))))
 
 
-editing
-	knob-read insertion
-
-hotkeys
-	manual TR
-	kill timers/slew
-	tr mute?
-
 screen refresh
 	activity monitor: implement X for event overrun
 	optimize list to single region
-
-
-i2c
-	CONST vals
 
 SPREADSHEET
 
@@ -42,6 +30,13 @@ flash
 
 move DOC strings to flash?
 
+editing
+	knob-read insertion
+
+hotkeys
+	manual TR
+	kill timers/slew
+	tr mute?
 
 
 

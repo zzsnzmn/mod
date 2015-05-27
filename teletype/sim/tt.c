@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 			error_detail[0] = 0;
 		}
 
-		tele_tick();
+		// tele_tick();
 	}
 	while(in[0] != 10);
 

@@ -26,7 +26,7 @@ typedef enum {
 	E_NEED_SEP
 } error_t;
 
-typedef enum {NUMBER, MOD, SEP, OP, VAR, ARRAY, PAT} tele_word_t;
+typedef enum {NUMBER, MOD, SEP, OP, VAR, ARRAY, KEY} tele_word_t;
 
 typedef struct {
 	tele_word_t t;
@@ -50,6 +50,11 @@ typedef struct {
 	int v;
 	tele_word_t t;
 } tele_var_t;
+
+typedef struct {
+	const char *name;
+	int v;
+} tele_key_t;
 
 typedef struct {
 	const char *name;
@@ -133,6 +138,9 @@ extern volatile update_q_t update_q;
 
 typedef void (*update_cv_off_t)(uint8_t, int v);
 extern volatile update_cv_off_t update_cv_off;
+
+typedef void (*update_ii_t)(uint8_t, int);
+extern volatile update_ii_t update_ii;
 
 extern char error_detail[16];
 extern int output, output_new;

@@ -87,6 +87,8 @@ uint8_t live;
 uint8_t activity;
 uint8_t activity_prev;
 
+uint8_t ii_i;
+int ii_d;
 
 uint8_t metro_act;
 unsigned int metro_time;
@@ -137,6 +139,7 @@ static void handler_HidDisconnect(s32 data);
 static void handler_HidPacket(s32 data);
 static void handler_Trigger(s32 data);
 static void handler_ScreenRefresh(s32 data);
+static void handler_II(s32 data);
 
 
 static u8 flash_is_fresh(void);
@@ -153,6 +156,7 @@ static void tele_cv_slew(uint8_t i, int v);
 static void tele_delay(uint8_t i);
 static void tele_q(uint8_t i);
 static void tele_cv_off(uint8_t i, int v);
+static void tele_ii(uint8_t i, int d);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -377,10 +381,10 @@ static void handler_HidTimer(s32 data) {
      			// ALT = 4
      			// META = 8
 
-     			print_dbg("\r\nk: ");
-     			print_dbg_hex(frame[i]);
-     			print_dbg("\r\nmod: ");
-     			print_dbg_hex(frame[0]);
+     			// print_dbg("\r\nk: ");
+     			// print_dbg_hex(frame[i]);
+     			// print_dbg("\r\nmod: ");
+     			// print_dbg_hex(frame[0]);
      			switch(frame[i]) {
      				case 0x2B: // tab
      					if(live) {
@@ -874,21 +878,29 @@ static void handler_ScreenRefresh(s32 data) {
 	}
 }
 
+static void handler_II(s32 data) {
+	uint8_t i = data >> 16;
+	int d = data & 0xff;
+	uint8_t addr = data & 0xf0;
+	i2c_master_tx(addr, i, d);
+}
+
 
 
 
 // assign event handlers
 static inline void assign_main_event_handlers(void) {
-	app_event_handlers[ kEventFront ]	= &handler_Front;
+	app_event_handlers[ kEventFront ] = &handler_Front;
 	app_event_handlers[ kEventPollADC ]	= &handler_PollADC;
 	app_event_handlers[ kEventKeyTimer ] = &handler_KeyTimer;
 	app_event_handlers[ kEventSaveFlash ] = &handler_SaveFlash;
-	app_event_handlers[ kEventHidConnect ]	= &handler_HidConnect;
-	app_event_handlers[ kEventHidDisconnect ]	= &handler_HidDisconnect;
-	app_event_handlers[ kEventHidPacket ]	= &handler_HidPacket;
-	app_event_handlers[ kEventHidTimer ]	= &handler_HidTimer;
+	app_event_handlers[ kEventHidConnect ] = &handler_HidConnect;
+	app_event_handlers[ kEventHidDisconnect ] = &handler_HidDisconnect;
+	app_event_handlers[ kEventHidPacket ] = &handler_HidPacket;
+	app_event_handlers[ kEventHidTimer ] = &handler_HidTimer;
 	app_event_handlers[ kEventTrigger ]	= &handler_Trigger;
-	app_event_handlers[ kEventScreenRefresh ]	= &handler_ScreenRefresh;
+	app_event_handlers[ kEventScreenRefresh ] = &handler_ScreenRefresh;
+	app_event_handlers[ kEventII ] = &handler_II;
 }
 
 // app event loop
@@ -1015,6 +1027,14 @@ static void tele_cv_off(uint8_t i, int v) {
 	aout[i].off = v;
 }
 
+static void tele_ii(uint8_t i, int d) {
+	static event_t e;
+	e.type = kEventII;
+	e.data = (i<<16) + d;
+	event_post(&e);
+}
+
+
 
 
 
@@ -1053,7 +1073,7 @@ int main(void)
 
 	init_oled();
 
-	init_i2c();
+	init_i2c_master();
 
 	print_dbg("\r\n\n// teletype! //////////////////////////////// ");
 	// print_dbg_ulong(sizeof(flashy));
@@ -1133,6 +1153,7 @@ int main(void)
 	update_delay = &tele_delay;
 	update_q = &tele_q;
 	update_cv_off = &tele_cv_off;
+	update_ii = &tele_ii;
 
 	while (true) {
 		check_events();

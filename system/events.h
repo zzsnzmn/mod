@@ -36,8 +36,7 @@ typedef enum {
   kEventScreenRefresh,
   // Trigger EVENT (8 digital inputs)
   kEventTrigger,
-
-  kEventI2C,
+  kEventII,
 
   /// dummy/count
   kNumEventTypes,
