@@ -1,8 +1,9 @@
 #ifndef _TELETYPE_H_
 #define _TELETYPE_H_
 
-#define SCRIPT_MAX_COMMANDS 4
-#define COMMAND_MAX_LENGTH 10
+#define SCRIPT_MAX_COMMANDS 6
+#define SCRIPT_MAX_COMMANDS_ 5
+#define COMMAND_MAX_LENGTH 12
 #define STACK_SIZE 8
 #define Q_SIZE 8
 #define D_SIZE 8
@@ -12,7 +13,7 @@
 #define TRUE 1
 #define FALSE 0
 
-enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D};
+enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O};
 
 typedef enum { 
 	E_OK,
@@ -74,18 +75,9 @@ typedef struct {
 	const char *name;
 	void (*func)(void);
 	char params;
-	char returns;
+	int8_t returns;
 	const char* doc;
 } tele_op_t;
-
-typedef struct {
-	const char *name;
-	void (*func)(uint8_t);
-	char lparams;
-	char rparams;
-	char lreturns;
-	char rreturns;
-} tele_pat_t;
 
 typedef struct {
 	int8_t i;

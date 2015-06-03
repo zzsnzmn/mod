@@ -15,6 +15,9 @@ u16 rotl(u16 value, u16 shift) {
 
 
 // http://www.jb.man.ac.uk/~slowe/cpp/itoa.html
+// http://embeddedgurus.com/stack-overflow/2009/06/division-of-integers-by-constants/
+// http://codereview.blogspot.com/2009/06/division-of-integers-by-constants.html
+// http://homepage.cs.uiowa.edu/~jones/bcd/divide.html
 /**
 	 * C++ version 0.4 char* style "itoa":
 	 * Written by Lukás Chmela
@@ -22,19 +25,30 @@ u16 rotl(u16 value, u16 shift) {
 	 */
 char* itoa(int value, char* result, int base) {
 	// check that the base if valid
-	if (base < 2 || base > 36) { *result = '\0'; return result; }
+	// removed for optimization
+	// if (base < 2 || base > 36) { *result = '\0'; return result; }
 
 	char* ptr = result, *ptr1 = result, tmp_char;
 	int tmp_value;
+	uint8_t inv = 0;
+
+	// add: opt crashes on negatives
+	if(value<0) {
+		value = -value;
+		inv++;
+	}
 
 	do {
 		tmp_value = value;
-		value /= base;
+		// opt-hack for base 10 assumed
+		// value = (((uint16_t)value * (uint16_t)0xCD) >> 8) >> 3;
+		value = (((uint32_t)value * (uint32_t)0xCCCD) >> 16) >> 3;
+		// value /= base;
 		*ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
 	} while ( value );
 
 	// Apply negative sign
-	if (tmp_value < 0) *ptr++ = '-';
+	if(inv) *ptr++ = '-';
 	*ptr-- = '\0';
 	while(ptr1 < ptr) {
 		tmp_char = *ptr;

@@ -34,30 +34,15 @@
 #include "conf_board.h"
 #include "teletype.h"
 
-#define FIRSTRUN_KEY 0x22
-
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
 
 #define RATE_CLOCK 10
 #define RATE_CV 6
 
-#define A_METRO 0x1
-#define A_TR 0x2
-#define A_SLEW 0x4
-#define A_DELAY 0x8
-#define A_Q 0x10
-#define A_X 0x20
-
 
 u8 preset, preset_dirty, preset_mode, preset_select, front_timer;
 char preset_name[17] = "NAMED";
-
-u8 glyph[8];
-
-
-// u8 clock_phase;
-// u16 clock_time, clock_temp;
 
 u16 adc[4];
 
@@ -77,49 +62,63 @@ error_t status;
 
 char input[32];
 char input_buffer[32];
+int num_buffer;
 uint8_t pos;
 
 tele_script_t script[10];
 tele_script_t history;
-uint8_t edit, edit_line;
-uint8_t live;
-
-uint8_t activity;
-uint8_t activity_prev;
-
-uint8_t ii_i;
-int ii_d;
+uint8_t edit, edit_line, edit_index, edit_pattern, offset_index;
 
 uint8_t metro_act;
 unsigned int metro_time;
 
-// typedef const struct {
-// } nvram_data_t;
+
+#define FIRSTRUN_KEY 0x22
+
+typedef const struct {
+	tele_script_t script[10];
+	uint8_t fresh;
+} nvram_data_t;
 
 // NVRAM data structure located in the flash array.
-// __attribute__((__section__(".flash_nvram")))
-// static nvram_data_t flashy;
+__attribute__((__section__(".flash_nvram")))
+static nvram_data_t f;
 
+
+
+#define M_LIVE 0
+#define M_EDIT 1
+#define M_TRACK 2
+#define M_PRESET 3
+uint8_t mode;
 
 #define R_PRESET (1<<0)
-#define R_ACTIVITY (1<<1)
-#define R_INPUT (1<<2)
-#define R_MESSAGE (1<<3)
-#define R_LIST1 (1<<4)
-#define R_LIST2 (1<<5)
-#define R_LIST3 (1<<6)
-#define R_LIST4 (1<<7)
-#define R_LIST (0xf<<4)
+#define R_INPUT (1<<1)
+#define R_MESSAGE (1<<2)
+#define R_LIST (1<<3)
+#define R_ALL 0xf
 uint8_t r_edit_dirty;
 
-static region r_preset = {.w = 96, .h = 8, .x = 0, .y = 0};
-static region r_activity = {.w = 32, .h = 3, .x = 96, .y = 0};
-static region r_list1 = {.w = 128, .h = 8, .x = 0, .y = 8};
-static region r_list2 = {.w = 128, .h = 8, .x = 0, .y = 16};
-static region r_list3 = {.w = 128, .h = 8, .x = 0, .y = 24};
-static region r_list4 = {.w = 128, .h = 8, .x = 0, .y = 32};
-static region r_message = {.w = 124, .h = 8, .x = 2, .y = 44};
-static region r_input = {.w = 124, .h = 8, .x = 2, .y = 56};
+#define A_METRO 0x1
+#define A_TR 0x2
+#define A_SLEW 0x4
+#define A_DELAY 0x8
+#define A_Q 0x10
+#define A_X 0x20
+#define A_REFRESH 0x40
+uint8_t activity;
+uint8_t activity_prev;
+
+static region line[8] = {
+	{.w = 128, .h = 8, .x = 0, .y = 0},
+	{.w = 128, .h = 8, .x = 0, .y = 8},
+	{.w = 128, .h = 8, .x = 0, .y = 16},
+	{.w = 128, .h = 8, .x = 0, .y = 24},
+	{.w = 128, .h = 8, .x = 0, .y = 32},
+	{.w = 128, .h = 8, .x = 0, .y = 40},
+	{.w = 128, .h = 8, .x = 0, .y = 48},
+	{.w = 128, .h = 8, .x = 0, .y = 56}
+};
 
 uint8_t sdirty;
 
@@ -195,7 +194,6 @@ static void cvTimer_callback(void* o) {
 
 			if(aout[i].step == 0) {
 				aout[i].now = aout[i].target;
-				r_edit_dirty |= R_ACTIVITY;
 			}
 			else {
 				aout[i].a += aout[i].delta;
@@ -256,14 +254,8 @@ static void refreshTimer_callback(void* o) {
 	event_post(&e);
 
 	if(sdirty) {
-		// region_draw(&r_preset);
-		region_draw(&r_activity);
-		region_draw(&r_message);
-		region_draw(&r_input);
-		region_draw(&r_list1);
-		region_draw(&r_list2);
-		region_draw(&r_list3);
-		region_draw(&r_list4);
+		for(int i=0;i<8;i++)
+			region_draw(&line[i]);
 
 		sdirty = 0;
 	}
@@ -274,6 +266,9 @@ static void keyTimer_callback(void* o) {
 	e.type = kEventKeyTimer;
 	e.data = 0;
 	event_post(&e);
+
+	if(front_timer)
+		front_timer--;
 }
 
 static void adcTimer_callback(void* o) {  
@@ -294,10 +289,15 @@ static void metroTimer_callback(void* o) {
 	// print_dbg("*");
 	uint8_t i;
 
-	for(i=0;i<script[METRO_SCRIPT].l;i++) {
-		process(&script[METRO_SCRIPT].c[i]);
+
+	
+	if(script[METRO_SCRIPT].l) {
 		activity |= A_METRO;
+		for(i=0;i<script[METRO_SCRIPT].l;i++)
+			process(&script[METRO_SCRIPT].c[i]);
 	}
+	else
+		activity &= ~A_METRO;
 }
 
 
@@ -315,10 +315,14 @@ static void handler_Front(s32 data) {
 		front_timer = 15;
 		if(preset_mode) preset_mode = 0;
 		else preset_mode = 1;
+
+		flash_write();
 	}
 	else {
 		front_timer = 0;
 	}
+
+
 
 	// monomeFrameDirty++;
 }
@@ -387,8 +391,8 @@ static void handler_HidTimer(s32 data) {
      			// print_dbg_hex(frame[0]);
      			switch(frame[i]) {
      				case 0x2B: // tab
-     					if(live) {
-     						live = 0;
+     					if(mode == M_LIVE) {
+     						mode = M_EDIT;
      						if(edit_line > script[edit].l)
 	     						edit_line = script[edit].l;
 	     					strcpy(input,print_command(&script[edit].c[edit_line]));
@@ -399,14 +403,51 @@ static void handler_HidTimer(s32 data) {
      					else {
      						for(n = 0;n < 32;n++) input[n] = 0;
 		 					pos = 0;
-     						live = 1;
-     						edit_line = 4;
+     						mode = M_LIVE;
+     						edit_line = SCRIPT_MAX_COMMANDS;
+     						activity |= A_REFRESH;
      						r_edit_dirty |= R_LIST | R_MESSAGE;
      					}
      					break;
-
+     				case 0x35: // ~
+     					if(mode == M_TRACK) {
+     						for(n = 0;n < 32;n++) input[n] = 0;
+		 					pos = 0;
+     						mode = M_LIVE;
+     						edit_line = SCRIPT_MAX_COMMANDS;
+     						activity |= A_REFRESH;
+     						r_edit_dirty |= R_LIST | R_MESSAGE;
+     					}
+     					else {
+     						mode = M_TRACK;
+     						r_edit_dirty = R_ALL;
+     					}
+     					break;
+     				case 0x29: // ESC
+     						;;
+     					break;
      				case 0x51: // down
-     					if(edit_line < 3) {
+     					if(mode == M_TRACK) {
+     						if(frame[0] & ALT) {
+     							if(offset_index + 8 < 63)
+     								offset_index += 8;
+     							else {
+     								offset_index = 56;
+     								edit_index = 7;
+     							}
+     						}
+     						else {
+     							edit_index++;
+	     						if(edit_index == 8) {
+	     							edit_index = 7;
+	     							if(offset_index < 56) {
+	     								offset_index++;
+	     							}
+	     						}
+	     					}
+	     					r_edit_dirty |= R_ALL;
+     					}
+     					else if(edit_line < SCRIPT_MAX_COMMANDS_) {
      						if(script[edit].l > edit_line) {
      							edit_line++;
      							strcpy(input,print_command(&script[edit].c[edit_line]));
@@ -414,180 +455,399 @@ static void handler_HidTimer(s32 data) {
      							for(n = pos;n < 32;n++) input[n] = 0;
 	 							r_edit_dirty |= R_LIST;
 	 						}
-     						else if(live) {
+     						else if(mode == M_LIVE) {
      							edit_line++;
      							strcpy(input,print_command(&history.c[edit_line]));
      							pos = strlen(input);
      							for(n = pos;n < 32;n++) input[n] = 0;
-	 							r_edit_dirty |= R_LIST;
 	 						}
+	 					}
+	 					else if(mode == M_LIVE) {
+	 						edit_line++;
+	 						pos = 0;
+     						for(n = 0;n < 32;n++) input[n] = 0;
 	 					}
      					break;
 
      				case 0x52: // up
-     					if(edit_line) {
+     					if(mode == M_TRACK) {
+     						if(frame[0] & ALT) {
+     							if(offset_index > 8) {
+     								offset_index -= 8;
+     							}
+     							else {
+     								offset_index = 0;
+     								edit_index = 0;
+     							}
+     						}
+     						else {
+	     						if(edit_index)
+	     							edit_index--;
+	     						else if(offset_index)
+	     							offset_index--;
+	     					}
+	     					r_edit_dirty |= R_ALL;
+     					}
+     					else if(edit_line) {
      						edit_line--;
-     						if(live)
+     						if(mode == M_LIVE)
      							strcpy(input,print_command(&history.c[edit_line]));
      						else
      							strcpy(input,print_command(&script[edit].c[edit_line]));
 
      						pos = strlen(input);
 	     					for(n = pos;n < 32;n++) input[n] = 0;
- 							r_edit_dirty |= R_LIST;
+ 							if(mode != M_LIVE) r_edit_dirty |= R_LIST;
  						}
+     					break;
+     				case 0x50: // back
+     					if(mode == M_TRACK) {
+     						if(frame[0] & ALT) {
+     							edit_index = 0;
+     							offset_index = 0;
+     						}
+     						else {
+	     						if(edit_pattern > 0)
+	     							edit_pattern--;
+	     					}
+	     					r_edit_dirty |= R_ALL;
+     					}
+     					else if(pos) {
+     						pos--;
+     					}
+     					break;
+
+     				case 0x4f: // forward
+     					if(mode == M_TRACK) {
+     						if(frame[0] & ALT) {
+     							edit_index = 7;
+     							offset_index = 56;
+     						}
+     						else {
+	     						if(edit_pattern < 3)
+	     							edit_pattern++;
+	     					}
+	     					r_edit_dirty |= R_ALL;
+     					}
+     					else if(pos < strlen(input)) {
+     						pos++;
+     					}
+
      					break;
 
      				case 0x30: // ]
-						live = 0;
-     					edit++;
-     					if(edit==10)
-     						edit = 0;
-     					if(edit_line > script[edit].l)
-     						edit_line = script[edit].l;
-     					strcpy(input,print_command(&script[edit].c[edit_line]));
- 						pos = strlen(input);
-     					for(n = pos;n < 32;n++) input[n] = 0;
+						if(mode == M_EDIT) {
+	     					edit++;
+	     					if(edit==10)
+	     						edit = 0;
+	     					if(edit_line > script[edit].l)
+	     						edit_line = script[edit].l;
+	     					strcpy(input,print_command(&script[edit].c[edit_line]));
+	 						pos = strlen(input);
+	     					for(n = pos;n < 32;n++) input[n] = 0;
 
 
-     					r_edit_dirty |= R_LIST;
+	     					r_edit_dirty |= R_LIST;
+ 						}
+ 						else if(mode == M_TRACK) {
+ 							tele_patterns[edit_pattern].v[edit_index+offset_index]++;
+ 							r_edit_dirty |= R_ALL;
+ 						}
      					break;
 
      				case 0x2F: // [
-     					live = 0;
-     					if(edit) 
-     						edit--;
-     					else 
-     						edit = 9;
-     					if(edit_line > script[edit].l)
-     						edit_line = script[edit].l;
-     					strcpy(input,print_command(&script[edit].c[edit_line]));
- 						pos = strlen(input);
-     					for(n = pos;n < 32;n++) input[n] = 0;
-     					r_edit_dirty |= R_LIST;
+     					if(mode == M_EDIT) {
+	     					if(edit) 
+	     						edit--;
+	     					else 
+	     						edit = 9;
+	     					if(edit_line > script[edit].l)
+	     						edit_line = script[edit].l;
+	     					strcpy(input,print_command(&script[edit].c[edit_line]));
+	 						pos = strlen(input);
+	     					for(n = pos;n < 32;n++) input[n] = 0;
+	 						r_edit_dirty |= R_LIST;
+	 					}
+	 					else if(mode == M_TRACK) {
+ 							tele_patterns[edit_pattern].v[edit_index+offset_index]--;
+ 							r_edit_dirty |= R_ALL;
+ 						}
      					break;
-     				case 0x4C:
+     				case 0x4C: // DELETE
      					for(n = 0;n < 32;n++)
      						input[n] = 0;
      					pos = 0;
      					break;
 
      				case BACKSPACE:
-     					if(pos) {
-     						pos--;
-     						// input[pos] = ' ';
-     						for(int x = pos; x < 31; x++)
-     							input[x] = input[x+1];
-	     				}
-     					break;
+     					if(mode == M_LIVE || mode == M_EDIT) {
+	     					if(pos) {
+	     						pos--;
+	     						// input[pos] = ' ';
+	     						for(int x = pos; x < 31; x++)
+	     							input[x] = input[x+1];
+		     				}
+		     			}
+		     			else if(mode == M_TRACK) {
+		     				if(frame[0] & SHIFT) {
+		     					for(int i = edit_index+offset_index;i<63;i++)
+		     						tele_patterns[edit_pattern].v[i] = tele_patterns[edit_pattern].v[i + 1];
 
-     				case 0x50: // back
-     					if(pos) {
-     						pos--;
-     					}
-     					break;
-
-     				case 0x4f: // forward
-     					if(pos < strlen(input)) {
-     						pos++;
-     					}
-
+		     					if(tele_patterns[edit_pattern].l > edit_index+offset_index)
+		     						tele_patterns[edit_pattern].l--;
+		     				}
+		     				else {
+			     				tele_patterns[edit_pattern].v[edit_index+offset_index] =
+			     					tele_patterns[edit_pattern].v[edit_index+offset_index] / 10;
+			     			}
+		     				r_edit_dirty |= R_ALL;
+		     			}
      					break;
 
      				case RETURN:
-     					status = parse(input);
+     					if(mode == M_EDIT || mode == M_LIVE) {
+	     					status = parse(input);
 
-     					if(status == E_OK) {
-							status = validate(&temp);
+	     					if(status == E_OK) {
+								status = validate(&temp);
 
-							if(status == E_OK) {
-								if(live) {
-									edit_line = 4;
+								if(status == E_OK) {
+									if(mode == M_LIVE) {
+										edit_line = SCRIPT_MAX_COMMANDS;
 
-									if(temp.l) {
-										memcpy(&history.c[0], &history.c[1], sizeof(tele_command_t));
-										memcpy(&history.c[1], &history.c[2], sizeof(tele_command_t));
-										memcpy(&history.c[2], &history.c[3], sizeof(tele_command_t));
-										memcpy(&history.c[3], &temp, sizeof(tele_command_t));
+										if(temp.l) {
+											memcpy(&history.c[0], &history.c[1], sizeof(tele_command_t));
+											memcpy(&history.c[1], &history.c[2], sizeof(tele_command_t));
+											memcpy(&history.c[2], &history.c[3], sizeof(tele_command_t));
+											memcpy(&history.c[3], &history.c[4], sizeof(tele_command_t));
+											memcpy(&history.c[4], &history.c[5], sizeof(tele_command_t));
+											memcpy(&history.c[5], &temp, sizeof(tele_command_t));
 
-										process(&temp);
+											process(&temp);
+										}
+
+										for(n = 0;n < 32;n++)
+				     						input[n] = 0;
+				     					pos = 0;
 									}
+									else {
+										if(temp.l == 0) {	// BLANK LINE
+											if(script[edit].l && script[edit].c[edit_line].l) {
+												print_dbg("\r\nl ");
+												print_dbg_ulong(script[edit].l);
 
-									for(n = 0;n < 32;n++)
-			     						input[n] = 0;
-			     					pos = 0;
+												script[edit].l--;
+
+			     								for(n=edit_line;n<script[edit].l;n++)
+			     									memcpy(&script[edit].c[n], &script[edit].c[n+1], sizeof(tele_command_t));
+
+			     								script[edit].c[script[edit].l].l = 0;
+			     								
+			     								if(edit_line > script[edit].l)
+			     									edit_line = script[edit].l;
+			     								strcpy(input,print_command(&script[edit].c[edit_line]));
+						 						pos = strlen(input);
+						 						// print_dbg(" -> ");
+												// print_dbg_ulong(script[edit].l);
+			     							}
+										}
+										else if(frame[0] & SHIFT) { // SHIFT = INSERT
+											for(n=script[edit].l;n>edit_line;n--) 
+		     									memcpy(&script[edit].c[n], &script[edit].c[n-1], sizeof(tele_command_t));
+
+		     								if(script[edit].l < SCRIPT_MAX_COMMANDS)
+		     									script[edit].l++;
+
+											memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
+											if((edit_line == script[edit].l) && (script[edit].l < 4))
+												script[edit].l++;
+											if(edit_line < SCRIPT_MAX_COMMANDS_) {
+												edit_line++;
+												strcpy(input,print_command(&script[edit].c[edit_line]));
+				     							pos = strlen(input);
+				     							for(n = pos;n < 32;n++) input[n] = 0;
+				     						}
+				     					}
+			     						else {
+											memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
+											if((edit_line == script[edit].l) && (script[edit].l < SCRIPT_MAX_COMMANDS))
+												script[edit].l++;
+											if(edit_line < SCRIPT_MAX_COMMANDS_) {
+												edit_line++;
+												strcpy(input,print_command(&script[edit].c[edit_line]));
+				     							pos = strlen(input);
+				     							for(n = pos;n < 32;n++) input[n] = 0;
+				     						}
+			     						}
+
+				     					r_edit_dirty |= R_MESSAGE;
+			     					}
+			     					if(mode == M_EDIT)
+			     						r_edit_dirty |= R_LIST;
 								}
 								else {
-									if(temp.l == 0) {	// BLANK LINE
-										if(script[edit].l && script[edit].c[edit_line].l) {
-											print_dbg("\r\nl ");
-											print_dbg_ulong(script[edit].l);
+									print_dbg("\r\nvalidate: ");
+									print_dbg(tele_error(status));
+	 							}
+							}
+							else {
+								print_dbg("\r\nERROR: ");
+								print_dbg(tele_error(status));
+							}
 
-											script[edit].l--;
+							// print_dbg("\r\n\n> ");
 
+	     					r_edit_dirty |= R_MESSAGE;
+	     				}
+	     				else if(mode == M_TRACK) {
+	     					if(frame[0] & SHIFT) {
+	     						for(int i=63;i>edit_index+offset_index;i--)
+	     							tele_patterns[edit_pattern].v[i] = tele_patterns[edit_pattern].v[i-1];
+	     						if(tele_patterns[edit_pattern].l < 63)
+	     							tele_patterns[edit_pattern].l++;
+	     						r_edit_dirty |= R_ALL;
+	     					}
+	     					else {
+	     						if(edit_index+offset_index == tele_patterns[edit_pattern].l && tele_patterns[edit_pattern].l < 64) {
+	     							tele_patterns[edit_pattern].l++;
+	     							edit_index++;
+		     						if(edit_index == 8) {
+		     							edit_index = 7;
+		     							if(offset_index < 56) {
+		     								offset_index++;
+		     							}
+		     						}
+	     							r_edit_dirty |= R_ALL;
+	     						}
+	     					}
+	     				}
+     					break;
+
+ 					default:
+ 						if(frame[0] & ALT) {	// ALT
+	     					if(frame[i] == 0x1b) {	// x CUT
+	     						if(mode == M_EDIT || mode == M_LIVE) {
+		     						memcpy(&input_buffer, &input, sizeof(input));
+		     						if(mode == M_LIVE) {
+		     							for(n = 0;n < 32;n++)
+				     						input[n] = 0;
+				     					pos = 0;
+		     						}
+		     						else {
+		     							if(script[edit].l) {
+		     								script[edit].l--;
 		     								for(n=edit_line;n<script[edit].l;n++)
 		     									memcpy(&script[edit].c[n], &script[edit].c[n+1], sizeof(tele_command_t));
 
 		     								script[edit].c[script[edit].l].l = 0;
-		     								
 		     								if(edit_line > script[edit].l)
 		     									edit_line = script[edit].l;
 		     								strcpy(input,print_command(&script[edit].c[edit_line]));
 					 						pos = strlen(input);
-					 						// print_dbg(" -> ");
-											// print_dbg_ulong(script[edit].l);
 		     							}
-									}
-									else if(frame[0] == 2 || frame[0] == 0x20) { // SHIFT = INSERT
-										for(n=script[edit].l;n>edit_line;n--) 
-	     									memcpy(&script[edit].c[n], &script[edit].c[n-1], sizeof(tele_command_t));
 
-	     								if(script[edit].l < 4)
-	     									script[edit].l++;
-
-										memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
-										if((edit_line == script[edit].l) && (script[edit].l < 4))
-											script[edit].l++;
-										if(edit_line < 3) {
-											edit_line++;
-											strcpy(input,print_command(&script[edit].c[edit_line]));
-			     							pos = strlen(input);
-			     							for(n = pos;n < 32;n++) input[n] = 0;
-			     						}
-			     					}
-		     						else {
-										memcpy(&script[edit].c[edit_line], &temp, sizeof(tele_command_t));
-										if((edit_line == script[edit].l) && (script[edit].l < 4))
-											script[edit].l++;
-										if(edit_line < 3) {
-											edit_line++;
-											strcpy(input,print_command(&script[edit].c[edit_line]));
-			     							pos = strlen(input);
-			     							for(n = pos;n < 32;n++) input[n] = 0;
-			     						}
+		     							r_edit_dirty |= R_LIST;
 		     						}
-
-			     					r_edit_dirty |= R_MESSAGE;
 		     					}
-		     					r_edit_dirty |= R_LIST;
-							}
-							else {
-								print_dbg("\r\nvalidate: ");
-								print_dbg(tele_error(status));
- 							}
-						}
-						else {
-							print_dbg("\r\nERROR: ");
-							print_dbg(tele_error(status));
-						}
+		     					else if(mode == M_TRACK) {
+ 									num_buffer = tele_patterns[edit_pattern].v[edit_index+offset_index];
+ 									for(int i = edit_index+offset_index;i<63;i++)
+			     						tele_patterns[edit_pattern].v[i] = tele_patterns[edit_pattern].v[i + 1];
 
-						// print_dbg("\r\n\n> ");
+			     					if(tele_patterns[edit_pattern].l > edit_index+offset_index)
+			     						tele_patterns[edit_pattern].l--;
+ 									r_edit_dirty |= R_ALL;
+ 								}
+	     					}
+	     					else if(frame[i] == 0x06) { // c COPY
+	     						if(mode == M_EDIT || mode == M_LIVE) {
+	     							memcpy(&input_buffer, &input, sizeof(input));
+	     						}
+	     						else if(mode == M_TRACK) {
+	     							num_buffer = tele_patterns[edit_pattern].v[edit_index+offset_index];
+	     							r_edit_dirty |= R_ALL;
+	     						}
+	     					}
+	     					else if(frame[i] == 0x19) { // v PASTE
+	     						if(mode == M_EDIT || mode == M_LIVE) {
+	     							memcpy(&input, &input_buffer, sizeof(input));
+	     							pos = strlen(input);
+	     						}
+	     						else if(mode == M_TRACK) {
+	     							if(frame[0] & SHIFT) {
+	     								for(int i=63;i>edit_index+offset_index;i--)
+			     							tele_patterns[edit_pattern].v[i] = tele_patterns[edit_pattern].v[i-1];
+			     						if(tele_patterns[edit_pattern].l >= edit_index+offset_index)
+			     							if(tele_patterns[edit_pattern].l < 63)
+			     								tele_patterns[edit_pattern].l++;
+	     							}
+	     							tele_patterns[edit_pattern].v[edit_index+offset_index] = num_buffer;
+	     							r_edit_dirty |= R_ALL;
+	     						}
+	     					}
+	     					else if(mode == M_TRACK) {
+	     						n = hid_to_ascii_raw(frame[i]);
+	     						if(n == 'L') {
+	     							if(tele_patterns[edit_pattern].l) {
+	     								offset_index = ((tele_patterns[edit_pattern].l - 1) >> 3) << 3;
+	     								edit_index = (tele_patterns[edit_pattern].l - 1) & 0x7;
 
-     					r_edit_dirty |= R_MESSAGE;
-     					break;
+	     								int8_t delta = edit_index - 3;
 
- 					default:
- 						if(frame[0] == 0) {
+	     								if((offset_index + delta > 0) && (offset_index + delta < 56)) {
+	     									offset_index += delta;
+	     									edit_index = 3;
+	     								}
+	     							}
+	     							else {
+	     								offset_index = 0;
+	     								edit_index = 0;
+	     							}
+	     							r_edit_dirty |= R_ALL;
+	     						}
+	     					}
+	     				}
+	     				else if(frame[0] & SHIFT && mode == M_TRACK) {
+     						n = hid_to_ascii_raw(frame[i]);
+     						if(n == 'L') {
+     							tele_patterns[edit_pattern].l = edit_index + offset_index + 1;
+     							r_edit_dirty |= R_ALL;
+     						}
+	     				}
+	     				else if(mode == M_TRACK) {
+	     					n = hid_to_ascii(frame[i], frame[0]);
+
+	     					if(n > 0x2F && n < 0x03A) {
+	     						if(tele_patterns[edit_pattern].v[edit_index+offset_index]) {
+	     							// limit range
+	     							if(tele_patterns[edit_pattern].v[edit_index+offset_index] < 3275 &&
+	     								tele_patterns[edit_pattern].v[edit_index+offset_index] > -3275)
+	     							{
+		     							tele_patterns[edit_pattern].v[edit_index+offset_index] =
+			     							tele_patterns[edit_pattern].v[edit_index+offset_index] * 10;
+			     						if(tele_patterns[edit_pattern].v[edit_index+offset_index] > 0)
+			     							tele_patterns[edit_pattern].v[edit_index+offset_index] += n - 0x30;
+			     						else
+			     							tele_patterns[edit_pattern].v[edit_index+offset_index] -= n - 0x30;
+			     					}
+	     						}
+	     						else
+	     							tele_patterns[edit_pattern].v[edit_index+offset_index] = n - 0x30;
+	     						r_edit_dirty |= R_ALL;
+	     					}
+	     					else if(n == 0x2D) { // - 
+	     					    tele_patterns[edit_pattern].v[edit_index+offset_index] = -tele_patterns[edit_pattern].v[edit_index+offset_index];
+     							r_edit_dirty |= R_ALL;
+     						}
+     						else if(n == 0x20) { // space
+     							if(tele_patterns[edit_pattern].v[edit_index+offset_index])
+     								tele_patterns[edit_pattern].v[edit_index+offset_index] = 0;
+     							else
+     								tele_patterns[edit_pattern].v[edit_index+offset_index] = 1;
+     							r_edit_dirty |= R_ALL;
+     						}
+	     				}
+	     				else {	/// NORMAL TEXT ENTRY
 	 						if(pos<31) {
 		     					// print_dbg_char(hid_to_ascii(frame[i], frame[0]));
 		     					n = hid_to_ascii(frame[i], frame[0]);
@@ -600,38 +860,6 @@ static void handler_HidTimer(s32 data) {
 		     					}
 		     					// pos++;
 		     					// input[pos] = 0;
-	     					}
-	     				}
-	     				else if(frame[0] == 4 || frame[0] == 0x40) {	// ALT
-	     					if(frame[i] == 0x1b) {	// x CUT
-	     						memcpy(&input_buffer, &input, sizeof(input));
-	     						if(live) {
-	     							for(n = 0;n < 32;n++)
-			     						input[n] = 0;
-			     					pos = 0;
-	     						}
-	     						else {
-	     							if(script[edit].l) {
-	     								script[edit].l--;
-	     								for(n=edit_line;n<script[edit].l;n++)
-	     									memcpy(&script[edit].c[n], &script[edit].c[n+1], sizeof(tele_command_t));
-
-	     								script[edit].c[script[edit].l].l = 0;
-	     								if(edit_line > script[edit].l)
-	     									edit_line = script[edit].l;
-	     								strcpy(input,print_command(&script[edit].c[edit_line]));
-				 						pos = strlen(input);
-	     							}
-
-	     							r_edit_dirty |= R_LIST;
-	     						}
-	     					}
-	     					else if(frame[i] == 0x06) { // c COPY
-	     						memcpy(&input_buffer, &input, sizeof(input));
-	     					}
-	     					else if(frame[i] == 0x19) { // v PASTE
-	     						memcpy(&input, &input_buffer, sizeof(input));
-	     						pos = strlen(input);
 	     					}
 	     				}
 
@@ -674,207 +902,199 @@ static void handler_ScreenRefresh(s32 data) {
 	static uint8_t a;
 	static char s[32];
 
-	if(r_edit_dirty & R_PRESET) {
-		strcpy(s," /  ");
+	uint8_t y;
 
-		s[0] = preset + 48;
-		s[2] = preset + 48; // PATTERN
+	if(mode == M_TRACK && (r_edit_dirty & R_ALL)) {
+		for(y=0;y<8;y++) {
+			region_fill(&line[y], 0);
+			itoa(y+offset_index, s, 10);
+			font_string_region_clip_right(&line[y], s, 4, 0, 0x1, 0);
+			if(tele_patterns[0].l > y+offset_index) a = 6; else a = 1;
+			itoa(tele_patterns[0].v[y+offset_index], s, 10);
+			font_string_region_clip_right(&line[y], s, 36, 0, a, 0);
+			if(tele_patterns[1].l > y+offset_index) a = 6; else a = 1;
+			itoa(tele_patterns[1].v[y+offset_index], s, 10);
+			font_string_region_clip_right(&line[y], s, 66, 0, a, 0);
+			if(tele_patterns[2].l > y+offset_index) a = 6; else a = 1;
+			itoa(tele_patterns[2].v[y+offset_index], s, 10);
+			font_string_region_clip_right(&line[y], s, 96, 0, a, 0);
+			if(tele_patterns[3].l > y+offset_index) a = 6; else a = 1;
+			itoa(tele_patterns[3].v[y+offset_index], s, 10);
+			font_string_region_clip_right(&line[y], s, 126, 0, a, 0);
+		}
 
-		strcat(s,preset_name);
+		itoa(tele_patterns[edit_pattern].v[edit_index + offset_index], s, 10);
+		font_string_region_clip_right(&line[edit_index], s, (edit_pattern+1) * 30 + 6, 0, 0xf, 0);
 
-		region_fill(&r_preset, 0);
-		if(preset_dirty)
-			region_string(&r_preset, s, 0, 0, 0xa, 0, 0);
-		else
-			region_string(&r_preset, s, 0, 0, 0x4, 0, 0);
+		r_edit_dirty &= ~R_ALL;
+
 		sdirty++;
-		r_edit_dirty &= ~R_PRESET;
 	}
-	// if(r_edit_dirty & R_ACTIVITY) {
-	if(activity != activity_prev) {
+	else {
+		/*
+		if(r_edit_dirty & R_PRESET) {
+			strcpy(s," /  ");
 
-		region_fill(&r_activity, 0);
+			s[0] = preset + 48;
+			s[2] = preset + 48; // PATTERN
+
+			strcat(s,preset_name);
+
+			region_fill(&r_preset, 0);
+			if(preset_dirty)
+				region_string(&r_preset, s, 0, 0, 0xa, 0, 0);
+			else
+				region_string(&r_preset, s, 0, 0, 0x4, 0, 0);
+			sdirty++;
+			r_edit_dirty &= ~R_PRESET;
+		}*/
 		
-/*		a = 1;
+		if(r_edit_dirty & R_INPUT) {
+			s[0] = '>';
+	 		s[1] = ' ';
+			s[2] = 0;
 
-		r_activity.data[ 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 1 + 2 * r_activity.w ] = a;
-		r_activity.data[ 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 3 + 2 * r_activity.w ] = a;
-		r_activity.data[ 4 + 0 * r_activity.w ] = a;
-		r_activity.data[ 5 + 2 * r_activity.w ] = a;
-		r_activity.data[ 6 + 0 * r_activity.w ] = a;
-		r_activity.data[ 7 + 2 * r_activity.w ] = a;
+			if(mode == M_EDIT) {
+				if(edit == 8) s[0] = 'M';
+				else if(edit == 9) s[0] = 'I';
+				else s[0] = edit+49;
+			}
 
-		if(activity & A_METRO) a = 15;
-		else a = 1;
+			strcat(s,input);
+			strcat(s," ");
 
-		r_activity.data[ 9 + 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 9 + 0 + 1 * r_activity.w ] = a;
-		r_activity.data[ 9 + 0 + 2 * r_activity.w ] = a;
-
-*/
-		if(activity & A_SLEW) a = 15;
-		else a = 1;
-
-		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
-		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 16 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 16 + 1 + 1 * r_activity.w ] = a;
-		r_activity.data[ 16 + 2 + 0 * r_activity.w ] = a;
-
-		if(activity & A_DELAY) a = 15;
-		else a = 1;
-
-		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
-		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 20 + 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 20 + 1 + 0 * r_activity.w ] = a;
-		r_activity.data[ 20 + 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 20 + 0 + 1 * r_activity.w ] = a;
-		r_activity.data[ 20 + 2 + 1 * r_activity.w ] = a;
-		r_activity.data[ 20 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 20 + 2 + 2 * r_activity.w ] = a;
-
-		if(activity & A_Q) a = 15;
-		else a = 1;
-
-		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
-		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 24 + 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 24 + 1 + 0 * r_activity.w ] = a;
-		r_activity.data[ 24 + 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 24 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 24 + 1 + 2 * r_activity.w ] = a;
-		r_activity.data[ 24 + 2 + 2 * r_activity.w ] = a;
-
-		if(activity & A_X) a = 15;
-		else a = 1;
-
-		// r_activity.data[ 16 + 0 + 4 * r_activity.w ] = a;
-		// r_activity.data[ 16 + 1 + 3 * r_activity.w ] = a;
-		r_activity.data[ 28 + 0 + 0 * r_activity.w ] = a;
-		r_activity.data[ 28 + 0 + 2 * r_activity.w ] = a;
-		r_activity.data[ 28 + 1 + 1 * r_activity.w ] = a;
-		r_activity.data[ 28 + 2 + 0 * r_activity.w ] = a;
-		r_activity.data[ 28 + 2 + 2 * r_activity.w ] = a;
-
-		activity_prev = activity;
-
-		activity &= ~A_METRO;
-		// activity &= ~A_X;
+			region_fill(&line[7], 0);
+			// region_string(&line[7], s, 0, 0, 0xf, 0, 0);
+			// font_string_region_clip(&line[7], s, 0, 0, 0xf, 0);
+			font_string_region_clip_hi(&line[7], s, 0, 0, 0xf, 0, pos+2);
+			sdirty++;
+			r_edit_dirty &= ~R_INPUT;
+		}
+		if(r_edit_dirty & R_MESSAGE) {
+			if(status) {
+				strcpy(s,tele_error(status));
+				if(error_detail[0]) {
+					strcat(s, ": ");
+					strcat(s, error_detail);
+					error_detail[0] = 0;
+				}
+				status = E_OK;
+			}
+			else if(output_new) {
+				output_new = 0;
+				if(mode == M_LIVE)
+					itoa(output, s, 10);
+				// strcat(s, " ");
+				// strcat(s, to_v(output));
+				else
+					s[0] = 0;
+			}
+			else {
+				s[0] = 0;
+			}
+			region_fill(&line[6], 0);
+			font_string_region_clip(&line[6], s, 0, 0, 0x4, 0);
+			sdirty++;
+			r_edit_dirty &= ~R_MESSAGE;
+		}
+		if(r_edit_dirty & R_LIST) {
+			if(mode == M_LIVE) {
+				for(int i=0;i<6;i++)
+					region_fill(&line[i], 0);
+			}
+			else {
+				for(int i=0;i<6;i++) {
+					a = edit_line == i;
+					region_fill(&line[i], a);
+					if(script[edit].l > i) {
+						strcpy(s,print_command(&script[edit].c[i]));
+						region_string(&line[i], s, 2, 0, 0xf, a, 0);
+					}
+				}
+			}
 
 			
-		sdirty++;
-		r_edit_dirty &= ~R_ACTIVITY;
-	}
-	if(r_edit_dirty & R_INPUT) {
-		s[0] = '>';
- 		s[1] = ' ';
-		s[2] = 0;
-
-		if(!live) {
-			if(edit == 8) s[0] = 'M';
-			else if(edit == 9) s[0] = 'I';
-			else s[0] = edit+49;
+			sdirty++;
+			r_edit_dirty &= ~R_LIST;
 		}
+		/*
+		if((activity != activity_prev) && (mode == M_LIVE)) {
+			region_fill(&line[0], 0);
+			
+			a = 1;
 
-		strcat(s,input);
-		strcat(s," ");
+			line[0].data[ 0 + 0 * line[0].w ] = a;
+			line[0].data[ 1 + 2 * line[0].w ] = a;
+			line[0].data[ 2 + 0 * line[0].w ] = a;
+			line[0].data[ 3 + 2 * line[0].w ] = a;
+			line[0].data[ 4 + 0 * line[0].w ] = a;
+			line[0].data[ 5 + 2 * line[0].w ] = a;
+			line[0].data[ 6 + 0 * line[0].w ] = a;
+			line[0].data[ 7 + 2 * line[0].w ] = a;
 
-		region_fill(&r_input, 0);
-		// region_string(&r_input, s, 0, 0, 0xf, 0, 0);
-		// font_string_region_clip(&r_input, s, 0, 0, 0xf, 0);
-		font_string_region_clip_hi(&r_input, s, 0, 0, 0xf, 0, pos+2);
-		sdirty++;
-		r_edit_dirty &= ~R_INPUT;
-	}
-	if(r_edit_dirty & R_MESSAGE) {
-		if(status) {
-			strcpy(s,tele_error(status));
-			if(error_detail[0]) {
-				strcat(s, ": ");
-				strcat(s, error_detail);
-				error_detail[0] = 0;
+			if((activity & A_METRO) != (activity_prev & A_METRO)) {
+				if(activity & A_METRO) a = 15;
+				else a = 1;
+
+				line[0].data[ 9 + 0 + 0 * line[0].w ] = a;
+				line[0].data[ 9 + 0 + 1 * line[0].w ] = a;
+				line[0].data[ 9 + 0 + 2 * line[0].w ] = a;
+				print_dbg("\r\ndraw metro");
 			}
-			status = E_OK;
-		}
-		else if(output_new) {
-			output_new = 0;
-			if(live)
-				itoa(output, s, 10);
-			// strcat(s, " ");
-			// strcat(s, to_v(output));
-			else
-				s[0] = 0;
-		}
-		else {
-			s[0] = 0;
-		}
-		region_fill(&r_message, 0);
-		font_string_region_clip(&r_message, s, 0, 0, 0x4, 0);
-		sdirty++;
-		r_edit_dirty &= ~R_MESSAGE;
-	}
-	if(r_edit_dirty & R_LIST1) {
-		a = edit_line == 0;
-		region_fill(&r_list1, a);
-		if(live) {
-			strcpy(s,print_command(&history.c[0]));
-			region_string(&r_list1, s, 2, 0, 0xf, a, 0);
-		}
-		else if(script[edit].l > 0) {
-			strcpy(s,print_command(&script[edit].c[0]));
-			region_string(&r_list1, s, 2, 0, 0xf, a, 0);
-		}
-		sdirty++;
-		r_edit_dirty &= ~R_LIST1;
-	}
-	if(r_edit_dirty & R_LIST2) {
-		a = edit_line == 1;
-		region_fill(&r_list2, a);
-		if(live) {
-			strcpy(s,print_command(&history.c[1]));
-			region_string(&r_list2, s, 2, 0, 0xf, a, 0);
-		}
-		else if(script[edit].l > 1) {
-			strcpy(s,print_command(&script[edit].c[1]));
-			region_string(&r_list2, s, 2, 0, 0xf, a, 0);
-		}
-		// region_string(&in, s, 4, 4, 0xf, a, 0);
-		sdirty++;
-		r_edit_dirty &= ~R_LIST2;
-	}
-	if(r_edit_dirty & R_LIST3) {
-		a = edit_line == 2;
-		region_fill(&r_list3, a);
-		if(live) {
-			strcpy(s,print_command(&history.c[2]));
-			region_string(&r_list3, s, 2, 0, 0xf, a, 0);
-		}
-		else if(script[edit].l > 2) {
-			strcpy(s,print_command(&script[edit].c[2]));
-			region_string(&r_list3, s, 2, 0, 0xf, a, 0);
-		}
-		// region_string(&in, s, 4, 4, 0xf, a, 0);
-		sdirty++;
-		r_edit_dirty &= ~R_LIST3;
-	}
-	if(r_edit_dirty & R_LIST4) {
-		a = edit_line == 3;
-		region_fill(&r_list4, a);
-		if(live) {
-			strcpy(s,print_command(&history.c[3]));
-			region_string(&r_list4, s, 2, 0, 0xf, a, 0);
-		}
-		else if(script[edit].l > 3) {
-			strcpy(s,print_command(&script[edit].c[3]));
-			region_string(&r_list4, s, 2, 0, 0xf, a, 0);
-		}
-		
-		// region_string(&in, s, 4, 4, 0xf, a, 0);
-		sdirty++;
-		r_edit_dirty &= ~R_LIST4;
+
+			if(activity & A_SLEW) a = 15;
+			else a = 1;
+
+			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
+			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
+			line[0].data[ 16 + 0 + 2 * line[0].w ] = a;
+			line[0].data[ 16 + 1 + 1 * line[0].w ] = a;
+			line[0].data[ 16 + 2 + 0 * line[0].w ] = a;
+
+			if(activity & A_DELAY) a = 15;
+			else a = 1;
+
+			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
+			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
+			line[0].data[ 20 + 0 + 0 * line[0].w ] = a;
+			line[0].data[ 20 + 1 + 0 * line[0].w ] = a;
+			line[0].data[ 20 + 2 + 0 * line[0].w ] = a;
+			line[0].data[ 20 + 0 + 1 * line[0].w ] = a;
+			line[0].data[ 20 + 2 + 1 * line[0].w ] = a;
+			line[0].data[ 20 + 0 + 2 * line[0].w ] = a;
+			line[0].data[ 20 + 2 + 2 * line[0].w ] = a;
+
+			if(activity & A_Q) a = 15;
+			else a = 1;
+
+			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
+			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
+			line[0].data[ 24 + 0 + 0 * line[0].w ] = a;
+			line[0].data[ 24 + 1 + 0 * line[0].w ] = a;
+			line[0].data[ 24 + 2 + 0 * line[0].w ] = a;
+			line[0].data[ 24 + 0 + 2 * line[0].w ] = a;
+			line[0].data[ 24 + 1 + 2 * line[0].w ] = a;
+			line[0].data[ 24 + 2 + 2 * line[0].w ] = a;
+
+			if(activity & A_X) a = 15;
+			else a = 1;
+
+			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
+			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
+			line[0].data[ 28 + 0 + 0 * line[0].w ] = a;
+			line[0].data[ 28 + 0 + 2 * line[0].w ] = a;
+			line[0].data[ 28 + 1 + 1 * line[0].w ] = a;
+			line[0].data[ 28 + 2 + 0 * line[0].w ] = a;
+			line[0].data[ 28 + 2 + 2 * line[0].w ] = a;
+
+			activity_prev = activity;
+
+			// activity &= ~A_X;
+
+			activity &= ~A_REFRESH;
+				
+			sdirty++;
+		}*/
 	}
 }
 
@@ -918,8 +1138,8 @@ void check_events(void) {
 
 
 u8 flash_is_fresh(void) {
-  // return (flashy.fresh != FIRSTRUN_KEY);
-	return 0;
+  return (f.fresh != FIRSTRUN_KEY);
+	// return 0;
   // flashc_memcpy((void *)&flashy.fresh, &i, sizeof(flashy.fresh),   true);
   // flashc_memset32((void*)&(flashy.fresh), fresh_MAGIC, 4, true);
   // flashc_memset((void *)nvram_data, 0x00, 8, sizeof(*nvram_data), true);
@@ -927,34 +1147,36 @@ u8 flash_is_fresh(void) {
 
 // write fresh status
 void flash_unfresh(void) {
-  // flashc_memset8((void*)&(flashy.fresh), FIRSTRUN_KEY, 4, true);
+  flashc_memset8((void*)&(f.fresh), FIRSTRUN_KEY, 4, true);
 }
 
 void flash_write(void) {
-	// print_dbg("\r write preset ");
+	print_dbg("\r\n:::: write flash");
 	// print_dbg_ulong(preset_select);
 
-	// flashc_memcpy((void *)&flashy.es[preset_select], &es, sizeof(es), true);
+	flashc_memcpy((void *)&f.script, &script, sizeof(script), true);
 	// flashc_memcpy((void *)&flashy.glyph[preset_select], &glyph, sizeof(glyph), true);
 	// flashc_memset8((void*)&(flashy.preset_select), preset_select, 1, true);
+	print_dbg("\r\n:::: done");
 }
 
 void flash_read(void) {
-	// print_dbg("\r\n read preset ");
-	// print_dbg_ulong(preset_select);
+	print_dbg("\r\n:::: read flash ");
+	print_dbg_ulong(preset_select);
+	memcpy(&script,&f.script,sizeof(script));
 }
 
 
 
 void render_init(void) {
-	region_alloc(&r_preset);
-	region_alloc(&r_activity);
-	region_alloc(&r_input);
-	region_alloc(&r_message);
-	region_alloc(&r_list1);
-	region_alloc(&r_list2);
-	region_alloc(&r_list3);
-	region_alloc(&r_list4);
+ 	region_alloc(&line[0]);
+	region_alloc(&line[1]);
+	region_alloc(&line[2]);
+	region_alloc(&line[3]);
+	region_alloc(&line[4]);
+	region_alloc(&line[5]);
+	region_alloc(&line[6]);
+	region_alloc(&line[7]);
 }
 
 
@@ -980,6 +1202,9 @@ static void tele_metro(int m, int m_act, uint8_t m_reset) {
 		// print_dbg("\r\nRESET METRO");
 		timer_reset(&metroTimer);
 	}
+
+	if(!metro_act)
+		activity &= ~A_METRO;
 }
 
 static void tele_tr(uint8_t i, int v) {
@@ -998,7 +1223,6 @@ static void tele_cv(uint8_t i, int v) {
 	aout[i].step = aout[i].slew;
 	aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
 	aout[i].a = aout[i].now<<16;
-	r_edit_dirty |= R_ACTIVITY;
 }
 
 static void tele_cv_slew(uint8_t i, int v) {
@@ -1076,11 +1300,13 @@ int main(void)
 	init_i2c_master();
 
 	print_dbg("\r\n\n// teletype! //////////////////////////////// ");
-	// print_dbg_ulong(sizeof(flashy));
+	print_dbg("\r\nflash size: ");
+	print_dbg_ulong(sizeof(f));
 
 	if(flash_is_fresh()) {
-		print_dbg("\r\nfirst run.");
+		print_dbg("\r\n:::: first run.");
 		flash_unfresh();
+		flash_write();
 
 		// clear out some reasonable defaults
 
@@ -1093,23 +1319,9 @@ int main(void)
 
 	}
 	else {
+		flash_read();
 		// load from flash at startup
 	}
-
-	// tele_command_t stored;
-
-	// stored.data[0].t = OP;
-	// stored.data[0].v = 2;
-	// stored.data[1].t = NUMBER;
-	// stored.data[1].v = 8;
-	// stored.data[2].t = NUMBER;
-	// stored.data[2].v = 10;
-	// stored.separator = -1;
-	// stored.l = 3;
-
-	// process(&stored);
-
-
 
 	// setup daisy chain for two dacs
 	spi_selectChip(SPI,DAC_SPI);
@@ -1141,8 +1353,9 @@ int main(void)
 	aout[3].slew = 1;
 
 	status = 1;
-	live = 1; edit_line = 4;
-	r_edit_dirty = 0xff;
+	mode = M_LIVE;
+	edit_line = SCRIPT_MAX_COMMANDS;
+	r_edit_dirty = R_MESSAGE | R_INPUT;
 	activity = 0;
 	activity_prev = 0xff;
 

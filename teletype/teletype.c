@@ -137,9 +137,10 @@ static void v_P_PREV(uint8_t);
 static void v_P_WRAP(uint8_t);
 static void v_P_START(uint8_t);
 static void v_P_END(uint8_t);
+static void v_O(uint8_t);
 
 
-#define VARS 25
+#define VARS 26
 static tele_var_t tele_vars[VARS] = {
 	{"I",NULL,0},	// gets overwritten by ITER
 	{"TIME",NULL,0},
@@ -157,6 +158,7 @@ static tele_var_t tele_vars[VARS] = {
 	{"B",NULL,2},
 	{"C",NULL,3},
 	{"D",NULL,4},
+	{"O",v_O,0},
 	{"P.N",v_P_N,0},
 	{"P.L",v_P_L,0},
 	{"P.I",v_P_I,0},
@@ -314,6 +316,16 @@ static void v_P_END(uint8_t n) {
 	}
 }
 
+static void v_O(uint8_t n) {
+	if(top == 0) {
+		push(tele_vars[V_O].v);
+		tele_vars[V_O].v++;
+	}
+	else {
+		tele_vars[V_O].v = pop();
+	}
+}
+
 
 static void a_TR(uint8_t);
 static void a_CV(uint8_t);
@@ -372,7 +384,7 @@ static void a_TR_TIME(uint8_t i) {
 static tele_command_t delay_c[D_SIZE];
 static int delay_t[D_SIZE];
 static uint8_t delay_count;
-static uint16_t tr_pulse[4];
+static int16_t tr_pulse[4];
 
 static void process_delays(uint8_t);
 void clear_delays(void);
@@ -422,22 +434,22 @@ void clear_delays(void) {
 
 static void mod_PROB(tele_command_t *);
 static void mod_DEL(tele_command_t *);
-static void mod_Q(tele_command_t *);
+static void mod_S(tele_command_t *);
 static void mod_IF(tele_command_t *);
 static void mod_ELIF(tele_command_t *);
 static void mod_ELSE(tele_command_t *);
-static void mod_ITER (tele_command_t *);
+static void mod_L (tele_command_t *);
 
 #define MAKEMOD(name, params, doc) {#name, mod_ ## name, params, doc}
 #define MODS 7
 static const tele_mod_t tele_mods[MODS] = {
 	MAKEMOD(PROB, 1, "PROBABILITY TO CONTINUE EXECUTING LINE"),
 	MAKEMOD(DEL, 1, "DELAY THIS COMMAND"),
-	MAKEMOD(Q, 0, "ADD COMMAND TO QUEUE"),
+	MAKEMOD(S, 0, "ADD COMMAND TO STACK"),
 	MAKEMOD(IF, 1, "IF CONDITION FOR COMMAND"),
 	MAKEMOD(ELIF, 1, "ELSE IF"),
 	MAKEMOD(ELSE, 0, "ELSE"),
-	MAKEMOD(ITER, 2, "LOOPED COMMAND WITH ITERATION")
+	MAKEMOD(L, 2, "LOOPED COMMAND WITH ITERATION")
 };
 
 
@@ -472,7 +484,7 @@ void mod_DEL(tele_command_t *c) {
 		memcpy(delay_c[i].data, &c->data[c->separator+1], delay_c[i].l * sizeof(tele_data_t));
 	}	
 }
-void mod_Q(tele_command_t *c) {
+void mod_S(tele_command_t *c) {
 	if(q_top < Q_SIZE) {
 		q[q_top].l = c->l - c->separator - 1;
 		memcpy(q[q_top].data, &c->data[c->separator+1], q[q_top].l * sizeof(tele_data_t));
@@ -518,7 +530,7 @@ void mod_ELSE(tele_command_t *c) {
 		process(&cc);
 	}
 }
-void mod_ITER(tele_command_t *c) {
+void mod_L(tele_command_t *c) {
 	int a, b, d, i;
 	tele_command_t cc;
 	a = pop();
@@ -558,6 +570,7 @@ static void op_ADD(void);
 static void op_SUB(void);
 static void op_MUL(void);
 static void op_DIV(void);
+static void op_MOD(void);
 static void op_RAND(void);
 static void op_RRAND(void);
 static void op_TOSS(void);
@@ -571,11 +584,13 @@ static void op_EQ(void);
 static void op_NE(void);
 static void op_LT(void);
 static void op_GT(void);
+static void op_NZ(void);
+static void op_EZ(void);
 static void op_TR_TOG(void);
 static void op_N(void);
-static void op_Q_ALL(void);
-static void op_Q_POP(void);
-static void op_Q_CLR(void);
+static void op_S_ALL(void);
+static void op_S_POP(void);
+static void op_S_CLR(void);
 static void op_DEL_CLR(void);
 static void op_M_RESET(void);
 static void op_V(void);
@@ -588,14 +603,18 @@ static void op_P_POP(void);
 static void op_PN(void);
 static void op_TR_PULSE(void);
 static void op_II(void);
+static void op_RSH(void);
+static void op_LSH(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 34
+#define OPS 39
+// DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
 	MAKEOP(SUB, 2, 1,"[A B] SUBTRACT B FROM A"),
 	MAKEOP(MUL, 2, 1,"[A B] MULTIPLY TWO VALUES"),
 	MAKEOP(DIV, 2, 1,"[A B] DIVIDE FIRST BY SECOND"),
+	MAKEOP(MOD, 2, 1,"[A B] MOD FIRST BY SECOND"),
 	MAKEOP(RAND, 1, 1,"[A] RETURN RANDOM NUMBER UP TO A"),
 	MAKEOP(RRAND, 2, 1,"[A B] RETURN RANDOM NUMBER BETWEEN A AND B"),
 	MAKEOP(TOSS, 0, 1,"RETURN RANDOM STATE"),
@@ -609,11 +628,13 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(NE, 2, 1,"LOGIC: NOT EQUAL"),
 	MAKEOP(LT, 2, 1,"LOGIC: LESS THAN"),
 	MAKEOP(GT, 2, 1,"LOGIC: GREATER THAN"),
+	MAKEOP(NZ, 1, 1,"LOGIC: NOT ZERO"),
+	MAKEOP(EZ, 1, 1,"LOGIC: EQUALS ZERO"),
 	{"TR.TOG", op_TR_TOG, 1, 0, "[A] TOGGLE TRIGGER A"},
 	MAKEOP(N, 1, 1, "TABLE FOR NOTE VALUES"),
-	{"Q.ALL", op_Q_ALL, 0, 0, "Q: EXECUTE ALL"},
-	{"Q.POP", op_Q_POP, 0, 0, "Q: POP LAST"},
-	{"Q.CLR", op_Q_CLR, 0, 0, "Q: FLUSH"},
+	{"S.ALL", op_S_ALL, 0, 0, "S: EXECUTE ALL"},
+	{"S.POP", op_S_POP, 0, 0, "S: POP LAST"},
+	{"S.CLR", op_S_CLR, 0, 0, "S: FLUSH"},
 	{"DEL.CLR", op_DEL_CLR, 0, 0, "DELAY: FLUSH"},
 	{"M.RESET", op_M_RESET, 0, 0, "METRO: RESET"},
 	MAKEOP(V, 1, 1, "TO VOLT"),
@@ -625,7 +646,9 @@ static const tele_op_t tele_ops[OPS] = {
 	{"P.POP", op_P_POP, 0, 1, "PATTERN: POP"},
 	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"},
 	{"TR.PULSE", op_TR_PULSE, 1, 0, "PULSE TRIGGER"},
-	{"II", op_II, 2, 0, "II"}
+	{"II", op_II, 2, 0, "II"},
+	{"RSH", op_RSH, 2, 1, "RIGHT SHIFT"},
+	{"LSH", op_LSH, 2, 1, "LEFT SHIFT"}
 };
 
 static void op_ADD() {
@@ -639,6 +662,10 @@ static void op_MUL() {
 }
 static void op_DIV() { 
 	push(pop() / pop());
+}
+// can be optimized:
+static void op_MOD() { 
+	push(pop() % pop());
 }
 static void op_RAND() { 
 	int a = pop();
@@ -732,6 +759,12 @@ static void op_LT() {
 static void op_GT() { 
 	push(pop() > pop());
 }
+static void op_NZ() { 
+	push(pop() != 0);
+}
+static void op_EZ() { 
+	push(pop() == 0);
+}
 static void op_TR_TOG() {
 	int a = pop();
 	// saturate and shift
@@ -755,13 +788,13 @@ static void op_N() {
 		push(table_n[a]);
 	}
 }
-static void op_Q_ALL() {
+static void op_S_ALL() {
 	for(int i = 0;i<q_top;i++)
 		process(&q[q_top-i-1]);
 	q_top = 0;
 	(*update_q)(0);
 }
-static void op_Q_POP() {
+static void op_S_POP() {
 	if(q_top) {
 		q_top--;
 		process(&q[q_top]);
@@ -769,7 +802,7 @@ static void op_Q_POP() {
 			(*update_q)(0);
 	}
 }
-static void op_Q_CLR() {
+static void op_S_CLR() {
 	q_top = 0;
 	(*update_q)(0);
 }
@@ -888,6 +921,12 @@ static void op_II() {
 	int a = pop();
 	int b = pop();
 	update_ii(a,b);
+}
+static void op_RSH() { 
+	push(pop() >> pop());
+}
+static void op_LSH() { 
+	push(pop() << pop());
 }
 
 
@@ -1046,7 +1085,7 @@ error_t validate(tele_command_t *c) {
 			}
 			h += tele_ops[c->data[n].v].returns;
 			// hack for var-length params for P
-			if(c->data[n].v == 26 || c->data[n].v == 31) {
+			if(c->data[n].v == 29 || c->data[n].v == 34) {
 				if(n==0) 
 					h--;
 				else if(c->data[n-1].t == SEP)

@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "teletype.h"
+#include "../../system/util.h"
 
 
 
@@ -34,6 +35,9 @@ int main(int argc, char *argv[]) {
 	printf("teletype. (blank line quits)");
 
 	do {
+		char ss[32];
+		itoa(4163,ss,10);
+		printf("\nitoa test: %s",ss);
 		printf("\n\n> ");
 		fgets(in, 256, stdin);
 
