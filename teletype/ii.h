@@ -1,0 +1,33 @@
+#define WW 			0x10
+#define WW_PRESET 	0x11
+#define WW_POS		0x12
+#define WW_SYNC		0x13
+#define WW_START	0x14
+#define WW_END		0x15
+#define WW_PMODE	0x16
+#define WW_PATTERN	0x17
+#define WW_QPATTERN	0x18
+#define WW_MUTE1	0x19
+#define WW_MUTE2	0x1A
+#define WW_MUTE3	0x1B
+#define WW_MUTE4	0x1C
+#define WW_MUTEA	0x1D
+#define WW_MUTEB	0x1E
+
+#define MP 			0x30
+#define MP_PRESET	0x31
+#define MP_RESET	0x32
+#define MP_SYNC		0x33
+
+#define ES 			0x50
+#define ES_PRESET	0x51
+#define ES_MODE		0x52
+#define ES_CLOCK	0x53
+#define ES_RESET	0x54
+#define ES_PATTERN	0x55
+#define ES_TRANS	0x56
+#define ES_STOP		0x57
+#define ES_SH1		0x58
+#define ES_SH2		0x59
+#define ES_SH3		0x5A
+#define ES_SH4		0x5B
