@@ -26,7 +26,9 @@ static const char * errordesc[] = {
 	"TOO MANY PARAMS",
 	"MOD NOT ALLOWED HERE",
 	"EXTRA SEPARATOR",
-	"NEED SEPARATOR"
+	"NEED SEPARATOR",
+	"BAD SEPARATOR",
+	"MOVE LEFT"
 };
 
 const char * tele_error(error_t e) {
@@ -48,8 +50,8 @@ static uint8_t pn;
 
 static char condition;
 
-static tele_command_t q[Q_SIZE];
-static uint8_t q_top;
+static tele_command_t tele_stack[TELE_STACK_SIZE];
+static uint8_t tele_stack_top;
 
 
 volatile update_metro_t update_metro;
@@ -57,7 +59,7 @@ volatile update_tr_t update_tr;
 volatile update_cv_t update_cv;
 volatile update_cv_slew_t update_cv_slew;
 volatile update_delay_t update_delay;
-volatile update_q_t update_q;
+volatile update_s_t update_s;
 volatile update_cv_off_t update_cv_off;
 volatile update_ii_t update_ii;
 
@@ -92,7 +94,7 @@ void push(int data) {
 // VARS ARRAYS KEYS /////////////////////////////////////////////
 
 
-#define KEYS 25
+#define KEYS 28
 static tele_key_t tele_keys[KEYS] = {
 	{"WW.PRESET",WW_PRESET},
 	{"WW.POS",WW_POS},
@@ -110,8 +112,11 @@ static tele_key_t tele_keys[KEYS] = {
 	{"WW.MUTEB",WW_MUTEB},
 	{"MP.PRESET",MP_PRESET},
 	{"MP.RESET",MP_RESET},
+	{"MP.SYNC",MP_SYNC},
 	{"ES.PRESET",ES_PRESET},
 	{"ES.RESET",ES_RESET},
+	{"ES.MODE",ES_MODE},
+	{"ES.CLOCK",ES_CLOCK},
 	{"ES.PATTERN",ES_PATTERN},
 	{"ES.TRANS",ES_TRANS},
 	{"ES.STOP",ES_STOP},
@@ -138,9 +143,14 @@ static void v_P_WRAP(uint8_t);
 static void v_P_START(uint8_t);
 static void v_P_END(uint8_t);
 static void v_O(uint8_t);
+static void v_DRUNK(uint8_t);
+static void v_Q(uint8_t);
+static void v_Q_N(uint8_t);
+static void v_Q_AVG(uint8_t);
 
+static int tele_q[16];
 
-#define VARS 26
+#define VARS 30
 static tele_var_t tele_vars[VARS] = {
 	{"I",NULL,0},	// gets overwritten by ITER
 	{"TIME",NULL,0},
@@ -159,6 +169,10 @@ static tele_var_t tele_vars[VARS] = {
 	{"C",NULL,3},
 	{"D",NULL,4},
 	{"O",v_O,0},
+	{"DRUNK",v_DRUNK,0},
+	{"Q",v_Q,0},
+	{"Q.N",v_Q_N,1},
+	{"Q.AVG",v_Q_AVG,0},
 	{"P.N",v_P_N,0},
 	{"P.L",v_P_L,0},
 	{"P.I",v_P_I,0},
@@ -326,6 +340,55 @@ static void v_O(uint8_t n) {
 	}
 }
 
+static void v_DRUNK(uint8_t n) {
+	if(top == 0) {
+		push(tele_vars[V_DRUNK].v);
+		tele_vars[V_DRUNK].v += (rand() % 3) - 1;
+	}
+	else {
+		tele_vars[V_DRUNK].v = pop();
+	}
+}
+
+static void v_Q(uint8_t n) {
+	if(top == 0) {
+		push(tele_q[tele_vars[V_Q_N].v-1]);
+	}
+	else {
+		for(int i = 15;i>0;i--)
+			tele_q[i] = tele_q[i-1];
+		tele_q[0] = pop();
+	}
+}
+static void v_Q_N(uint8_t n) {
+	if(top == 0) {
+		push(tele_vars[V_Q_N].v);
+	}
+	else {
+		int a = pop();
+		if(a<1) a = 1;
+		else if(a>16) a = 16;
+		tele_vars[V_Q_N].v = a;
+	}
+}
+
+static void v_Q_AVG(uint8_t n) {
+	if(top == 0) {
+		int avg = 0;
+		for(int i = 0;i<tele_vars[V_Q_N].v;i++)
+			avg += tele_q[i];
+		avg /= tele_vars[V_Q_N].v;
+
+		push(avg);
+	}
+	else {
+		int a = pop();
+		for(int i=0;i<16;i++)
+			tele_q[i] = a;
+	}
+}
+
+
 
 static void a_TR(uint8_t);
 static void a_CV(uint8_t);
@@ -381,8 +444,8 @@ static void a_TR_TIME(uint8_t i) {
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
 
-static tele_command_t delay_c[D_SIZE];
-static int delay_t[D_SIZE];
+static tele_command_t delay_c[TELE_D_SIZE];
+static int delay_t[TELE_D_SIZE];
 static uint8_t delay_count;
 static int16_t tr_pulse[4];
 
@@ -390,7 +453,7 @@ static void process_delays(uint8_t);
 void clear_delays(void);
 
 static void process_delays(uint8_t v) {
-	for(int i=0;i<D_SIZE;i++) {
+	for(int i=0;i<TELE_D_SIZE;i++) {
 		if(delay_t[i]) {
 			delay_t[i] -= v;
  			if(delay_t[i] <= 0) {
@@ -419,7 +482,7 @@ static void process_delays(uint8_t v) {
 }
 
 void clear_delays(void) {
-	for(int i=0;i<D_SIZE;i++) {
+	for(int i=0;i<TELE_D_SIZE;i++) {
 		delay_t[i] = 0;
 	}
 
@@ -469,10 +532,10 @@ void mod_DEL(tele_command_t *c) {
 	int i = 0;
 	int a = pop();
 
-	while(delay_t[i] != 0 && i != D_SIZE)
+	while(delay_t[i] != 0 && i != TELE_D_SIZE)
 		i++;
 
-	if(i < D_SIZE) {
+	if(i < TELE_D_SIZE) {
 		delay_count++;
 		if(delay_count == 1)
 			(*update_delay)(1);
@@ -485,13 +548,13 @@ void mod_DEL(tele_command_t *c) {
 	}	
 }
 void mod_S(tele_command_t *c) {
-	if(q_top < Q_SIZE) {
-		q[q_top].l = c->l - c->separator - 1;
-		memcpy(q[q_top].data, &c->data[c->separator+1], q[q_top].l * sizeof(tele_data_t));
-		q[q_top].separator = -1;
-		q_top++;
-		if(q_top == 1)
-			(*update_q)(1);
+	if(tele_stack_top < TELE_STACK_SIZE) {
+		tele_stack[tele_stack_top].l = c->l - c->separator - 1;
+		memcpy(tele_stack[tele_stack_top].data, &c->data[c->separator+1], tele_stack[tele_stack_top].l * sizeof(tele_data_t));
+		tele_stack[tele_stack_top].separator = -1;
+		tele_stack_top++;
+		if(tele_stack_top == 1)
+			(*update_s)(1);
 	}
 }
 void mod_IF(tele_command_t *c) {
@@ -738,11 +801,17 @@ static void op_WRAP() {
 	push(i);
 }
 static void op_QT() {
-	int a, b;
+	// this rounds negative numbers rather than quantize (choose closer)
+	int a, b, c, d, e;
 	a = pop();
 	b = pop();
 
-	// TODO
+	c = b / a;
+	d = c * a;
+	e = (c+1) * a;
+
+	if(abs(b-d) < abs(b-e)) push(d);
+	else push(e);
 }
 static void op_AVG() {
 	push((pop() + pop()) / 2);
@@ -780,8 +849,8 @@ static void op_N() {
 
 	if(a < 0) {
 		if(a < -127) a = -127;
-		a *= -1;
-		push(-1 * table_n[a]);
+		a = -a;
+		push(-table_n[a]);
 	}
 	else {
 		if(a > 127) a = 127;
@@ -789,22 +858,22 @@ static void op_N() {
 	}
 }
 static void op_S_ALL() {
-	for(int i = 0;i<q_top;i++)
-		process(&q[q_top-i-1]);
-	q_top = 0;
-	(*update_q)(0);
+	for(int i = 0;i<tele_stack_top;i++)
+		process(&tele_stack[tele_stack_top-i-1]);
+	tele_stack_top = 0;
+	(*update_s)(0);
 }
 static void op_S_POP() {
-	if(q_top) {
-		q_top--;
-		process(&q[q_top]);
-		if(q_top == 0)
-			(*update_q)(0);
+	if(tele_stack_top) {
+		tele_stack_top--;
+		process(&tele_stack[tele_stack_top]);
+		if(tele_stack_top == 0)
+			(*update_s)(0);
 	}
 }
 static void op_S_CLR() {
-	q_top = 0;
-	(*update_q)(0);
+	tele_stack_top = 0;
+	(*update_s)(0);
 }
 static void op_DEL_CLR() {
 	clear_delays();
@@ -814,24 +883,42 @@ static void op_M_RESET() {
 }
 static void op_V() {
 	int a = pop();
-	if(a < 0) a = 0;
-	else if(a > 10) a = 10;
-	push(table_v[a]);
+	if(a > 10) a = 10;
+	else if(a < -10) a = -10;
+
+	if(a < 0) {
+		a = -a;
+		push(-table_v[a]);
+	}
+	else 
+		push(table_v[a]);
 }
 static void op_VV() {
 	int a = pop();
 	int b = pop();
-	if(a < 0) a = 0;
+	if(a < -10) a = -10;
 	else if(a > 10) a = 10;
-	if(b < 0) b = 0;
+	if(b < -99) b = -99;
 	else if(b > 99) b = 99;
-	push(table_v[a] + table_vv[b]);
+
+	if(a < 0) a = -table_v[-a];
+	else a = table_v[a];
+
+	if(b < 0) b = -table_v[-b];
+	else b = table_vv[b];
+
+	push(a + b);
 }
 static void op_P() {
 	int a, b;
 	a = pop();
-	if(a < 0) a = 0;
-	else if(a > 63) a = 63;
+	if(a < 0) {
+		if(tele_patterns[pn].l == 0) a = 0;
+		else if(-a == tele_patterns[pn].l) a =0;
+		else 
+			a = tele_patterns[pn].l-(-a%tele_patterns[pn].l);
+	}
+	if(a > 63) a = 63;
 
 	if(top == 0) {
 		push(tele_patterns[pn].v[a]);
@@ -846,8 +933,8 @@ static void op_P_INS() {
 	a = pop();
 	b = pop();
 
-	if(a<0) a = 0;
-	else if(a>63) a =63;
+	if(a<0) a = 64-a;
+	if(a>63) a =63;
 
 	if(tele_patterns[pn].l >= a) {
 		for(i = tele_patterns[pn].l;i>a;i--)
@@ -894,9 +981,15 @@ static void op_PN() {
 	b = pop();
 
 	if(a < 0) a = 0;
-	else if(a > 3) a = 33;
-	if(a < 0) a = 0;
-	else if(a > 63) a = 63;
+	else if(a > 3) a = 3;
+	
+	if(b < 0) {
+		if(tele_patterns[a].l == 0) b = 0;
+		else if(-b == tele_patterns[a].l) b = 0;
+		else 
+			b = tele_patterns[a].l - (-b % tele_patterns[a].l);
+	}
+	if(b > 63) b = 63;
 
 	if(top == 0) {
 		push(tele_patterns[a].v[b]);
@@ -1077,6 +1170,11 @@ error_t validate(tele_command_t *c) {
 
 	while(n--) {
 		if(c->data[n].t == OP) {
+			if(tele_ops[c->data[n].v].returns == 0 && n) {
+				strcpy(error_detail, tele_ops[c->data[n].v].name);
+				return E_NOT_LEFT;
+			}
+
 			h -= tele_ops[c->data[n].v].params;
 			
 			if(h < 0) {
@@ -1108,6 +1206,8 @@ error_t validate(tele_command_t *c) {
 		else if(c->data[n].t == SEP) {
 			if(c->separator != -1)
 				return E_MANY_SEP;
+			else if(n==0)
+				return E_PLACE_SEP;
 
 			c->separator = n;
 			if(h > 1) 

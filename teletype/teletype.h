@@ -5,15 +5,15 @@
 #define SCRIPT_MAX_COMMANDS_ 5
 #define COMMAND_MAX_LENGTH 12
 #define STACK_SIZE 8
-#define Q_SIZE 8
-#define D_SIZE 8
+#define TELE_STACK_SIZE 8
+#define TELE_D_SIZE 8
 
 #define WELCOME "TELETYPE 1.0"
 
 #define TRUE 1
 #define FALSE 0
 
-enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O};
+enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O, V_DRUNK, V_Q, V_Q_N, V_Q_AVG };
 
 typedef enum { 
 	E_OK,
@@ -24,7 +24,9 @@ typedef enum {
 	E_EXTRA_PARAMS,
 	E_NO_MOD_HERE,
 	E_MANY_SEP,
-	E_NEED_SEP
+	E_NEED_SEP,
+	E_PLACE_SEP,
+	E_NOT_LEFT
 } error_t;
 
 typedef enum {NUMBER, MOD, SEP, OP, VAR, ARRAY, KEY} tele_word_t;
@@ -125,8 +127,8 @@ extern volatile update_cv_slew_t update_cv_slew;
 typedef void (*update_delay_t)(uint8_t);
 extern volatile update_delay_t update_delay;
 
-typedef void (*update_q_t)(uint8_t);
-extern volatile update_q_t update_q;
+typedef void (*update_s_t)(uint8_t);
+extern volatile update_s_t update_s;
 
 typedef void (*update_cv_off_t)(uint8_t, int v);
 extern volatile update_cv_off_t update_cv_off;
