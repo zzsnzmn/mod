@@ -27,7 +27,5 @@
 #define ES_PATTERN	0x55
 #define ES_TRANS	0x56
 #define ES_STOP		0x57
-#define ES_SH1		0x58
-#define ES_SH2		0x59
-#define ES_SH3		0x5A
-#define ES_SH4		0x5B
+#define ES_TRIPLE	0x58
+#define ES_MAGIC	0x59

@@ -1,7 +1,5 @@
 README  // teletype
 
-
-@ system
 HELP?
 	key list
 	command list?
@@ -14,16 +12,18 @@ preset
 	front panel functions
 	max out ram
 
-i2c
-	earthsea
-		clocking mode, clock step
-	mp.sync
-
+EARTHSEA
+	cv smoothers
 
 hotkeys
 	CTL-ESC kill timers/slew
 	CTL-` tr mute
 
+commands
+	SCENE
+	should vv just be a single number ie 100 for 1v?
+	EXP
+	LOG
 
 TRACKER
 	visual
@@ -44,6 +44,7 @@ move DOC strings to flash?
 ----> protect process() from ints? tele_tick??
 
 v2//////////////
+@ system ??
 cv.set (kills slew, cuts to value)
 input trigger state
 i2c bidirectional

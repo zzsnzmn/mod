@@ -14,6 +14,7 @@
 #include "gpio.h"
 #include "spi.h"
 #include "sysclk.h"
+#include "twi.h"
 
 // skeleton
 #include "types.h"
@@ -25,9 +26,11 @@
 #include "adc.h"
 #include "util.h"
 #include "ftdi.h"
+#include "i2c.h"
 
 // this
 #include "conf_board.h"
+#include "ii.h"
 	
 
 #define FIRSTRUN_KEY 0x22
@@ -88,10 +91,12 @@ typedef struct {
 } ain_t;
 
 typedef struct {
-	s16 now;
+	u16 now;
 	u16 target;
 	u16 slew;
-	s16 step;
+	u16 step;
+	s32 delta;
+	u32 a;
 } aout_t;
 
 
@@ -163,6 +168,8 @@ u16 p_timer_total;
 u8 blinker;
 u8 all_edit;
 
+u8 clock_mode;
+
 s8 move_x, move_y;
 
 //this
@@ -227,6 +234,8 @@ void pattern_time_double(void);
 void reset_hys(void);
 
 
+static void es_process_ii(uint8_t i, int d);
+
 
 void reset_hys() {
 	u8 i1;
@@ -267,9 +276,17 @@ static void cvTimer_callback(void* o) {
 	u8 i;
 
 	for(i=0;i<4;i++)
-		if(aout[i].now != aout[i].target) {
-			aout[i].now += (aout[i].target - aout[i].now) / aout[i].step;
+		if(aout[i].step) {
 			aout[i].step--;
+
+			if(aout[i].step == 0) {
+				aout[i].now = aout[i].target;
+			}
+			else {
+				aout[i].a += aout[i].delta;
+				aout[i].now = aout[i].a >> 16;
+			}
+
 			monomeFrameDirty++;
 		}
 
@@ -379,56 +396,59 @@ static void clockTimer_callback(void* o) {
 		rec_timer++;
 	}
 
-	if(p_playing) {
-		if(p_timer == 0) {
+	if(clock_mode == 0) {
+		if(p_playing) {
+			if(p_timer == 0) {
 
-			if(p_play_pos == es.p[p_select].length && !es.p[p_select].loop) {
-				// print_dbg("\r\nPATTERN DONE");
-				p_playing = 0;
-			}
-			else {
-				if(p_play_pos == es.p[p_select].length && es.p[p_select].loop) {
-					// print_dbg("\r\nLOOP");
-					p_play_pos = 0;
-					p_timer_total = 0;
+				if(p_play_pos == es.p[p_select].length && !es.p[p_select].loop) {
+					// print_dbg("\r\nPATTERN DONE");
+					p_playing = 0;
 				}
+				else {
+					if(p_play_pos == es.p[p_select].length && es.p[p_select].loop) {
+						// print_dbg("\r\nLOOP");
+						p_play_pos = 0;
+						p_timer_total = 0;
+					}
 
-				u8 i = p_play_pos;
-				p_timer = es.p[p_select].e[i].interval;
+					u8 i = p_play_pos;
+					p_timer = es.p[p_select].e[i].interval;
 
-				s8 x = es.p[p_select].e[i].x + es.p[p_select].x;
-				s8 y = es.p[p_select].e[i].y + es.p[p_select].y;
+					s8 x = es.p[p_select].e[i].x + es.p[p_select].x;
+					s8 y = es.p[p_select].e[i].y + es.p[p_select].y;
 
-				if(x<0) x = 0;
-				else if(x>15) x=15;
-				if(y<0) y = 0;
-				else if(y>7) y=7;
-
-
-				// print_dbg("\r\n");
-				// print_dbg_ulong(i);
-				// print_dbg(" : ");
-				// print_dbg_ulong(es.p[p_select].e[i].shape);
-				// print_dbg(" @ (");
-				// print_dbg_ulong(es.p[p_select].e[i].x);
-				// print_dbg(", ");
-				// print_dbg_ulong(es.p[p_select].e[i].y);
-				// print_dbg(")   NEXT: ");
-				// print_dbg_ulong(es.p[p_select].e[i].interval);
-
-				pattern_shape(es.p[p_select].e[i].shape, (u8)x, (u8)y);
+					if(x<0) x = 0;
+					else if(x>15) x=15;
+					if(y<0) y = 0;
+					else if(y>7) y=7;
 
 
-				p_play_pos++;
+					// print_dbg("\r\n");
+					// print_dbg_ulong(i);
+					// print_dbg(" : ");
+					// print_dbg_ulong(es.p[p_select].e[i].shape);
+					// print_dbg(" @ (");
+					// print_dbg_ulong(es.p[p_select].e[i].x);
+					// print_dbg(", ");
+					// print_dbg_ulong(es.p[p_select].e[i].y);
+					// print_dbg(")   NEXT: ");
+					// print_dbg_ulong(es.p[p_select].e[i].interval);
 
+					pattern_shape(es.p[p_select].e[i].shape, (u8)x, (u8)y);
+
+
+					p_play_pos++;
+
+				}
 			}
+			else p_timer--;
+
+			p_timer_total++;
+
+			monomeFrameDirty++;
 		}
-		else p_timer--;
-
-		p_timer_total++;
-
-		monomeFrameDirty++;
 	}
+
 
 	if(r_status == rRec || all_edit || !VARI) {
 		blinker++;
@@ -471,16 +491,16 @@ void rec_stop() {
 	for(i=0;i<rec_position;i++) {
 		es.p[p_select].total_time += es.p[p_select].e[i].interval;
 
-		print_dbg("\r\n");
-		print_dbg_ulong(i);
-		print_dbg(" : ");
-		print_dbg_ulong(es.p[p_select].e[i].shape);
-		print_dbg(" @ (");
-		print_dbg_ulong(es.p[p_select].e[i].x);
-		print_dbg(", ");
-		print_dbg_ulong(es.p[p_select].e[i].y);
-		print_dbg(") + ");
-		print_dbg_ulong(es.p[p_select].e[i].interval);
+		// print_dbg("\r\n");
+		// print_dbg_ulong(i);
+		// print_dbg(" : ");
+		// print_dbg_ulong(es.p[p_select].e[i].shape);
+		// print_dbg(" @ (");
+		// print_dbg_ulong(es.p[p_select].e[i].x);
+		// print_dbg(", ");
+		// print_dbg_ulong(es.p[p_select].e[i].y);
+		// print_dbg(") + ");
+		// print_dbg_ulong(es.p[p_select].e[i].interval);
 	}
 
 	// print_dbg("\r\ntotal time: ");
@@ -723,6 +743,8 @@ static void handler_PollADC(s32 data) {
 					for(n=0;n<8;n++)
 						es.cv[n][i] = aout[i].target = (adc[i] + adc_last[i])>>1;
 					aout[i].step = 5; // smooth out the input
+					aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
+					aout[i].a = aout[i].now<<16;
 				}
 				else if(mode == mSlew) {
 					for(n=0;n<8;n++)
@@ -732,6 +754,8 @@ static void handler_PollADC(s32 data) {
 			else if(mode == mNormal) {
 				es.cv[shape_on][i] = aout[i].target = (adc[i] + adc_last[i])>>1;
 				aout[i].step = 5; // smooth out the input
+				aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
+				aout[i].a = aout[i].now<<16;
 			}
 			else if(mode == mSlew)
 				es.slew[shape_on][i] = aout[i].slew = (adc[i] + adc_last[i])>>1;
@@ -1149,9 +1173,9 @@ static void shape(u8 s, u8 x, u8 y) {
 		// aout[3].target = TONE[x*scale[scale_x]+(7-y)*scale[scale_y]];
 
 		if(port_active) {
-			aout[3].step = aout[3].slew >> 2;
-			if(!aout[3].step)
-				aout[3].now = aout[3].target;
+			aout[3].step = (aout[3].slew >> 2) + 1;
+			aout[3].delta = ((aout[3].target - aout[3].now)<<16) / aout[3].step;
+			aout[3].a = aout[3].now<<16;
 		}
 		else {
 			aout[3].now = aout[3].target;
@@ -1183,12 +1207,12 @@ static void shape(u8 s, u8 x, u8 y) {
 				// don't change CV if above thresh
 				if(es.slew[shape_on][i] < SLEW_CV_OFF_THRESH) {
 					aout[i].target = es.cv[shape_on][i];
-				}
+					aout[i].slew = es.slew[shape_on][i];
 
-				aout[i].slew = es.slew[shape_on][i];
-				aout[i].step = EXP[aout[i].slew >> 4];
-				if(!aout[i].step) 
-					aout[i].now = aout[i].target;
+					aout[i].step = EXP[aout[i].slew >> 4] + 1;
+					aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
+					aout[i].a = aout[i].now<<16;
+				}
 			}
 
 			reset_hys();
@@ -1249,9 +1273,9 @@ static void pattern_shape(u8 s, u8 x, u8 y) {
 
 
 		if(port_active) {
-			aout[3].step = aout[3].slew >> 2;
-			if(!aout[3].step)
-				aout[3].now = aout[3].target;
+			aout[3].step = (aout[3].slew >> 2) + 1;
+			aout[3].delta = ((aout[3].target - aout[3].now)<<16) / aout[3].step;
+			aout[3].a = aout[3].now<<16;
 		}
 		else {
 			aout[3].now = aout[3].target;
@@ -1282,12 +1306,12 @@ static void pattern_shape(u8 s, u8 x, u8 y) {
 					// don't change CV if above thresh
 					if(es.slew[shape_on][i] < SLEW_CV_OFF_THRESH) {
 						aout[i].target = es.cv[shape_on][i];
-					}
+						aout[i].slew = es.slew[shape_on][i];
 
-					aout[i].slew = es.slew[shape_on][i];
-					aout[i].step = EXP[aout[i].slew >> 4];
-					if(!aout[i].step) 
-						aout[i].now = aout[i].target;
+						aout[i].step = EXP[aout[i].slew >> 4] + 1;
+						aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
+						aout[i].a = aout[i].now<<16;
+					}
 				}
 
 				reset_hys();
@@ -1629,6 +1653,137 @@ static void refresh_preset() {
 }
 
 
+
+
+
+static void es_process_ii(uint8_t i, int d) {
+	// print_dbg("\r\nes: ");
+	// print_dbg_hex(i);
+	// print_dbg(" ");
+	// print_dbg_ulong(d);
+
+	switch(i) {
+		case ES_PRESET:
+			if(d<0 || d>8)
+				break;
+			preset_select = d;
+			flash_read();
+			monomeFrameDirty++;
+			break;
+		case ES_MODE:
+			if(d)
+				clock_mode = 1;
+			else
+				clock_mode = 0;
+			break;
+		case ES_CLOCK:
+			if(d && clock_mode) {
+				if(p_play_pos == es.p[p_select].length && !es.p[p_select].loop) {
+					// print_dbg("\r\nPATTERN DONE");
+					p_playing = 0;
+				}
+				else {
+					if(p_play_pos == es.p[p_select].length && es.p[p_select].loop) {
+						// print_dbg("\r\nLOOP");
+						p_play_pos = 0;
+						p_timer_total = 0;
+					}
+
+					u8 i = p_play_pos;
+					p_timer_total += es.p[p_select].e[i].interval;
+
+					s8 x = es.p[p_select].e[i].x + es.p[p_select].x;
+					s8 y = es.p[p_select].e[i].y + es.p[p_select].y;
+
+					if(x<0) x = 0;
+					else if(x>15) x=15;
+					if(y<0) y = 0;
+					else if(y>7) y=7;
+
+
+					// print_dbg("\r\n");
+					// print_dbg_ulong(i);
+					// print_dbg(" : ");
+					// print_dbg_ulong(es.p[p_select].e[i].shape);
+					// print_dbg(" @ (");
+					// print_dbg_ulong(es.p[p_select].e[i].x);
+					// print_dbg(", ");
+					// print_dbg_ulong(es.p[p_select].e[i].y);
+					// print_dbg(")   NEXT: ");
+					// print_dbg_ulong(es.p[p_select].e[i].interval);
+
+					pattern_shape(es.p[p_select].e[i].shape, (u8)x, (u8)y);
+
+
+					p_play_pos++;
+
+				}
+
+				monomeFrameDirty++;
+			}
+			break;
+		case ES_RESET:
+			if(d) {
+				if(r_status == rRec) {
+					rec_stop();
+					r_status = rOff;
+					play();
+				}
+				play();
+			}
+			break;
+		case ES_PATTERN:
+			if(d < 0 || d > 15)
+				break;
+			if(p_playing) {
+				stop();
+				p_select = d;
+				play();
+			}
+			else {
+				stop();
+				p_select = d;
+			}
+			break;
+		case ES_TRANS:
+			d = (short)d;
+			es.p[p_select].x = (d % 5);
+			es.p[p_select].y = -(d / 5);
+			break;
+		case ES_STOP:
+			if(d) {
+				if(r_status == rRec) {
+					rec_stop();
+					r_status = rOff;
+				}
+				stop();
+			}
+			break;
+		case ES_TRIPLE:
+			if(d<1 || d>4)
+				break;
+			pattern_shape(d+4,root_x,root_y);
+			break;
+		case ES_MAGIC:
+			if(d==1)
+				pattern_time_double();
+			else if(d==2)
+				pattern_time_half();
+			else if(d==3)
+				pattern_linearize();
+ 			break;
+		default:
+			break;
+	}
+}
+
+
+
+
+
+
+
+
 // assign event handlers
 static inline void assign_main_event_handlers(void) {
 	app_event_handlers[ kEventFront ]	= &handler_Front;
@@ -1724,6 +1879,8 @@ void flash_read(void) {
 
 
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1748,6 +1905,8 @@ int main(void)
 
 	init_usb_host();
 	init_monome();
+
+	init_i2c_slave(0x50);
 
 
 	print_dbg("\r\n\n// earthsea! //////////////////////////////// ");
@@ -1825,6 +1984,8 @@ int main(void)
 	SIZE = 16;
 
 	re = &refresh;
+
+	process_ii = &es_process_ii;
 
 	clock_pulse = &clock;
 	// clock_external = !gpio_get_pin_value(B09);

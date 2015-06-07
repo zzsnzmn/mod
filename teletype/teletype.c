@@ -94,7 +94,7 @@ void push(int data) {
 // VARS ARRAYS KEYS /////////////////////////////////////////////
 
 
-#define KEYS 28
+#define KEYS 26
 static tele_key_t tele_keys[KEYS] = {
 	{"WW.PRESET",WW_PRESET},
 	{"WW.POS",WW_POS},
@@ -114,16 +114,14 @@ static tele_key_t tele_keys[KEYS] = {
 	{"MP.RESET",MP_RESET},
 	{"MP.SYNC",MP_SYNC},
 	{"ES.PRESET",ES_PRESET},
-	{"ES.RESET",ES_RESET},
 	{"ES.MODE",ES_MODE},
 	{"ES.CLOCK",ES_CLOCK},
+	{"ES.RESET",ES_RESET},
 	{"ES.PATTERN",ES_PATTERN},
 	{"ES.TRANS",ES_TRANS},
 	{"ES.STOP",ES_STOP},
-	{"ES.SH1",ES_SH1},
-	{"ES.SH2",ES_SH2},
-	{"ES.SH3",ES_SH3},
-	{"ES.SH4",ES_SH4}
+	{"ES.TRIPLE",ES_TRIPLE},
+	{"ES.MAGIC",ES_MAGIC}
 };
 
 
@@ -1171,8 +1169,10 @@ error_t validate(tele_command_t *c) {
 	while(n--) {
 		if(c->data[n].t == OP) {
 			if(tele_ops[c->data[n].v].returns == 0 && n) {
-				strcpy(error_detail, tele_ops[c->data[n].v].name);
-				return E_NOT_LEFT;
+				if(c->data[n-1].t != SEP) {
+					strcpy(error_detail, tele_ops[c->data[n].v].name);
+					return E_NOT_LEFT;
+				}
 			}
 
 			h -= tele_ops[c->data[n].v].params;

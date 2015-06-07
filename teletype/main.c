@@ -1323,10 +1323,18 @@ static void handler_ScreenRefresh(s32 data) {
 }
 
 static void handler_II(s32 data) {
-	uint8_t i = data >> 16;
-	int d = data & 0xff;
-	uint8_t addr = data & 0xf0;
+	uint8_t i = data & 0xff;
+	int16_t d = (int)(data >> 16);
+	uint8_t addr = i & 0xf0;
 	i2c_master_tx(addr, i, d);
+	// print_dbg("\r\ni2c: ");
+	// print_dbg_ulong(addr);
+	// print_dbg(" ");
+	// print_dbg_ulong(i);
+	// print_dbg(" ");
+	// if(d<0)
+	// 	print_dbg(" -");
+	// print_dbg_ulong(d);
 }
 
 
@@ -1482,7 +1490,7 @@ static void tele_cv_off(uint8_t i, int v) {
 static void tele_ii(uint8_t i, int d) {
 	static event_t e;
 	e.type = kEventII;
-	e.data = (i<<16) + d;
+	e.data = (d<<16) + i;
 	event_post(&e);
 }
 
