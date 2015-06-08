@@ -455,7 +455,7 @@ static void handler_HidTimer(s32 data) {
      				case 0x51: // down
      					if(mode == M_TRACK) {
      						if(frame[0] & ALT) {
-     							if(offset_index + 8 < 63)
+     							if(offset_index < 48)
      								offset_index += 8;
      							else {
      								offset_index = 56;
@@ -1091,6 +1091,7 @@ static void handler_ScreenRefresh(s32 data) {
 
 					if(y+offset_index == tele_patterns[x].i) {
 						line[y].data[2*128 + (x+1)*30+6] = 11;
+						line[y].data[3*128 + (x+1)*30+6] = 11;
 						line[y].data[4*128 + (x+1)*30+6] = 11;
 					}
 
@@ -1099,6 +1100,14 @@ static void handler_ScreenRefresh(s32 data) {
 
 			itoa(tele_patterns[edit_pattern].v[edit_index + offset_index], s, 10);
 			font_string_region_clip_right(&line[edit_index], s, (edit_pattern+1) * 30 + 4, 0, 0xf, 0);
+
+			for(y=0;y<64;y+=2) {
+				line[y>>3].data[(y & 0x7)*128 + 8] = 1;
+			}
+
+			for(y=0;y<8;y++) {
+				line[(offset_index+y)>>3].data[((offset_index+y)&0x7)*128 + 8] = 6;
+			}
 
 			r_edit_dirty &= ~R_ALL;
 

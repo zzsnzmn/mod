@@ -730,9 +730,10 @@ static void op_MOD() {
 }
 static void op_RAND() { 
 	int a = pop();
-	if(a < 0)
-		a = (a * -1);
-	push(rand() % (a+1));
+	if(a == -1)
+		push(0);
+	else
+		push(rand() % (a+1));
 	
 }
 static void op_RRAND() {
