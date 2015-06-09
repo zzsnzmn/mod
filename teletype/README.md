@@ -1,43 +1,37 @@
 README  // teletype
 
 HELP?
+	nav jump spacing
 	key list
 	command list?
-
 
 LIVE
 	activity
 
-preset
+scenes
 	front panel functions
-	max out ram
 
-EARTHSEA
-	cv smoothers
+command
+	cv.set
 
 hotkeys
 	CTL-ESC kill timers/slew
 	CTL-` tr mute
 
-commands
-	SCENE
-	should vv just be a single number ie 100 for 1v?
-	EXP
-	LOG
+ii
+	mp mute, unmute, freeze, unfreeze
 
 TRACKER
 	visual
+		update pattern index
 		--> start/end reversal doesn't display
 	functions
-		edit
-			--> grab knob val (scaled?)
+		--> grab knob val (scaled?)
 
-editing
-	knob-read insertion
-
+arrow key repeat
 
 remove debug prints
-move DOC strings to flash?
+remove op text strings?
 
 
 ----> script tr execution clocked? on 1ms timer, where interrupts simply queue execution?

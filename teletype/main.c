@@ -30,9 +30,11 @@
 #include "region.h"
 #include "font.h"
 
+
 // this
 #include "conf_board.h"
 #include "teletype.h"
+#include "help.h"
 
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
@@ -40,12 +42,11 @@
 #define RATE_CLOCK 10
 #define RATE_CV 6
 
-#define SCENE_SLOTS 8
-#define SCENE_SLOTS_ 7
+#define SCENE_SLOTS 32
+#define SCENE_SLOTS_ 31
 
 
-
-u8 preset, preset_select, front_timer, preset_edit_line, preset_edit_offset;
+uint8_t preset, preset_select, front_timer, preset_edit_line, preset_edit_offset, offset_view;
 
 u16 adc[4];
 
@@ -100,6 +101,7 @@ static nvram_data_t f;
 #define M_TRACK 2
 #define M_PRESET_W 3
 #define M_PRESET_R 4
+#define M_HELP 5
 
 uint8_t mode;
 
@@ -159,14 +161,15 @@ static void flash_read(void);
 
 static void render_init(void);
 
-static void tele_metro(int, int, uint8_t);
-static void tele_tr(uint8_t i, int v);
-static void tele_cv(uint8_t i, int v);
-static void tele_cv_slew(uint8_t i, int v);
+static void tele_metro(int16_t, int16_t, uint8_t);
+static void tele_tr(uint8_t i, int16_t v);
+static void tele_cv(uint8_t i, int16_t v);
+static void tele_cv_slew(uint8_t i, int16_t v);
 static void tele_delay(uint8_t i);
 static void tele_s(uint8_t i);
-static void tele_cv_off(uint8_t i, int v);
-static void tele_ii(uint8_t i, int d);
+static void tele_cv_off(uint8_t i, int16_t v);
+static void tele_ii(uint8_t i, int16_t d);
+static void tele_scene(uint8_t i);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -452,6 +455,19 @@ static void handler_HidTimer(s32 data) {
      					}
 
      					break;
+     				case 0x3A: // F1
+     					if(mode == M_HELP) {
+     						for(n = 0;n < 32;n++) input[n] = 0;
+		 					pos = 0;
+     						edit_line = SCRIPT_MAX_COMMANDS;
+     						mode = M_LIVE;
+     						r_edit_dirty = R_ALL;
+     					}
+     					else {
+     						mode = M_HELP;
+     						r_edit_dirty = R_ALL;
+     					}
+     					break;
      				case 0x51: // down
      					if(mode == M_TRACK) {
      						if(frame[0] & ALT) {
@@ -487,6 +503,12 @@ static void handler_HidTimer(s32 data) {
      					else if(mode == M_PRESET_R) {
      						if(preset_edit_offset < 8) {
      							preset_edit_offset++;
+     							r_edit_dirty |= R_ALL;
+     						}
+     					}
+     					else if(mode == M_HELP) {
+     						if(offset_view < HELP_LENGTH_) {
+     							offset_view++;
      							r_edit_dirty |= R_ALL;
      						}
      					}
@@ -545,6 +567,12 @@ static void handler_HidTimer(s32 data) {
      					else if(mode == M_PRESET_R) {
      						if(preset_edit_offset) {
      							preset_edit_offset--;
+     							r_edit_dirty |= R_ALL;
+     						}
+     					}
+     					else if(mode == M_HELP) {
+     						if(offset_view) {
+     							offset_view--;
      							r_edit_dirty |= R_ALL;
      						}
      					}
@@ -614,8 +642,10 @@ static void handler_HidTimer(s32 data) {
  							r_edit_dirty |= R_ALL;
  						}
  						else if(mode == M_TRACK) {
- 							tele_patterns[edit_pattern].v[edit_index+offset_index]++;
- 							r_edit_dirty |= R_ALL;
+ 							if(tele_patterns[edit_pattern].v[edit_index+offset_index] < 32766) {
+ 								tele_patterns[edit_pattern].v[edit_index+offset_index]++;
+ 								r_edit_dirty |= R_ALL;
+ 							}
  						}
      					break;
 
@@ -637,8 +667,10 @@ static void handler_HidTimer(s32 data) {
 	 						r_edit_dirty |= R_ALL;
 	 					}
 	 					else if(mode == M_TRACK) {
- 							tele_patterns[edit_pattern].v[edit_index+offset_index]--;
- 							r_edit_dirty |= R_ALL;
+	 						if(tele_patterns[edit_pattern].v[edit_index+offset_index] > -32767) {
+ 								tele_patterns[edit_pattern].v[edit_index+offset_index]--;
+ 								r_edit_dirty |= R_ALL;
+ 							}
  						}
      					break;
      				case BACKSPACE:
@@ -791,6 +823,7 @@ static void handler_HidTimer(s32 data) {
 	     				}
 	     				else if(mode == M_PRESET_R) {
 	     					flash_read();
+	     					tele_set_val(V_SCENE, preset_select);
 
      						for(int i=0;i<script[INIT_SCRIPT].l;i++)
 								process(&script[INIT_SCRIPT].c[i]);
@@ -965,8 +998,8 @@ static void handler_HidTimer(s32 data) {
 	     					if(n > 0x2F && n < 0x03A) {
 	     						if(tele_patterns[edit_pattern].v[edit_index+offset_index]) {
 	     							// limit range
-	     							if(tele_patterns[edit_pattern].v[edit_index+offset_index] < 3275 &&
-	     								tele_patterns[edit_pattern].v[edit_index+offset_index] > -3275)
+	     							if(tele_patterns[edit_pattern].v[edit_index+offset_index] < 3276 &&
+	     								tele_patterns[edit_pattern].v[edit_index+offset_index] > -3276)
 	     							{
 		     							tele_patterns[edit_pattern].v[edit_index+offset_index] =
 			     							tele_patterns[edit_pattern].v[edit_index+offset_index] * 10;
@@ -1162,6 +1195,17 @@ static void handler_ScreenRefresh(s32 data) {
 			r_edit_dirty &= ~R_ALL;
 			sdirty++;
 		}
+	}
+	else if(mode == M_HELP) {
+		if(r_edit_dirty & R_ALL) {
+			for(y=0;y<8;y++) {
+				region_fill(&line[y], 0);
+				font_string_region_clip_tab(&line[y], help[y+offset_view], 2, 0, 0xa, 0);
+			}
+
+			r_edit_dirty &= ~R_ALL;
+			sdirty++;
+		}	
 	}
 	else {
 		/*
@@ -1392,7 +1436,7 @@ void flash_unfresh(void) {
 }
 
 void flash_write(void) {
-	print_dbg("\r\n:::: write flash");
+	// print_dbg("\r\n:::: write flash");
 	// print_dbg_ulong(preset_select);
 
 	flashc_memcpy((void *)&f.s[preset_select].script, &script, sizeof(script), true);
@@ -1400,7 +1444,7 @@ void flash_write(void) {
 	flashc_memcpy((void *)&f.s[preset_select].text, &scene_text, sizeof(scene_text), true);
 	// flashc_memcpy((void *)&flashy.glyph[preset_select], &glyph, sizeof(glyph), true);
 	// flashc_memset8((void*)&(flashy.preset_select), preset_select, 1, true);
-	print_dbg("\r\n:::: done");
+	// print_dbg("\r\n:::: done");
 }
 
 void flash_read(void) {
@@ -1426,7 +1470,7 @@ void render_init(void) {
 
 
 
-static void tele_metro(int m, int m_act, uint8_t m_reset) {
+static void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
 	metro_time = m;
 
 	if(m_act && !metro_act) {
@@ -1452,14 +1496,14 @@ static void tele_metro(int m, int m_act, uint8_t m_reset) {
 		activity &= ~A_METRO;
 }
 
-static void tele_tr(uint8_t i, int v) {
+static void tele_tr(uint8_t i, int16_t v) {
 	if(v)
 		gpio_set_pin_high(B08+i);
 	else
 		gpio_set_pin_low(B08+i);
 }
 
-static void tele_cv(uint8_t i, int v) {
+static void tele_cv(uint8_t i, int16_t v) {
 	aout[i].target = v + aout[i].off;
 	if(aout[i].target < 0)
 		aout[i].target = 0;
@@ -1470,7 +1514,7 @@ static void tele_cv(uint8_t i, int v) {
 	aout[i].a = aout[i].now<<16;
 }
 
-static void tele_cv_slew(uint8_t i, int v) {
+static void tele_cv_slew(uint8_t i, int16_t v) {
 	aout[i].slew = v / RATE_CV;
 	if(aout[i].slew == 0)
 		aout[i].slew = 1;
@@ -1492,15 +1536,20 @@ static void tele_s(uint8_t i) {
 		activity &= ~A_Q;
 }
 
-static void tele_cv_off(uint8_t i, int v) {
+static void tele_cv_off(uint8_t i, int16_t v) {
 	aout[i].off = v;
 }
 
-static void tele_ii(uint8_t i, int d) {
+static void tele_ii(uint8_t i, int16_t d) {
 	static event_t e;
 	e.type = kEventII;
 	e.data = (d<<16) + i;
 	event_post(&e);
+}
+
+static void tele_scene(uint8_t i) {
+	preset_select = i;
+	flash_read();
 }
 
 
@@ -1551,8 +1600,10 @@ int main(void)
 	if(flash_is_fresh()) {
 		print_dbg("\r\n:::: first run.");
 		flash_unfresh();
-		flash_write();
 
+		for(preset_select=0;preset_select<SCENE_SLOTS;preset_select++)
+			flash_write();
+		preset_select = 0;
 		// clear out some reasonable defaults
 
 		// save all presets, clear glyphs
@@ -1612,6 +1663,7 @@ int main(void)
 	update_s = &tele_s;
 	update_cv_off = &tele_cv_off;
 	update_ii = &tele_ii;
+	update_scene = &tele_scene;
 
 
 	for(int i=0;i<script[INIT_SCRIPT].l;i++)

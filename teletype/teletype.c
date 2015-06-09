@@ -39,7 +39,7 @@ static char dbg[32];
 static char pcmd[32];
 
 
-int output, output_new;
+int16_t output, output_new;
 
 char error_detail[16];
 
@@ -62,28 +62,29 @@ volatile update_delay_t update_delay;
 volatile update_s_t update_s;
 volatile update_cv_off_t update_cv_off;
 volatile update_ii_t update_ii;
+volatile update_scene_t update_scene;
 
 
-const char * to_v(int);
+const char * to_v(int16_t);
 
 
 
 /////////////////////////////////////////////////////////////////
 // STACK ////////////////////////////////////////////////////////
 
-static int pop(void);
-static void push(int);
+static int16_t pop(void);
+static void push(int16_t);
 
-static int top;
-static int stack[STACK_SIZE];
+static int16_t top;
+static int16_t stack[STACK_SIZE];
 
-int pop() {
+int16_t pop() {
 	top--;
 	// sprintf(dbg,"\r\npop %d", stack[top]);
 	return stack[top];
 }
 
-void push(int data) {
+void push(int16_t data) {
 	stack[top] = data;
 	// sprintf(dbg,"\r\npush %d", stack[top]);
 	top++;
@@ -145,10 +146,11 @@ static void v_DRUNK(uint8_t);
 static void v_Q(uint8_t);
 static void v_Q_N(uint8_t);
 static void v_Q_AVG(uint8_t);
+static void v_SCENE(uint8_t);
 
-static int tele_q[16];
+static int16_t tele_q[16];
 
-#define VARS 30
+#define VARS 31
 static tele_var_t tele_vars[VARS] = {
 	{"I",NULL,0},	// gets overwritten by ITER
 	{"TIME",NULL,0},
@@ -171,6 +173,7 @@ static tele_var_t tele_vars[VARS] = {
 	{"Q",v_Q,0},
 	{"Q.N",v_Q_N,1},
 	{"Q.AVG",v_Q_AVG,0},
+	{"SCENE",v_SCENE,0},
 	{"P.N",v_P_N,0},
 	{"P.L",v_P_L,0},
 	{"P.I",v_P_I,0},
@@ -204,7 +207,7 @@ static void v_M_ACT(uint8_t n) {
 }
 
 static void v_P_N(uint8_t n) {
-	int a;
+	int16_t a;
 	if(top == 0) {
 		push(pn);
 	}
@@ -217,7 +220,7 @@ static void v_P_N(uint8_t n) {
 }
 
 static void v_P_L(uint8_t n) {
-	int a;
+	int16_t a;
 	if(top == 0) {
 		push(tele_patterns[pn].l);
 	}
@@ -230,7 +233,7 @@ static void v_P_L(uint8_t n) {
 }
 
 static void v_P_I(uint8_t n) {
-	int a;
+	int16_t a;
 	if(top == 0) {
 		push(tele_patterns[pn].i);
 	}
@@ -243,7 +246,7 @@ static void v_P_I(uint8_t n) {
 }
 
 static void v_P_HERE(uint8_t n) {
-	int a;
+	int16_t a;
 	if(top == 0) {
 		push(tele_patterns[pn].v[tele_patterns[pn].i]);
 	}
@@ -254,7 +257,7 @@ static void v_P_HERE(uint8_t n) {
 }
 
 static void v_P_NEXT(uint8_t n) {
-	int a;
+	int16_t a;
 	if((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) || (tele_patterns[pn].i == tele_patterns[pn].end)) {
 		if(tele_patterns[pn].wrap)
 			tele_patterns[pn].i = tele_patterns[pn].start;
@@ -272,10 +275,14 @@ static void v_P_NEXT(uint8_t n) {
 }
 
 static void v_P_PREV(uint8_t n) {
-	int a;
+	int16_t a;
 	if((tele_patterns[pn].i == 0) || (tele_patterns[pn].i == tele_patterns[pn].start)) {
-		if(tele_patterns[pn].wrap)
-			tele_patterns[pn].i = tele_patterns[pn].end;
+		if(tele_patterns[pn].wrap) {
+			if(tele_patterns[pn].end < tele_patterns[pn].l)
+				tele_patterns[pn].i = tele_patterns[pn].end;
+			else
+				tele_patterns[pn].i = tele_patterns[pn].l;
+		}
 	}
 	else
 		tele_patterns[pn].i--;
@@ -290,7 +297,7 @@ static void v_P_PREV(uint8_t n) {
 }
 
 static void v_P_WRAP(uint8_t n) {
-	int a;
+	int16_t a;
 	if(top == 0) {
 		push(tele_patterns[pn].wrap);
 	}
@@ -303,7 +310,7 @@ static void v_P_WRAP(uint8_t n) {
 }
 
 static void v_P_START(uint8_t n) {
-	int a;
+	int16_t a;
 	if(top == 0) {
 		push(tele_patterns[pn].start);
 	}
@@ -316,7 +323,7 @@ static void v_P_START(uint8_t n) {
 }
 
 static void v_P_END(uint8_t n) {
-	int a;
+	int16_t a;
 	if(top == 0) {
 		push(tele_patterns[pn].end);
 	}
@@ -353,7 +360,7 @@ static void v_Q(uint8_t n) {
 		push(tele_q[tele_vars[V_Q_N].v-1]);
 	}
 	else {
-		for(int i = 15;i>0;i--)
+		for(int16_t i = 15;i>0;i--)
 			tele_q[i] = tele_q[i-1];
 		tele_q[0] = pop();
 	}
@@ -363,7 +370,7 @@ static void v_Q_N(uint8_t n) {
 		push(tele_vars[V_Q_N].v);
 	}
 	else {
-		int a = pop();
+		int16_t a = pop();
 		if(a<1) a = 1;
 		else if(a>16) a = 16;
 		tele_vars[V_Q_N].v = a;
@@ -372,17 +379,26 @@ static void v_Q_N(uint8_t n) {
 
 static void v_Q_AVG(uint8_t n) {
 	if(top == 0) {
-		int avg = 0;
-		for(int i = 0;i<tele_vars[V_Q_N].v;i++)
+		int16_t avg = 0;
+		for(int16_t i = 0;i<tele_vars[V_Q_N].v;i++)
 			avg += tele_q[i];
 		avg /= tele_vars[V_Q_N].v;
 
 		push(avg);
 	}
 	else {
-		int a = pop();
-		for(int i=0;i<16;i++)
+		int16_t a = pop();
+		for(int16_t i=0;i<16;i++)
 			tele_q[i] = a;
+	}
+}
+static void v_SCENE(uint8_t n) {
+	if(top == 0) {
+		push(tele_vars[V_SCENE].v);
+	}
+	else {
+		tele_vars[V_SCENE].v = pop();
+		(*update_scene)(tele_vars[V_SCENE].v);
 	}
 }
 
@@ -405,34 +421,34 @@ static tele_array_t tele_arrays[ARRAYS] = {
 };
 
 static void a_TR(uint8_t i) {
-	int a = pop();
+	int16_t a = pop();
 	a = (a != 0);
 	tele_arrays[0].v[i] = a;
 	(*update_tr)(i, a);
 }
 static void a_CV(uint8_t i) {
-	int a = pop();
+	int16_t a = pop();
 	if(a<0) a = 0;
 	else if(a > 16383) a = 16383;
 	tele_arrays[1].v[i] = a;
 	(*update_cv)(i, a);
 }
 static void a_CV_SLEW(uint8_t i) {
-	int a = pop();
+	int16_t a = pop();
 	if(a<1) a = 1;	// min slew = 1
-	else if(a > 16383) a = 16383;
+	else if(a > 32767) a = 32767;
 	tele_arrays[2].v[i] = a;
 	(*update_cv_slew)(i, a);
 }
 static void a_CV_OFF(uint8_t i) {
-	int a = pop();
+	int16_t a = pop();
 	tele_arrays[3].v[i] = a;
 	(*update_cv_off)(i, a);
 	(*update_cv)(i, tele_arrays[1].v[i]);
 
 }
 static void a_TR_TIME(uint8_t i) {
-	int a = pop();
+	int16_t a = pop();
 	if(a<1) a = 1;
 	tele_arrays[4].v[i] = a;
 }
@@ -443,7 +459,7 @@ static void a_TR_TIME(uint8_t i) {
 // DELAY ////////////////////////////////////////////////////////
 
 static tele_command_t delay_c[TELE_D_SIZE];
-static int delay_t[TELE_D_SIZE];
+static int16_t delay_t[TELE_D_SIZE];
 static uint8_t delay_count;
 static int16_t tr_pulse[4];
 
@@ -451,7 +467,7 @@ static void process_delays(uint8_t);
 void clear_delays(void);
 
 static void process_delays(uint8_t v) {
-	for(int i=0;i<TELE_D_SIZE;i++) {
+	for(int16_t i=0;i<TELE_D_SIZE;i++) {
 		if(delay_t[i]) {
 			delay_t[i] -= v;
  			if(delay_t[i] <= 0) {
@@ -466,7 +482,7 @@ static void process_delays(uint8_t v) {
 		}
 	}
 
-	for(int i=0;i<4;i++) {
+	for(int16_t i=0;i<4;i++) {
 		if(tr_pulse[i]) {
 			tr_pulse[i] -= v;
 			if(tr_pulse[i] <= 0) {
@@ -480,7 +496,7 @@ static void process_delays(uint8_t v) {
 }
 
 void clear_delays(void) {
-	for(int i=0;i<TELE_D_SIZE;i++) {
+	for(int16_t i=0;i<TELE_D_SIZE;i++) {
 		delay_t[i] = 0;
 	}
 
@@ -515,7 +531,7 @@ static const tele_mod_t tele_mods[MODS] = {
 
 
 void mod_PROB(tele_command_t *c) { 
-	int a = pop();
+	int16_t a = pop();
 
 	tele_command_t cc;
 	if(rand() % 101 < a) {
@@ -527,8 +543,8 @@ void mod_PROB(tele_command_t *c) {
 	}
 }
 void mod_DEL(tele_command_t *c) {
-	int i = 0;
-	int a = pop();
+	int16_t i = 0;
+	int16_t a = pop();
 
 	while(delay_t[i] != 0 && i != TELE_D_SIZE)
 		i++;
@@ -592,7 +608,7 @@ void mod_ELSE(tele_command_t *c) {
 	}
 }
 void mod_L(tele_command_t *c) {
-	int a, b, d, i;
+	int16_t a, b, d, i;
 	tele_command_t cc;
 	a = pop();
 	b = pop();
@@ -666,9 +682,10 @@ static void op_TR_PULSE(void);
 static void op_II(void);
 static void op_RSH(void);
 static void op_LSH(void);
+static void op_S_L(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 39
+#define OPS 40
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -699,7 +716,7 @@ static const tele_op_t tele_ops[OPS] = {
 	{"DEL.CLR", op_DEL_CLR, 0, 0, "DELAY: FLUSH"},
 	{"M.RESET", op_M_RESET, 0, 0, "METRO: RESET"},
 	MAKEOP(V, 1, 1, "TO VOLT"),
-	MAKEOP(VV, 2, 1, "TO VOLT WITH PRECISION"),
+	MAKEOP(VV, 1, 1, "TO VOLT WITH PRECISION"),
 	{"P", op_P, 1, 1, "PATTERN: GET/SET"},
 	{"P.INS", op_P_INS, 2, 0, "PATTERN: INSERT"},
 	{"P.RM", op_P_RM, 1, 0, "PATTERN: REMOVE"},
@@ -709,7 +726,8 @@ static const tele_op_t tele_ops[OPS] = {
 	{"TR.PULSE", op_TR_PULSE, 1, 0, "PULSE TRIGGER"},
 	{"II", op_II, 2, 0, "II"},
 	{"RSH", op_RSH, 2, 1, "RIGHT SHIFT"},
-	{"LSH", op_LSH, 2, 1, "LEFT SHIFT"}
+	{"LSH", op_LSH, 2, 1, "LEFT SHIFT"},
+	{"S.L", op_S_L, 0, 1, "STACK LENGTH"}
 };
 
 static void op_ADD() {
@@ -729,7 +747,7 @@ static void op_MOD() {
 	push(pop() % pop());
 }
 static void op_RAND() { 
-	int a = pop();
+	int16_t a = pop();
 	if(a == -1)
 		push(0);
 	else
@@ -737,7 +755,7 @@ static void op_RAND() {
 	
 }
 static void op_RRAND() {
-	int a, b, min, max, range;
+	int16_t a, b, min, max, range;
 	a = pop();
 	b = pop();
 	if(a < b) {
@@ -757,41 +775,42 @@ static void op_TOSS() {
 	push(rand() & 1);
 }
 static void op_MIN() { 
-	int a, b;
+	int16_t a, b;
 	a = pop();
 	b = pop();
 	if(b > a) push(a);
 	else push(b);
 }
 static void op_MAX() { 
-	int a, b;
+	int16_t a, b;
 	a = pop();
 	b = pop();
 	if(a > b) push(a);
 	else push(b);
 }
 static void op_LIM() {
-	int a, b, i;
+	int16_t a, b, i;
+	i = pop();
 	a = pop();
 	b = pop();
-	i = pop();
 	if(i < a) push(a);
 	else if(i > b) push(b);
+	else push(i);
 }
 static void op_WRAP() {
-	int a, b, i, c;
+	int16_t a, b, i, c;
+	i = pop();
 	a = pop();
 	b = pop();
-	i = pop();
 	if(a < b) {
-		c = b - a;
+		c = b - a + 1;
 		while(i >= b)
 			i -= c;
 		while(i < a)
 			i += c;
 	}
 	else {
-		c = a - b;
+		c = a - b + 1;
 		while(i >= a)
 			i -= c;
 		while(i < b)
@@ -801,9 +820,9 @@ static void op_WRAP() {
 }
 static void op_QT() {
 	// this rounds negative numbers rather than quantize (choose closer)
-	int a, b, c, d, e;
-	a = pop();
+	int16_t a, b, c, d, e;
 	b = pop();
+	a = pop();
 
 	c = b / a;
 	d = c * a;
@@ -813,7 +832,7 @@ static void op_QT() {
 	else push(e);
 }
 static void op_AVG() {
-	push((pop() + pop()) / 2);
+	push((pop() + pop()) >> 1);
 }
 static void op_EQ() { 
 	push(pop() == pop());
@@ -834,7 +853,7 @@ static void op_EZ() {
 	push(pop() == 0);
 }
 static void op_TR_TOG() {
-	int a = pop();
+	int16_t a = pop();
 	// saturate and shift
 	if(a < 1) a = 1;
 	else if(a > 4) a = 4;
@@ -844,7 +863,7 @@ static void op_TR_TOG() {
 	update_tr(a,tele_arrays[0].v[a]);
 }
 static void op_N() { 
-	int a = pop();
+	int16_t a = pop();
 
 	if(a < 0) {
 		if(a < -127) a = -127;
@@ -857,7 +876,7 @@ static void op_N() {
 	}
 }
 static void op_S_ALL() {
-	for(int i = 0;i<tele_stack_top;i++)
+	for(int16_t i = 0;i<tele_stack_top;i++)
 		process(&tele_stack[tele_stack_top-i-1]);
 	tele_stack_top = 0;
 	(*update_s)(0);
@@ -881,7 +900,7 @@ static void op_M_RESET() {
 	(*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 1);
 }
 static void op_V() {
-	int a = pop();
+	int16_t a = pop();
 	if(a > 10) a = 10;
 	else if(a < -10) a = -10;
 
@@ -893,29 +912,24 @@ static void op_V() {
 		push(table_v[a]);
 }
 static void op_VV() {
-	int a = pop();
-	int b = pop();
-	if(a < -10) a = -10;
-	else if(a > 10) a = 10;
-	if(b < -99) b = -99;
-	else if(b > 99) b = 99;
+	uint8_t negative = 1;
+	int16_t a = pop();
+	if(a < 0) {
+		negative = -1;
+		a = -a;
+	}
+	if(a > 1000) a = 1000;
 
-	if(a < 0) a = -table_v[-a];
-	else a = table_v[a];
-
-	if(b < 0) b = -table_v[-b];
-	else b = table_vv[b];
-
-	push(a + b);
+	push(negative * (table_v[a/100] + table_vv[a%100]));
 }
 static void op_P() {
-	int a, b;
+	int16_t a, b;
 	a = pop();
 	if(a < 0) {
 		if(tele_patterns[pn].l == 0) a = 0;
-		else if(-a == tele_patterns[pn].l) a =0;
+		else if(a < -tele_patterns[pn].l) a = 0;
 		else 
-			a = tele_patterns[pn].l-(-a%tele_patterns[pn].l);
+			a = tele_patterns[pn].l + a;
 	}
 	if(a > 63) a = 63;
 
@@ -928,11 +942,16 @@ static void op_P() {
 	}
 }
 static void op_P_INS() {
-	int a, b, i;
+	int16_t a, b, i;
 	a = pop();
 	b = pop();
 
-	if(a<0) a = 64-a;
+	if(a < 0) {
+		if(tele_patterns[pn].l == 0) a = 0;
+		else if(a < -tele_patterns[pn].l) a = 0;
+		else 
+			a = tele_patterns[pn].l + a;
+	}
 	if(a>63) a =63;
 
 	if(tele_patterns[pn].l >= a) {
@@ -945,10 +964,15 @@ static void op_P_INS() {
 	tele_patterns[pn].v[a] = b;
 }
 static void op_P_RM() {
-	int a, i;
+	int16_t a, i;
 	a = pop();
 
-	if(a < 0) a = 0;
+	if(a < 0) {
+		if(tele_patterns[pn].l == 0) a = 0;
+		else if(a < -tele_patterns[pn].l) a = 0;
+		else 
+			a = tele_patterns[pn].l + a;
+	}
 	else if(a > tele_patterns[pn].l) a = tele_patterns[pn].l;
 
 	if(tele_patterns[pn].l > 0) {
@@ -959,7 +983,7 @@ static void op_P_RM() {
 	}
 }
 static void op_P_PUSH() {
-	int a;
+	int16_t a;
 	a = pop();
 
 	if(tele_patterns[pn].l < 63) {
@@ -975,7 +999,7 @@ static void op_P_POP() {
 	else push(0);
 }
 static void op_PN() {
-	int a, b, c;
+	int16_t a, b, c;
 	a = pop();
 	b = pop();
 
@@ -984,9 +1008,9 @@ static void op_PN() {
 	
 	if(b < 0) {
 		if(tele_patterns[a].l == 0) b = 0;
-		else if(-b == tele_patterns[a].l) b = 0;
+		else if(b < -tele_patterns[a].l) b = 0;
 		else 
-			b = tele_patterns[a].l - (-b % tele_patterns[a].l);
+			b = tele_patterns[a].l + b;
 	}
 	if(b > 63) b = 63;
 
@@ -999,7 +1023,7 @@ static void op_PN() {
 	}
 }
 static void op_TR_PULSE() {
-	int a = pop();
+	int16_t a = pop();
 	// saturate and shift
 	if(a < 1) a = 1;
 	else if(a > 4) a = 4;
@@ -1010,8 +1034,8 @@ static void op_TR_PULSE() {
 	update_tr(a,tele_arrays[0].v[a]);
 }
 static void op_II() {
-	int a = pop();
-	int b = pop();
+	int16_t a = pop();
+	int16_t b = pop();
 	update_ii(a,b);
 }
 static void op_RSH() { 
@@ -1020,7 +1044,9 @@ static void op_RSH() {
 static void op_LSH() { 
 	push(pop() << pop());
 }
-
+static void op_S_L() { 
+	push(tele_stack_top);
+}
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
@@ -1051,7 +1077,7 @@ error_t parse(char *cmd) {
 			temp.data[n].t = SEP;
 		else {
 			// CHECK AGAINST VARS
-			int i = VARS - 1;
+			int16_t i = VARS - 1;
 
 			do {
 				// print_dbg("\r\nvar '");
@@ -1163,7 +1189,7 @@ error_t parse(char *cmd) {
 // VALIDATE /////////////////////////////////////////////////////
 
 error_t validate(tele_command_t *c) {
-	int h = 0;
+	int16_t h = 0;
 	uint8_t n = c->l;
 	c->separator = -1;
 
@@ -1268,8 +1294,8 @@ error_t validate(tele_command_t *c) {
 
 void process(tele_command_t *c) {
 	top = 0;
-	int i;
-	int n;
+	int16_t i;
+	int16_t n;
 
 	if(c->separator == -1)
 		n = c->l;
@@ -1323,7 +1349,7 @@ void process(tele_command_t *c) {
 		}
 	}
 
-	// PRINT DEBUG OUTPUT IF VAL LEFT ON STACK
+	// PRint16_t DEBUG OUTPUT IF VAL LEFT ON STACK
 	if(top) {
 		output = pop();
 		output_new++;
@@ -1336,7 +1362,7 @@ void process(tele_command_t *c) {
 
 
 char * print_command(const tele_command_t *c) {
-	int n = 0;
+	int16_t n = 0;
 	char number[8];
 	char *p = pcmd;
 
@@ -1389,7 +1415,7 @@ char * print_command(const tele_command_t *c) {
 
 
 
-int tele_get_array(uint8_t a, uint8_t i) {
+int16_t tele_get_array(uint8_t a, uint8_t i) {
 	return tele_arrays[a].v[i];
 }
 
@@ -1423,9 +1449,9 @@ void tele_init() {
 }
 
 
-const char * to_v(int i) {
+const char * to_v(int16_t i) {
 	static char n[3], v[7];
-	int a=0, b=0;
+	int16_t a=0, b=0;
 
 	if(i > table_v[8]) {
 		i -= table_v[8];

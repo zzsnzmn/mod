@@ -13,7 +13,8 @@
 #define TRUE 1
 #define FALSE 0
 
-enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT, V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O, V_DRUNK, V_Q, V_Q_N, V_Q_AVG };
+enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT,
+	V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O, V_DRUNK, V_Q, V_Q_N, V_Q_AVG, V_SCENE };
 
 typedef enum { 
 	E_OK,
@@ -33,7 +34,7 @@ typedef enum {NUMBER, MOD, SEP, OP, VAR, ARRAY, KEY} tele_word_t;
 
 typedef struct {
 	tele_word_t t;
-	int v;
+	int16_t v;
 } tele_data_t;
 
 typedef struct {
@@ -50,18 +51,18 @@ typedef struct {
 typedef struct {
 	const char *name;
 	void (*func)(uint8_t);
-	int v;
+	int16_t v;
 	tele_word_t t;
 } tele_var_t;
 
 typedef struct {
 	const char *name;
-	int v;
+	int16_t v;
 } tele_key_t;
 
 typedef struct {
 	const char *name;
-	int v[4];
+	int16_t v[4];
 	void (*func)(uint8_t);
 	tele_word_t t[4];
 } tele_array_t;
@@ -86,7 +87,7 @@ typedef struct {
 	uint8_t l;
 	uint8_t wrap;
 	int8_t start, end;
-	int v[64];
+	int16_t v[64];
 } tele_pattern_t;
 
 
@@ -101,27 +102,27 @@ void clear_delays(void);
 
 void tele_init(void);
 
-int tele_get_array(uint8_t a, uint8_t i);
+int16_t tele_get_array(uint8_t a, uint8_t i);
 void tele_set_array(uint8_t a, uint8_t i, uint16_t v);
 void tele_set_val(uint8_t i, uint16_t v);
 
 const char * tele_error(error_t);
-const char * to_v(int);
+const char * to_v(int16_t);
 
 extern tele_command_t temp;
 
 extern tele_pattern_t tele_patterns[4];
 
-typedef void(*update_metro_t)(int, int, uint8_t);
+typedef void(*update_metro_t)(int16_t, int16_t, uint8_t);
 extern volatile update_metro_t update_metro;
 
-typedef void (*update_tr_t)(uint8_t, int);
+typedef void (*update_tr_t)(uint8_t, int16_t);
 extern volatile update_tr_t update_tr;
 
-typedef void (*update_cv_t)(uint8_t, int);
+typedef void (*update_cv_t)(uint8_t, int16_t);
 extern volatile update_cv_t update_cv;
 
-typedef void (*update_cv_slew_t)(uint8_t, int);
+typedef void (*update_cv_slew_t)(uint8_t, int16_t);
 extern volatile update_cv_slew_t update_cv_slew;
 
 typedef void (*update_delay_t)(uint8_t);
@@ -130,13 +131,16 @@ extern volatile update_delay_t update_delay;
 typedef void (*update_s_t)(uint8_t);
 extern volatile update_s_t update_s;
 
-typedef void (*update_cv_off_t)(uint8_t, int v);
+typedef void (*update_cv_off_t)(uint8_t, int16_t v);
 extern volatile update_cv_off_t update_cv_off;
 
-typedef void (*update_ii_t)(uint8_t, int);
+typedef void (*update_ii_t)(uint8_t, int16_t);
 extern volatile update_ii_t update_ii;
 
+typedef void (*update_scene_t)(uint8_t);
+extern volatile update_scene_t update_scene;
+
 extern char error_detail[16];
-extern int output, output_new;
+extern int16_t output, output_new;
 
 #endif
