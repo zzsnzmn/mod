@@ -69,20 +69,33 @@ char input_buffer[32];
 int num_buffer;
 uint8_t pos;
 
+uint8_t knob_redirect;
+int16_t knob_val;
+
 tele_script_t script[10];
 tele_script_t history;
 uint8_t edit, edit_line, edit_index, edit_pattern, offset_index;
-char scene_text[16][32];
+char scene_text[32][SCENE_SLOTS];
 
 uint8_t metro_act;
 unsigned int metro_time;
+
+uint8_t mod_SH;
+uint8_t mod_ALT;
+uint8_t mod_CTRL;
+uint8_t mod_META;
+
+uint16_t hold_up;
+uint16_t hold_down;
+uint16_t hold_right;
+uint16_t hold_left;
 
 #define FIRSTRUN_KEY 0x22
 
 typedef const struct {
 	tele_script_t script[10];
 	tele_pattern_t patterns[4];
-	char text[16][32];
+	char text[32][SCENE_SLOTS];
 } tele_scene_t;
 
 typedef const struct {
@@ -170,6 +183,7 @@ static void tele_s(uint8_t i);
 static void tele_cv_off(uint8_t i, int16_t v);
 static void tele_ii(uint8_t i, int16_t d);
 static void tele_scene(uint8_t i);
+static void tele_pi(void);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -303,8 +317,6 @@ static void metroTimer_callback(void* o) {
 	// print_dbg("*");
 	uint8_t i;
 
-
-	
 	if(script[METRO_SCRIPT].l) {
 		activity |= A_METRO;
 		for(i=0;i<script[METRO_SCRIPT].l;i++)
@@ -341,7 +353,18 @@ static void handler_PollADC(s32 data) {
 	adc_convert(&adc);
 
 	tele_set_val(V_IN,adc[0]<<2);	// IN
-	tele_set_val(V_PARAM,adc[1]<<2);	// PARAM
+
+	if(mode == M_TRACK) {
+		if(mod_CTRL) {
+			if(mod_SH)
+				tele_patterns[edit_pattern].v[edit_index+offset_index] = adc[1]>>2;
+			else
+				tele_patterns[edit_pattern].v[edit_index+offset_index] = adc[1]>>7;
+			r_edit_dirty |= R_ALL;
+		}
+	}
+	else
+		tele_set_val(V_PARAM,adc[1]<<2);	// PARAM
 
 	// print_dbg("\r\nadc:\t"); print_dbg_ulong(adc[0]);
 	// print_dbg("\t"); print_dbg_ulong(adc[1]);
@@ -364,6 +387,79 @@ static void handler_KeyTimer(s32 data) {
 		}
 		else front_timer--;
 	}
+
+	#define KEY_REPEAT_HOLD 4
+	if(hold_up) {
+		if(mode == M_TRACK) {
+			if(hold_up > KEY_REPEAT_HOLD) {
+				if(edit_index)
+					edit_index--;
+				else if(offset_index)
+					offset_index--;
+				r_edit_dirty |= R_ALL;
+			}
+		}
+		else if(mode == M_PRESET_R) {
+			if(preset_edit_offset) {
+				preset_edit_offset--;
+				r_edit_dirty |= R_ALL;
+			}
+		}
+		else if(mode == M_HELP) {
+			if(offset_view) {
+				offset_view--;
+				r_edit_dirty |= R_ALL;
+			}
+		}	
+		hold_up++;
+	}
+	if(hold_down) {
+		if(mode == M_TRACK) {
+			if(hold_down > KEY_REPEAT_HOLD) {
+				edit_index++;
+				if(edit_index == 8) {
+					edit_index = 7;
+					if(offset_index < 56) {
+						offset_index++;
+					}
+				}
+				r_edit_dirty |= R_ALL;
+			}
+		}
+		else if(mode == M_PRESET_R) {
+			if(preset_edit_offset < 24) {
+				preset_edit_offset++;
+				r_edit_dirty |= R_ALL;
+			}
+		}
+		else if(mode == M_HELP) {
+			if(offset_view < HELP_LENGTH_) {
+				offset_view++;
+				r_edit_dirty |= R_ALL;
+			}
+		}
+		hold_down++;
+	}
+	if(hold_left) {
+		if(hold_left > KEY_REPEAT_HOLD) {
+			if(pos) {
+				pos--;
+				r_edit_dirty |= R_INPUT;
+			}
+		}
+		hold_left++;
+	}
+	if(hold_right) {
+		if(hold_right > KEY_REPEAT_HOLD) {
+			if(pos < strlen(input)) {
+				pos++;
+				r_edit_dirty |= R_INPUT;
+			}
+		}
+		hold_right++;
+	}
+
+
 }
 
 static void handler_HidConnect(s32 data) {
@@ -385,8 +481,19 @@ static void handler_HidTimer(s32 data) {
 		frame = (const s8*)hid_get_frame_data();
 
      	for(i=2;i<8;i++) {
-     		if(frame[i] == 0)
+     		if(frame[i] == 0) {
+     			mod_SH = frame[0] & SHIFT;
+     			mod_CTRL = frame[0] & CTRL;
+     			mod_ALT = frame[0] & ALT;
+     			mod_META = frame[0] & META;
+     			if(i==2) {
+     				hold_up = 0;
+     				hold_down = 0;
+     				hold_right = 0;
+     				hold_left = 0;
+     			}
      			break;
+     		}
 
      		if(frame_compare(frame[i]) == false) {
      			// CTRL = 1
@@ -433,7 +540,7 @@ static void handler_HidTimer(s32 data) {
      					}
      					break;
      				case 0x29: // ESC
-     					if(frame[0] & ALT) {
+     					if(mod_ALT) {
      						preset_edit_line = 0;
      						preset_edit_offset = 0;
      						strcpy(input,scene_text[preset_edit_line + preset_edit_offset]);
@@ -469,8 +576,9 @@ static void handler_HidTimer(s32 data) {
      					}
      					break;
      				case 0x51: // down
+     					hold_down = 1;
      					if(mode == M_TRACK) {
-     						if(frame[0] & ALT) {
+     						if(mod_ALT) {
      							if(offset_index < 48)
      								offset_index += 8;
      							else {
@@ -490,7 +598,7 @@ static void handler_HidTimer(s32 data) {
 	     					r_edit_dirty |= R_ALL;
      					}
      					else if(mode == M_PRESET_W) {
-     						if((preset_edit_offset + preset_edit_line) < 15) {
+     						if((preset_edit_offset + preset_edit_line) < 31) {
      							if(preset_edit_line == 5)
      								preset_edit_offset++;
      							else
@@ -501,7 +609,7 @@ static void handler_HidTimer(s32 data) {
      						}
      					}
      					else if(mode == M_PRESET_R) {
-     						if(preset_edit_offset < 8) {
+     						if(preset_edit_offset < 24) {
      							preset_edit_offset++;
      							r_edit_dirty |= R_ALL;
      						}
@@ -535,8 +643,9 @@ static void handler_HidTimer(s32 data) {
      					break;
 
      				case 0x52: // up
+     					hold_up = 1;
      					if(mode == M_TRACK) {
-     						if(frame[0] & ALT) {
+     						if(mod_ALT) {
      							if(offset_index > 8) {
      								offset_index -= 8;
      							}
@@ -589,8 +698,9 @@ static void handler_HidTimer(s32 data) {
  						}
      					break;
      				case 0x50: // back
+     					hold_left = 1;
      					if(mode == M_TRACK) {
-     						if(frame[0] & ALT) {
+     						if(mod_ALT) {
      							edit_index = 0;
      							offset_index = 0;
      						}
@@ -606,8 +716,9 @@ static void handler_HidTimer(s32 data) {
      					break;
 
      				case 0x4f: // forward
+     					hold_right = 1;
      					if(mode == M_TRACK) {
-     						if(frame[0] & ALT) {
+     						if(mod_ALT) {
      							edit_index = 7;
      							offset_index = 56;
      						}
@@ -675,7 +786,7 @@ static void handler_HidTimer(s32 data) {
      					break;
      				case BACKSPACE:
      					if(mode == M_LIVE || mode == M_EDIT || mode == M_PRESET_W) {
-     						if(frame[0] & SHIFT) {
+     						if(mod_SH) {
      							for(n = 0;n < 32;n++)
 		     						input[n] = 0;
 		     					pos = 0;
@@ -688,7 +799,7 @@ static void handler_HidTimer(s32 data) {
 		     				}
 		     			}
 		     			else if(mode == M_TRACK) {
-		     				if(frame[0] & SHIFT) {
+		     				if(mod_SH) {
 		     					for(int i = edit_index+offset_index;i<63;i++)
 		     						tele_patterns[edit_pattern].v[i] = tele_patterns[edit_pattern].v[i + 1];
 
@@ -750,7 +861,7 @@ static void handler_HidTimer(s32 data) {
 												// print_dbg_ulong(script[edit].l);
 			     							}
 										}
-										else if(frame[0] & SHIFT) { // SHIFT = INSERT
+										else if(mod_SH) { // SHIFT = INSERT
 											for(n=script[edit].l;n>edit_line;n--) 
 		     									memcpy(&script[edit].c[n], &script[edit].c[n-1], sizeof(tele_command_t));
 
@@ -799,7 +910,7 @@ static void handler_HidTimer(s32 data) {
 	     					r_edit_dirty |= R_MESSAGE;
 	     				}
 	     				else if(mode == M_PRESET_W) {
-	     					if(frame[0] & ALT) {
+	     					if(mod_ALT) {
 	     						strcpy(scene_text[preset_edit_line+preset_edit_offset],input);
  								flash_write();
  								for(n = 0;n < 32;n++) input[n] = 0;
@@ -810,7 +921,7 @@ static void handler_HidTimer(s32 data) {
 	     					}
 	     					else {
 		     					strcpy(scene_text[preset_edit_line+preset_edit_offset],input);
-		     					if(preset_edit_line + preset_edit_offset < 15) {
+		     					if(preset_edit_line + preset_edit_offset < 31) {
 			     					if(preset_edit_line == 5)
 		 								preset_edit_offset++;
 		 							else
@@ -835,7 +946,7 @@ static void handler_HidTimer(s32 data) {
 							r_edit_dirty |= R_ALL;
 	     				}
 	     				else if(mode == M_TRACK) {
-	     					if(frame[0] & SHIFT) {
+	     					if(mod_SH) {
 	     						for(int i=63;i>edit_index+offset_index;i--)
 	     							tele_patterns[edit_pattern].v[i] = tele_patterns[edit_pattern].v[i-1];
 	     						if(tele_patterns[edit_pattern].l < 63)
@@ -859,7 +970,7 @@ static void handler_HidTimer(s32 data) {
      					break;
 
  					default:
- 						if(frame[0] & ALT) {	// ALT
+ 						if(mod_ALT) {	// ALT
 	     					if(frame[i] == 0x1b) {	// x CUT
 	     						if(mode == M_EDIT || mode == M_LIVE) {
 		     						memcpy(&input_buffer, &input, sizeof(input));
@@ -909,7 +1020,7 @@ static void handler_HidTimer(s32 data) {
 	     							pos = strlen(input);
 	     						}
 	     						else if(mode == M_TRACK) {
-	     							if(frame[0] & SHIFT) {
+	     							if(mod_SH) {
 	     								for(int i=63;i>edit_index+offset_index;i--)
 			     							tele_patterns[edit_pattern].v[i] = tele_patterns[edit_pattern].v[i-1];
 			     						if(tele_patterns[edit_pattern].l >= edit_index+offset_index)
@@ -978,7 +1089,7 @@ static void handler_HidTimer(s32 data) {
 	     						}
 	     					}
 	     				}
-	     				else if(frame[0] & SHIFT && mode == M_TRACK) {
+	     				else if(mod_SH && mode == M_TRACK) {
      						n = hid_to_ascii_raw(frame[i]);
      						if(n == 'L') {
      							tele_patterns[edit_pattern].l = edit_index + offset_index + 1;
@@ -991,6 +1102,29 @@ static void handler_HidTimer(s32 data) {
      							tele_patterns[edit_pattern].end = offset_index + edit_index;
      						}
 
+	     				}
+	     				else if(mod_META) {
+	     					if(frame[i] == ESCAPE) {
+	     						// kill slews/delays/etc
+	     					}else if(frame[i] == TILDE) {
+	     						// mute triggers
+	     					}
+	     					else {
+	     						n = hid_to_ascii_raw(frame[i]);
+
+	     						if(n > 0x30 && n < 0x039) {
+	     							for(int i=0;i<script[n - 0x31].l;i++)
+										process(&script[n - 0x31].c[i]);
+	     						}
+	     						else if(n == 'M') {
+	     							for(int i=0;i<script[METRO_SCRIPT].l;i++)
+										process(&script[METRO_SCRIPT].c[i]);
+	     						}
+	     						else if(n == 'I') {
+	     							for(int i=0;i<script[INIT_SCRIPT].l;i++)
+										process(&script[INIT_SCRIPT].c[i]);
+	     						}
+	     					}
 	     				}
 	     				else if(mode == M_TRACK) {
 	     					n = hid_to_ascii(frame[i], frame[0]);
@@ -1024,29 +1158,6 @@ static void handler_HidTimer(s32 data) {
      								tele_patterns[edit_pattern].v[edit_index+offset_index] = 1;
      							r_edit_dirty |= R_ALL;
      						}
-	     				}
-	     				else if(frame[0] & CTRL) {
-	     					if(frame[i] == ESCAPE) {
-	     						// kill slews/delays/etc
-	     					}else if(frame[i] == TILDE) {
-	     						// mute triggers
-	     					}
-	     					else {
-	     						n = hid_to_ascii_raw(frame[i]);
-
-	     						if(n > 0x30 && n < 0x039) {
-	     							for(int i=0;i<script[n - 0x31].l;i++)
-										process(&script[n - 0x31].c[i]);
-	     						}
-	     						else if(n == 'M') {
-	     							for(int i=0;i<script[METRO_SCRIPT].l;i++)
-										process(&script[METRO_SCRIPT].c[i]);
-	     						}
-	     						else if(n == 'I') {
-	     							for(int i=0;i<script[INIT_SCRIPT].l;i++)
-										process(&script[INIT_SCRIPT].c[i]);
-	     						}
-	     					}
 	     				}
 	     				else {	/// NORMAL TEXT ENTRY
 	 						if(pos<31) {
@@ -1552,6 +1663,10 @@ static void tele_scene(uint8_t i) {
 	flash_read();
 }
 
+static void tele_pi() {
+	if(mode == M_TRACK)
+		r_edit_dirty |= R_ALL;
+}
 
 
 
@@ -1629,7 +1744,7 @@ int main(void)
 	timer_add(&clockTimer, RATE_CLOCK, &clockTimer_callback, NULL);
 	timer_add(&refreshTimer, 63, &refreshTimer_callback, NULL);
 	timer_add(&cvTimer, RATE_CV, &cvTimer_callback, NULL);
-	timer_add(&keyTimer, 51, &keyTimer_callback, NULL);
+	timer_add(&keyTimer, 71, &keyTimer_callback, NULL);
 	timer_add(&adcTimer, 61, &adcTimer_callback, NULL);
 	
 	metro_act = 1;
@@ -1664,6 +1779,7 @@ int main(void)
 	update_cv_off = &tele_cv_off;
 	update_ii = &tele_ii;
 	update_scene = &tele_scene;
+	update_pi = &tele_pi;
 
 
 	for(int i=0;i<script[INIT_SCRIPT].l;i++)

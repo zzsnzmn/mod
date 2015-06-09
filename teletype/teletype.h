@@ -140,6 +140,9 @@ extern volatile update_ii_t update_ii;
 typedef void (*update_scene_t)(uint8_t);
 extern volatile update_scene_t update_scene;
 
+typedef void (*update_pi_t)(void);
+extern volatile update_pi_t update_pi;
+
 extern char error_detail[16];
 extern int16_t output, output_new;
 

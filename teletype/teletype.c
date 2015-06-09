@@ -63,6 +63,7 @@ volatile update_s_t update_s;
 volatile update_cv_off_t update_cv_off;
 volatile update_ii_t update_ii;
 volatile update_scene_t update_scene;
+volatile update_pi_t update_pi;
 
 
 const char * to_v(int16_t);
@@ -246,6 +247,7 @@ static void v_P_I(uint8_t n) {
 		if(a < 0) tele_patterns[pn].i = 0;
 		else if(a > tele_patterns[pn].l) tele_patterns[pn].i = tele_patterns[pn].l;
 		else tele_patterns[pn].i = a;
+		(*update_pi)();
 	}
 }
 
@@ -276,6 +278,8 @@ static void v_P_NEXT(uint8_t n) {
 		a = pop();
 		tele_patterns[pn].v[tele_patterns[pn].i] = a;
 	}
+
+	(*update_pi)();
 }
 
 static void v_P_PREV(uint8_t n) {
@@ -298,6 +302,8 @@ static void v_P_PREV(uint8_t n) {
 		a = pop();
 		tele_patterns[pn].v[tele_patterns[pn].i] = a;
 	}
+
+	(*update_pi)();
 }
 
 static void v_P_WRAP(uint8_t n) {
@@ -943,6 +949,7 @@ static void op_P() {
 	else if(top == 1) {
 		b = pop();
 		tele_patterns[pn].v[a] = b;
+		(*update_pi)();
 	}
 }
 static void op_P_INS() {
@@ -966,6 +973,7 @@ static void op_P_INS() {
 	}
 
 	tele_patterns[pn].v[a] = b;
+	(*update_pi)();
 }
 static void op_P_RM() {
 	int16_t a, i;
@@ -985,6 +993,7 @@ static void op_P_RM() {
 
 		tele_patterns[pn].l--;
 	}
+	(*update_pi)();
 }
 static void op_P_PUSH() {
 	int16_t a;
@@ -993,12 +1002,14 @@ static void op_P_PUSH() {
 	if(tele_patterns[pn].l < 63) {
 		tele_patterns[pn].v[tele_patterns[pn].l] = a;
 		tele_patterns[pn].l++;
+		(*update_pi)();
 	}
 }
 static void op_P_POP() {
 	if(tele_patterns[pn].l > 0) {
 		tele_patterns[pn].l--;
  		push(tele_patterns[pn].v[tele_patterns[pn].l]);
+ 		(*update_pi)();
 	}
 	else push(0);
 }
@@ -1024,6 +1035,7 @@ static void op_PN() {
 	else if(top == 1) {
 		c = pop();
 		tele_patterns[a].v[b] = c;
+		(*update_pi)();
 	}
 }
 static void op_TR_PULSE() {

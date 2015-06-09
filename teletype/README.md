@@ -1,34 +1,17 @@
 README  // teletype
 
-HELP?
-	nav jump spacing
-	key list
-	command list?
-
 LIVE
 	activity
 
+command
+	cv.set
+	
 scenes
 	front panel functions
 
-command
-	cv.set
-
-hotkeys
-	CTL-ESC kill timers/slew
-	CTL-` tr mute
-
-ii
-	mp mute, unmute, freeze, unfreeze
-
-TRACKER
-	visual
-		update pattern index
-		--> start/end reversal doesn't display
-	functions
-		--> grab knob val (scaled?)
-
-arrow key repeat
+HELP
+	pages
+	proof
 
 remove debug prints
 remove op text strings?
@@ -53,6 +36,8 @@ tracker data views
 	bars (fine) -- notes
 	bars (fine bipolar) -- notes relative
 	on/off boxes
+hotkeys
+	CTL-ESC kill timers/slew
 
 ///////
 
