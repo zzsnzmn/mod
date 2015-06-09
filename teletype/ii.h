@@ -18,6 +18,10 @@
 #define MP_PRESET	0x31
 #define MP_RESET	0x32
 #define MP_SYNC		0x33
+#define MP_MUTE		0x34
+#define MP_UNMUTE	0x35
+#define MP_FREEZE	0x36
+#define MP_UNFREEZE	0x37
 
 #define ES 			0x50
 #define ES_PRESET	0x51
