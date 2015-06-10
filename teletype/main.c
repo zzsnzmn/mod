@@ -69,8 +69,8 @@ char input_buffer[32];
 int num_buffer;
 uint8_t pos;
 
-uint8_t knob_redirect;
-int16_t knob_val;
+uint8_t knob_now;
+uint8_t knob_last;
 
 tele_script_t script[10];
 tele_script_t history;
@@ -89,6 +89,10 @@ uint16_t hold_up;
 uint16_t hold_down;
 uint16_t hold_right;
 uint16_t hold_left;
+
+uint8_t help_page;
+uint8_t help_length[8] = {HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH, HELP4_LENGTH, HELP5_LENGTH, HELP6_LENGTH, HELP7_LENGTH, HELP8_LENGTH };
+
 
 #define FIRSTRUN_KEY 0x22
 
@@ -176,7 +180,7 @@ static void render_init(void);
 
 static void tele_metro(int16_t, int16_t, uint8_t);
 static void tele_tr(uint8_t i, int16_t v);
-static void tele_cv(uint8_t i, int16_t v);
+static void tele_cv(uint8_t i, int16_t v, uint8_t s);
 static void tele_cv_slew(uint8_t i, int16_t v);
 static void tele_delay(uint8_t i);
 static void tele_s(uint8_t i);
@@ -294,9 +298,6 @@ static void keyTimer_callback(void* o) {
 	e.type = kEventKeyTimer;
 	e.data = 0;
 	event_post(&e);
-
-	if(front_timer)
-		front_timer--;
 }
 
 static void adcTimer_callback(void* o) {  
@@ -338,15 +339,22 @@ static void handler_Front(s32 data) {
 	// print_dbg("\r\n //// FRONT HOLD");
 
 	if(data == 0) {
-		front_timer = 15;
+		if(mode != M_PRESET_R) {
+			front_timer = 0;
+			knob_last = adc[1]>>7;
+			mode = M_PRESET_R;
+			r_edit_dirty = R_ALL;
+		}
+		else
+			front_timer = 15;
 	}
 	else {
+		if(front_timer) {
+			mode = M_LIVE;
+			r_edit_dirty = R_ALL;
+		}
 		front_timer = 0;
 	}
-
-
-
-	// monomeFrameDirty++;
 }
 
 static void handler_PollADC(s32 data) {
@@ -362,6 +370,14 @@ static void handler_PollADC(s32 data) {
 				tele_patterns[edit_pattern].v[edit_index+offset_index] = adc[1]>>7;
 			r_edit_dirty |= R_ALL;
 		}
+	}
+	else if(mode == M_PRESET_R) {
+		knob_now = adc[1]>>7;
+		if(knob_now != knob_last) {
+			preset_select = knob_now;
+			r_edit_dirty = R_ALL; 
+		}
+		knob_last = knob_now;
 	}
 	else
 		tele_set_val(V_PARAM,adc[1]<<2);	// PARAM
@@ -379,9 +395,10 @@ static void handler_SaveFlash(s32 data) {
 static void handler_KeyTimer(s32 data) {
 	if(front_timer) {
 		if(front_timer == 1) {
-			static event_t e;
-			e.type = kEventSaveFlash;
-			event_post(&e);
+			flash_read();
+
+			mode = M_LIVE;
+			r_edit_dirty = R_ALL;
 
 			front_timer--;
 		}
@@ -433,7 +450,7 @@ static void handler_KeyTimer(s32 data) {
 			}
 		}
 		else if(mode == M_HELP) {
-			if(offset_view < HELP_LENGTH_) {
+			if(offset_view < help_length[help_page] - 8) {
 				offset_view++;
 				r_edit_dirty |= R_ALL;
 			}
@@ -557,6 +574,7 @@ static void handler_HidTimer(s32 data) {
      					}
      					else {
      						preset_edit_offset = 0;
+     						knob_last = adc[1]>>7;
      						mode = M_PRESET_R;
      						r_edit_dirty = R_ALL;
      					}
@@ -615,7 +633,7 @@ static void handler_HidTimer(s32 data) {
      						}
      					}
      					else if(mode == M_HELP) {
-     						if(offset_view < HELP_LENGTH_) {
+     						if(offset_view < help_length[help_page] - 8) {
      							offset_view++;
      							r_edit_dirty |= R_ALL;
      						}
@@ -758,6 +776,13 @@ static void handler_HidTimer(s32 data) {
  								r_edit_dirty |= R_ALL;
  							}
  						}
+ 						else if(mode == M_HELP) {
+ 							if(help_page < 7) {
+ 								offset_view = 0;
+ 								help_page++;
+ 								r_edit_dirty |= R_ALL;
+ 							}
+ 						}
      					break;
 
      				case 0x2F: // [
@@ -780,6 +805,13 @@ static void handler_HidTimer(s32 data) {
 	 					else if(mode == M_TRACK) {
 	 						if(tele_patterns[edit_pattern].v[edit_index+offset_index] > -32767) {
  								tele_patterns[edit_pattern].v[edit_index+offset_index]--;
+ 								r_edit_dirty |= R_ALL;
+ 							}
+ 						}
+ 						else if(mode == M_HELP) {
+ 							if(help_page) {
+ 								offset_view = 0;
+ 								help_page--;
  								r_edit_dirty |= R_ALL;
  							}
  						}
@@ -1311,7 +1343,15 @@ static void handler_ScreenRefresh(s32 data) {
 		if(r_edit_dirty & R_ALL) {
 			for(y=0;y<8;y++) {
 				region_fill(&line[y], 0);
-				font_string_region_clip_tab(&line[y], help[y+offset_view], 2, 0, 0xa, 0);
+				/// fixme: make a pointer array
+				if(help_page == 0) font_string_region_clip_tab(&line[y], help1[y+offset_view], 2, 0, 0xa, 0);
+				else if(help_page == 1) font_string_region_clip_tab(&line[y], help2[y+offset_view], 2, 0, 0xa, 0);
+				else if(help_page == 2) font_string_region_clip_tab(&line[y], help3[y+offset_view], 2, 0, 0xa, 0);
+				else if(help_page == 3) font_string_region_clip_tab(&line[y], help4[y+offset_view], 2, 0, 0xa, 0);
+				else if(help_page == 4) font_string_region_clip_tab(&line[y], help5[y+offset_view], 2, 0, 0xa, 0);
+				else if(help_page == 5) font_string_region_clip_tab(&line[y], help6[y+offset_view], 2, 0, 0xa, 0);
+				else if(help_page == 6) font_string_region_clip_tab(&line[y], help7[y+offset_view], 2, 0, 0xa, 0);
+				else if(help_page == 7) font_string_region_clip_tab(&line[y], help8[y+offset_view], 2, 0, 0xa, 0);
 			}
 
 			r_edit_dirty &= ~R_ALL;
@@ -1319,24 +1359,6 @@ static void handler_ScreenRefresh(s32 data) {
 		}	
 	}
 	else {
-		/*
-		if(r_edit_dirty & R_PRESET) {
-			strcpy(s," /  ");
-
-			s[0] = preset + 48;
-			s[2] = preset + 48; // PATTERN
-
-			strcat(s,preset_name);
-
-			region_fill(&r_preset, 0);
-			if(preset_dirty)
-				region_string(&r_preset, s, 0, 0, 0xa, 0, 0);
-			else
-				region_string(&r_preset, s, 0, 0, 0x4, 0, 0);
-			sdirty++;
-			r_edit_dirty &= ~R_PRESET;
-		}*/
-		
 		if(r_edit_dirty & R_INPUT) {
 			s[0] = '>';
 	 		s[1] = ' ';
@@ -1405,75 +1427,71 @@ static void handler_ScreenRefresh(s32 data) {
 			sdirty++;
 			r_edit_dirty &= ~R_LIST;
 		}
-		/*
+		
 		if((activity != activity_prev) && (mode == M_LIVE)) {
 			region_fill(&line[0], 0);
-			
-			a = 1;
-
-			line[0].data[ 0 + 0 * line[0].w ] = a;
-			line[0].data[ 1 + 2 * line[0].w ] = a;
-			line[0].data[ 2 + 0 * line[0].w ] = a;
-			line[0].data[ 3 + 2 * line[0].w ] = a;
-			line[0].data[ 4 + 0 * line[0].w ] = a;
-			line[0].data[ 5 + 2 * line[0].w ] = a;
-			line[0].data[ 6 + 0 * line[0].w ] = a;
-			line[0].data[ 7 + 2 * line[0].w ] = a;
-
-			if((activity & A_METRO) != (activity_prev & A_METRO)) {
-				if(activity & A_METRO) a = 15;
-				else a = 1;
-
-				line[0].data[ 9 + 0 + 0 * line[0].w ] = a;
-				line[0].data[ 9 + 0 + 1 * line[0].w ] = a;
-				line[0].data[ 9 + 0 + 2 * line[0].w ] = a;
-				print_dbg("\r\ndraw metro");
-			}
 
 			if(activity & A_SLEW) a = 15;
 			else a = 1;
 
-			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
-			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
-			line[0].data[ 16 + 0 + 2 * line[0].w ] = a;
-			line[0].data[ 16 + 1 + 1 * line[0].w ] = a;
-			line[0].data[ 16 + 2 + 0 * line[0].w ] = a;
+			line[0].data[ 98 + 0 + 512 ] = a;
+			line[0].data[ 98 + 1 + 384 ] = a;
+			line[0].data[ 98 + 2 + 256 ] = a;
+			line[0].data[ 98 + 3 + 128 ] = a;
+			line[0].data[ 98 + 4 + 0 ] = a;
 
 			if(activity & A_DELAY) a = 15;
 			else a = 1;
 
-			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
-			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
-			line[0].data[ 20 + 0 + 0 * line[0].w ] = a;
-			line[0].data[ 20 + 1 + 0 * line[0].w ] = a;
-			line[0].data[ 20 + 2 + 0 * line[0].w ] = a;
-			line[0].data[ 20 + 0 + 1 * line[0].w ] = a;
-			line[0].data[ 20 + 2 + 1 * line[0].w ] = a;
-			line[0].data[ 20 + 0 + 2 * line[0].w ] = a;
-			line[0].data[ 20 + 2 + 2 * line[0].w ] = a;
+			line[0].data[ 106 + 0 + 0 ] = a;
+			line[0].data[ 106 + 1 + 0 ] = a;
+			line[0].data[ 106 + 2 + 0 ] = a;
+			line[0].data[ 106 + 3 + 0 ] = a;
+			line[0].data[ 106 + 4 + 0 ] = a;
+			line[0].data[ 106 + 0 + 128 ] = a;
+			line[0].data[ 106 + 0 + 256 ] = a;
+			line[0].data[ 106 + 0 + 384 ] = a;
+			line[0].data[ 106 + 0 + 512 ] = a;
+			line[0].data[ 106 + 4 + 128 ] = a;
+			line[0].data[ 106 + 4 + 256 ] = a;
+			line[0].data[ 106 + 4 + 384 ] = a;
+			line[0].data[ 106 + 4 + 512 ] = a;
 
 			if(activity & A_Q) a = 15;
 			else a = 1;
 
-			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
-			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
-			line[0].data[ 24 + 0 + 0 * line[0].w ] = a;
-			line[0].data[ 24 + 1 + 0 * line[0].w ] = a;
-			line[0].data[ 24 + 2 + 0 * line[0].w ] = a;
-			line[0].data[ 24 + 0 + 2 * line[0].w ] = a;
-			line[0].data[ 24 + 1 + 2 * line[0].w ] = a;
-			line[0].data[ 24 + 2 + 2 * line[0].w ] = a;
+			line[0].data[ 114 + 0 + 0 ] = a;
+			line[0].data[ 114 + 1 + 0 ] = a;
+			line[0].data[ 114 + 2 + 0 ] = a;
+			line[0].data[ 114 + 3 + 0 ] = a;
+			line[0].data[ 114 + 4 + 0 ] = a;
+			line[0].data[ 114 + 0 + 256 ] = a;
+			line[0].data[ 114 + 1 + 256 ] = a;
+			line[0].data[ 114 + 2 + 256 ] = a;
+			line[0].data[ 114 + 3 + 256 ] = a;
+			line[0].data[ 114 + 4 + 256 ] = a;
+			line[0].data[ 114 + 0 + 512 ] = a;
+			line[0].data[ 114 + 1 + 512 ] = a;
+			line[0].data[ 114 + 2 + 512 ] = a;
+			line[0].data[ 114 + 3 + 512 ] = a;
+			line[0].data[ 114 + 4 + 512 ] = a;
 
-			if(activity & A_X) a = 15;
+			if(activity & A_METRO) a = 15;
 			else a = 1;
 
-			// line[0].data[ 16 + 0 + 4 * line[0].w ] = a;
-			// line[0].data[ 16 + 1 + 3 * line[0].w ] = a;
-			line[0].data[ 28 + 0 + 0 * line[0].w ] = a;
-			line[0].data[ 28 + 0 + 2 * line[0].w ] = a;
-			line[0].data[ 28 + 1 + 1 * line[0].w ] = a;
-			line[0].data[ 28 + 2 + 0 * line[0].w ] = a;
-			line[0].data[ 28 + 2 + 2 * line[0].w ] = a;
+			line[0].data[ 122 + 0 + 0 ] = a;
+			line[0].data[ 122 + 0 + 128 ] = a;
+			line[0].data[ 122 + 0 + 256 ] = a;
+			line[0].data[ 122 + 0 + 384 ] = a;
+			line[0].data[ 122 + 0 + 512 ] = a;
+			line[0].data[ 122 + 1 + 128 ] = a;
+			line[0].data[ 122 + 2 + 256 ] = a;
+			line[0].data[ 122 + 3 + 128 ] = a;
+			line[0].data[ 122 + 4 + 0 ] = a;
+			line[0].data[ 122 + 4 + 128 ] = a;
+			line[0].data[ 122 + 4 + 256 ] = a;
+			line[0].data[ 122 + 4 + 384 ] = a;
+			line[0].data[ 122 + 4 + 512 ] = a;
 
 			activity_prev = activity;
 
@@ -1482,7 +1500,7 @@ static void handler_ScreenRefresh(s32 data) {
 			activity &= ~A_REFRESH;
 				
 			sdirty++;
-		}*/
+		}
 	}
 }
 
@@ -1587,6 +1605,8 @@ static void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
 	if(m_act && !metro_act) {
 		// print_dbg("\r\nTURN ON METRO");
 		metro_act = 1;
+		if(script[METRO_SCRIPT].l)
+			activity |= A_METRO;
 		timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
 	}
 	else if(!m_act && metro_act) {
@@ -1614,13 +1634,14 @@ static void tele_tr(uint8_t i, int16_t v) {
 		gpio_set_pin_low(B08+i);
 }
 
-static void tele_cv(uint8_t i, int16_t v) {
+static void tele_cv(uint8_t i, int16_t v, uint8_t s) {
 	aout[i].target = v + aout[i].off;
 	if(aout[i].target < 0)
 		aout[i].target = 0;
 	else if(aout[i].target > 16383)
 		aout[i].target = 16383;
-	aout[i].step = aout[i].slew;
+ 	if(s) aout[i].step = aout[i].slew;
+ 	else aout[i].step = 1;
 	aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
 	aout[i].a = aout[i].now<<16;
 }

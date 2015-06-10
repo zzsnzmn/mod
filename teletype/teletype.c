@@ -441,7 +441,7 @@ static void a_CV(uint8_t i) {
 	if(a<0) a = 0;
 	else if(a > 16383) a = 16383;
 	tele_arrays[1].v[i] = a;
-	(*update_cv)(i, a);
+	(*update_cv)(i, a, 1);
 }
 static void a_CV_SLEW(uint8_t i) {
 	int16_t a = pop();
@@ -454,7 +454,7 @@ static void a_CV_OFF(uint8_t i) {
 	int16_t a = pop();
 	tele_arrays[3].v[i] = a;
 	(*update_cv_off)(i, a);
-	(*update_cv)(i, tele_arrays[1].v[i]);
+	(*update_cv)(i, tele_arrays[1].v[i], 1);
 
 }
 static void a_TR_TIME(uint8_t i) {
@@ -693,9 +693,10 @@ static void op_II(void);
 static void op_RSH(void);
 static void op_LSH(void);
 static void op_S_L(void);
+static void op_CV_SET(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 40
+#define OPS 41
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -737,7 +738,8 @@ static const tele_op_t tele_ops[OPS] = {
 	{"II", op_II, 2, 0, "II"},
 	{"RSH", op_RSH, 2, 1, "RIGHT SHIFT"},
 	{"LSH", op_LSH, 2, 1, "LEFT SHIFT"},
-	{"S.L", op_S_L, 0, 1, "STACK LENGTH"}
+	{"S.L", op_S_L, 0, 1, "STACK LENGTH"},
+	{"CV.SET", op_CV_SET, 2, 0, "CV SET"}
 };
 
 static void op_ADD() {
@@ -1062,6 +1064,18 @@ static void op_LSH() {
 }
 static void op_S_L() { 
 	push(tele_stack_top);
+}
+static void op_CV_SET() {
+	int16_t a = pop();
+	int16_t b = pop();
+	// saturate and shift
+	if(a < 1) a = 1;
+	else if(a > 4) a = 4;
+	a--;
+	if(b<0) b = 0;
+	else if(b > 16383) b = 16383;
+	tele_arrays[1].v[a] = b;
+	(*update_cv)(a, b, 0);
 }
 
 /////////////////////////////////////////////////////////////////

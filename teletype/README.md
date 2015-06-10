@@ -1,16 +1,6 @@
 README  // teletype
 
-LIVE
-	activity
-
-command
-	cv.set
-	
-scenes
-	front panel functions
-
 HELP
-	pages
 	proof
 
 remove debug prints

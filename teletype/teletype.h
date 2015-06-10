@@ -119,7 +119,7 @@ extern volatile update_metro_t update_metro;
 typedef void (*update_tr_t)(uint8_t, int16_t);
 extern volatile update_tr_t update_tr;
 
-typedef void (*update_cv_t)(uint8_t, int16_t);
+typedef void (*update_cv_t)(uint8_t, int16_t, uint8_t);
 extern volatile update_cv_t update_cv;
 
 typedef void (*update_cv_slew_t)(uint8_t, int16_t);
