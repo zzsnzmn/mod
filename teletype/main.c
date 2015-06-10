@@ -481,13 +481,13 @@ static void handler_KeyTimer(s32 data) {
 }
 
 static void handler_HidConnect(s32 data) {
-	print_dbg("\r\nhid connect\r\n");
+	// print_dbg("\r\nhid connect\r\n");
 	timer_add(&hidTimer,47,&hidTimer_callback, NULL);
 }
 
 static void handler_HidDisconnect(s32 data) {
 	timer_remove(&hidTimer);
-	print_dbg("\r\nno more hid");
+	// print_dbg("\r\nno more hid");
 
 }
 
@@ -876,8 +876,8 @@ static void handler_HidTimer(s32 data) {
 									else {
 										if(temp.l == 0) {	// BLANK LINE
 											if(script[edit].l && script[edit].c[edit_line].l) {
-												print_dbg("\r\nl ");
-												print_dbg_ulong(script[edit].l);
+												// print_dbg("\r\nl ");
+												// print_dbg_ulong(script[edit].l);
 
 												script[edit].l--;
 
@@ -929,13 +929,13 @@ static void handler_HidTimer(s32 data) {
 			     						r_edit_dirty |= R_LIST;
 								}
 								else {
-									print_dbg("\r\nvalidate: ");
-									print_dbg(tele_error(status));
+									// print_dbg("\r\nvalidate: ");
+									// print_dbg(tele_error(status));
 	 							}
 							}
 							else {
-								print_dbg("\r\nERROR: ");
-								print_dbg(tele_error(status));
+								// print_dbg("\r\nERROR: ");
+								// print_dbg(tele_error(status));
 							}
 
 							// print_dbg("\r\n\n> ");
@@ -1229,7 +1229,7 @@ static void handler_HidTimer(s32 data) {
 
 
 static void handler_HidPacket(s32 data) {
-	print_dbg("\r\nhid packet");
+	// print_dbg("\r\nhid packet");
 }
 
 
@@ -1578,8 +1578,8 @@ void flash_write(void) {
 }
 
 void flash_read(void) {
-	print_dbg("\r\n:::: read flash ");
-	print_dbg_ulong(preset_select);
+	// print_dbg("\r\n:::: read flash ");
+	// print_dbg_ulong(preset_select);
 	memcpy(&script,&f.s[preset_select].script,sizeof(script));
 	memcpy(&tele_patterns,&f.s[preset_select].patterns,sizeof(tele_patterns));
 	memcpy(&scene_text,&f.s[preset_select].text,sizeof(scene_text));
