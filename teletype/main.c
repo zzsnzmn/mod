@@ -104,6 +104,7 @@ typedef const struct {
 
 typedef const struct {
 	tele_scene_t s[SCENE_SLOTS];
+	uint8_t scene;
 	uint8_t fresh;
 } nvram_data_t;
 
@@ -1561,7 +1562,7 @@ u8 flash_is_fresh(void) {
 
 // write fresh status
 void flash_unfresh(void) {
-  flashc_memset8((void*)&(f.fresh), FIRSTRUN_KEY, 4, true);
+  flashc_memset8((void*)&(f.fresh), FIRSTRUN_KEY, 1, true);
 }
 
 void flash_write(void) {
@@ -1571,9 +1572,9 @@ void flash_write(void) {
 	flashc_memcpy((void *)&f.s[preset_select].script, &script, sizeof(script), true);
 	flashc_memcpy((void *)&f.s[preset_select].patterns, &tele_patterns, sizeof(tele_patterns), true);
 	flashc_memcpy((void *)&f.s[preset_select].text, &scene_text, sizeof(scene_text), true);
+	flashc_memset8((void*)&(f.scene), preset_select, 1, true);
 	// flashc_memcpy((void *)&flashy.glyph[preset_select], &glyph, sizeof(glyph), true);
 	// flashc_memset8((void*)&(flashy.preset_select), preset_select, 1, true);
-	// print_dbg("\r\n:::: done");
 }
 
 void flash_read(void) {
@@ -1582,6 +1583,7 @@ void flash_read(void) {
 	memcpy(&script,&f.s[preset_select].script,sizeof(script));
 	memcpy(&tele_patterns,&f.s[preset_select].patterns,sizeof(tele_patterns));
 	memcpy(&scene_text,&f.s[preset_select].text,sizeof(scene_text));
+	flashc_memset8((void*)&(f.scene), preset_select, 1, true);
 }
 
 
@@ -1735,11 +1737,13 @@ int main(void)
 
 	if(flash_is_fresh()) {
 		print_dbg("\r\n:::: first run.");
-		flash_unfresh();
 
 		for(preset_select=0;preset_select<SCENE_SLOTS;preset_select++)
 			flash_write();
 		preset_select = 0;
+		flashc_memset8((void*)&(f.scene), preset_select, 1, true);
+		flash_unfresh();
+
 		// clear out some reasonable defaults
 
 		// save all presets, clear glyphs
@@ -1751,6 +1755,7 @@ int main(void)
 
 	}
 	else {
+		preset_select = f.scene;
 		flash_read();
 		// load from flash at startup
 	}
