@@ -14,7 +14,7 @@
 #define FALSE 0
 
 enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT,
-	V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O, V_DRUNK, V_Q, V_Q_N, V_Q_AVG, V_SCENE };
+	V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O, V_DRUNK, V_Q, V_Q_N, V_Q_AVG, V_SCENE, V_P_N };
 
 typedef enum { 
 	E_OK,
@@ -83,10 +83,10 @@ typedef struct {
 } tele_op_t;
 
 typedef struct {
-	int8_t i;
-	uint8_t l;
-	uint8_t wrap;
-	int8_t start, end;
+	int16_t i;
+	uint16_t l;
+	uint16_t wrap;
+	int16_t start, end;
 	int16_t v[64];
 } tele_pattern_t;
 

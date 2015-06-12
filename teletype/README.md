@@ -1,9 +1,5 @@
 README  // teletype
 
-HELP
-	proof
-
-remove debug prints
 remove op text strings?
 
 

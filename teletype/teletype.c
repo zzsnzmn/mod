@@ -52,6 +52,7 @@ static char condition;
 
 static tele_command_t tele_stack[TELE_STACK_SIZE];
 static uint8_t tele_stack_top;
+static uint8_t left;
 
 
 volatile update_metro_t update_metro;
@@ -191,7 +192,7 @@ static tele_var_t tele_vars[VARS] = {
 };
 
 static void v_M(uint8_t n) {
-	if(top == 0)
+	if(left || left || top == 0)
 		push(tele_vars[V_M].v);
 	else {
 		tele_vars[V_M].v = pop();
@@ -201,7 +202,7 @@ static void v_M(uint8_t n) {
 }
 
 static void v_M_ACT(uint8_t n) {
-	if(top == 0)
+	if(left || top == 0)
 		push(tele_vars[V_M_ACT].v);
 	else {
 		tele_vars[V_M_ACT].v = pop();
@@ -213,7 +214,7 @@ static void v_M_ACT(uint8_t n) {
 
 static void v_P_N(uint8_t n) {
 	int16_t a;
-	if(top == 0) {
+	if(left || top == 0) {
 		push(pn);
 	}
 	else {
@@ -226,7 +227,7 @@ static void v_P_N(uint8_t n) {
 
 static void v_P_L(uint8_t n) {
 	int16_t a;
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_patterns[pn].l);
 	}
 	else {
@@ -239,7 +240,7 @@ static void v_P_L(uint8_t n) {
 
 static void v_P_I(uint8_t n) {
 	int16_t a;
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_patterns[pn].i);
 	}
 	else {
@@ -253,7 +254,7 @@ static void v_P_I(uint8_t n) {
 
 static void v_P_HERE(uint8_t n) {
 	int16_t a;
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_patterns[pn].v[tele_patterns[pn].i]);
 	}
 	else {
@@ -271,7 +272,10 @@ static void v_P_NEXT(uint8_t n) {
 	else
 		tele_patterns[pn].i++;
 
-	if(top == 0) {
+	if(tele_patterns[pn].i > tele_patterns[pn].l)
+		tele_patterns[pn].i = 0;
+
+	if(left || top == 0) {
 		push(tele_patterns[pn].v[tele_patterns[pn].i]);
 	}
 	else {
@@ -289,13 +293,13 @@ static void v_P_PREV(uint8_t n) {
 			if(tele_patterns[pn].end < tele_patterns[pn].l)
 				tele_patterns[pn].i = tele_patterns[pn].end;
 			else
-				tele_patterns[pn].i = tele_patterns[pn].l;
+				tele_patterns[pn].i = tele_patterns[pn].l - 1;
 		}
 	}
 	else
 		tele_patterns[pn].i--;
 	
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_patterns[pn].v[tele_patterns[pn].i]);
 	}
 	else {
@@ -308,7 +312,7 @@ static void v_P_PREV(uint8_t n) {
 
 static void v_P_WRAP(uint8_t n) {
 	int16_t a;
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_patterns[pn].wrap);
 	}
 	else {
@@ -321,7 +325,7 @@ static void v_P_WRAP(uint8_t n) {
 
 static void v_P_START(uint8_t n) {
 	int16_t a;
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_patterns[pn].start);
 	}
 	else {
@@ -334,7 +338,7 @@ static void v_P_START(uint8_t n) {
 
 static void v_P_END(uint8_t n) {
 	int16_t a;
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_patterns[pn].end);
 	}
 	else {
@@ -346,7 +350,7 @@ static void v_P_END(uint8_t n) {
 }
 
 static void v_O(uint8_t n) {
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_vars[V_O].v);
 		tele_vars[V_O].v++;
 	}
@@ -356,7 +360,7 @@ static void v_O(uint8_t n) {
 }
 
 static void v_DRUNK(uint8_t n) {
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_vars[V_DRUNK].v);
 		tele_vars[V_DRUNK].v += (rand() % 3) - 1;
 	}
@@ -366,7 +370,7 @@ static void v_DRUNK(uint8_t n) {
 }
 
 static void v_Q(uint8_t n) {
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_q[tele_vars[V_Q_N].v-1]);
 	}
 	else {
@@ -376,7 +380,7 @@ static void v_Q(uint8_t n) {
 	}
 }
 static void v_Q_N(uint8_t n) {
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_vars[V_Q_N].v);
 	}
 	else {
@@ -388,7 +392,7 @@ static void v_Q_N(uint8_t n) {
 }
 
 static void v_Q_AVG(uint8_t n) {
-	if(top == 0) {
+	if(left || top == 0) {
 		int16_t avg = 0;
 		for(int16_t i = 0;i<tele_vars[V_Q_N].v;i++)
 			avg += tele_q[i];
@@ -403,7 +407,7 @@ static void v_Q_AVG(uint8_t n) {
 	}
 }
 static void v_SCENE(uint8_t n) {
-	if(top == 0) {
+	if(left || top == 0) {
 		push(tele_vars[V_SCENE].v);
 	}
 	else {
@@ -1323,7 +1327,7 @@ error_t validate(tele_command_t *c) {
 // PROCESS //////////////////////////////////////////////////////
 
 void process(tele_command_t *c) {
-	top = 0;
+	top = 0; left = 0;
 	int16_t i;
 	int16_t n;
 
@@ -1336,6 +1340,7 @@ void process(tele_command_t *c) {
 	// DBG;
 
 	while(n--) {
+		left = n;
 		if(c->data[n].t == NUMBER)
 			push(c->data[n].v);
 		else if(c->data[n].t == OP)

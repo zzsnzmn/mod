@@ -363,14 +363,12 @@ static void handler_PollADC(s32 data) {
 
 	tele_set_val(V_IN,adc[0]<<2);	// IN
 
-	if(mode == M_TRACK) {
-		if(mod_CTRL) {
-			if(mod_SH)
-				tele_patterns[edit_pattern].v[edit_index+offset_index] = adc[1]>>2;
-			else
-				tele_patterns[edit_pattern].v[edit_index+offset_index] = adc[1]>>7;
-			r_edit_dirty |= R_ALL;
-		}
+	if(mode == M_TRACK && mod_CTRL) {
+		if(mod_SH)
+			tele_patterns[edit_pattern].v[edit_index+offset_index] = adc[1]>>2;
+		else
+			tele_patterns[edit_pattern].v[edit_index+offset_index] = adc[1]>>7;
+		r_edit_dirty |= R_ALL;
 	}
 	else if(mode == M_PRESET_R) {
 		knob_now = adc[1]>>7;
@@ -527,8 +525,7 @@ static void handler_HidTimer(s32 data) {
      				case 0x2B: // tab
      					if(mode == M_LIVE) {
      						mode = M_EDIT;
-     						if(edit_line > script[edit].l)
-	     						edit_line = script[edit].l;
+ 							edit_line = 0;
 	     					strcpy(input,print_command(&script[edit].c[edit_line]));
 	 						pos = strlen(input);
 	 						for(n = pos;n < 32;n++) input[n] = 0;
@@ -640,18 +637,18 @@ static void handler_HidTimer(s32 data) {
      						}
      					}
      					else if(edit_line < SCRIPT_MAX_COMMANDS_) {
-     						if(script[edit].l > edit_line) {
+     						if(mode == M_LIVE) {
+     							edit_line++;
+     							strcpy(input,print_command(&history.c[edit_line]));
+     							pos = strlen(input);
+     							for(n = pos;n < 32;n++) input[n] = 0;
+	 						}
+     						else if(script[edit].l > edit_line) {
      							edit_line++;
      							strcpy(input,print_command(&script[edit].c[edit_line]));
      							pos = strlen(input);
      							for(n = pos;n < 32;n++) input[n] = 0;
 	 							r_edit_dirty |= R_LIST;
-	 						}
-     						else if(mode == M_LIVE) {
-     							edit_line++;
-     							strcpy(input,print_command(&history.c[edit_line]));
-     							pos = strlen(input);
-     							for(n = pos;n < 32;n++) input[n] = 0;
 	 						}
 	 					}
 	 					else if(mode == M_LIVE) {
@@ -1573,6 +1570,7 @@ void flash_write(void) {
 	flashc_memcpy((void *)&f.s[preset_select].patterns, &tele_patterns, sizeof(tele_patterns), true);
 	flashc_memcpy((void *)&f.s[preset_select].text, &scene_text, sizeof(scene_text), true);
 	flashc_memset8((void*)&(f.scene), preset_select, 1, true);
+
 	// flashc_memcpy((void *)&flashy.glyph[preset_select], &glyph, sizeof(glyph), true);
 	// flashc_memset8((void*)&(flashy.preset_select), preset_select, 1, true);
 }
@@ -1735,6 +1733,8 @@ int main(void)
 	print_dbg("\r\nflash size: ");
 	print_dbg_ulong(sizeof(f));
 
+	tele_init();
+
 	if(flash_is_fresh()) {
 		print_dbg("\r\n:::: first run.");
 
@@ -1781,8 +1781,6 @@ int main(void)
 	render_init();
 
 	clear_delays();
-
-	tele_init();
 
 	aout[0].slew = 1;
 	aout[1].slew = 1;
