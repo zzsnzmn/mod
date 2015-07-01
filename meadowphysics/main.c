@@ -22,6 +22,7 @@ refresh preset while in ext trigger mode?
 // skeleton
 #include "types.h"
 #include "events.h"
+#include "i2c.h"
 #include "init.h"
 #include "interrupts.h"
 #include "monome.h"
@@ -29,9 +30,11 @@ refresh preset while in ext trigger mode?
 #include "adc.h"
 #include "util.h"
 #include "ftdi.h"
+#include "twi.h"
 
 // this
 #include "conf_board.h"
+#include "ii.h"
 	
 
 #define FIRSTRUN_KEY 0x22
@@ -71,6 +74,8 @@ typedef struct {
 	u8 trig_dests[8];
 	u8 rules[8];
 	u8 rule_dests[8];
+	u8 mutes[8];
+	u8 freezes[8];
 } mp_set;
 
 typedef const struct {
@@ -132,6 +137,8 @@ void flash_write(void);
 void flash_read(void);
 
 
+static void mp_process_ii(uint8_t i, int d);
+
 
 static void cascades_trigger(u8 n);
 
@@ -154,7 +161,8 @@ void clock(u8 phase) {
 			m.triggers[i] = 0;
 
 		// main
-		cascades_trigger(0);
+		if(!m.freezes[0])
+			cascades_trigger(0);
 
 		// ensure bounds, output triggers
 		for(i=0;i<8;i++) {
@@ -164,7 +172,7 @@ void clock(u8 phase) {
 				m.positions[i] = m.points[i];
 
 			// send out
-			if(m.triggers[i])
+			if(m.triggers[i] && !m.mutes[i])
 				gpio_set_gpio_pin(outs[i]);
 		}
 
@@ -467,11 +475,17 @@ static void handler_MonomeGridKey(s32 data) {
 			monomeFrameDirty++;
 		}
 		else if(mode == 1 && z == 1) {
-			if(y != edit_row) {    // filter out self-triggering
-				m.trig_dests[edit_row] ^= (1<<y);
-				monomeFrameDirty++;
-			  // post("\ntrig_dests", edit_row, ":", trig_dests[edit_row]);
+			if(x > 1 && x < 7) {
+				if(y != edit_row) {    // filter out self-triggering
+					m.trig_dests[edit_row] ^= (1<<y);
+					monomeFrameDirty++;
+				  // post("\ntrig_dests", edit_row, ":", trig_dests[edit_row]);
+				}
 			}
+			else if(x == 15)
+				m.freezes[y] ^= 1;
+			else if(x == 14)
+				m.mutes[y] ^= 1;
 		}
 		else if(mode == 2 && z == 1) {
 			if(x > 1 && x < 7) {
@@ -513,16 +527,23 @@ static void refresh() {
 	}
 	// SET ROUTING
 	else if(mode == 1) {
-		monomeLedBuffer[edit_row * 16] = L1;
-		monomeLedBuffer[edit_row * 16 + 1] = L1;
-
 		for(i1=0;i1<8;i1++) {
 			if((m.trig_dests[edit_row] & (1<<i1)) != 0) {
 				for(i2=0;i2<=m.points[i1];i2++)
-					monomeLedBuffer[i1*16 + i2] = L2;
+					monomeLedBuffer[i1*16 + i2] = L0;
+				monomeLedBuffer[i1*16 + m.positions[i1]] = L2;
 			}
-			monomeLedBuffer[i1*16 + m.positions[i1]] = L0;
+			else
+				monomeLedBuffer[i1*16 + m.positions[i1]] = L0;
+
+			if(m.freezes[i1])
+				monomeLedBuffer[i1*16+15] = L2;
+			if(m.mutes[i1])
+				monomeLedBuffer[i1*16+14] = L1;
+
 		}
+
+		monomeLedBuffer[edit_row * 16] = L2;
 	}
 	// SET RULES
 	else if(mode == 2) {
@@ -643,11 +664,73 @@ static void cascades_trigger(u8 n) {
 
     //triggers
     for(i=0;i<8;i++)
-      if((m.trig_dests[n] & (1<<i)) != 0)
+      if(((m.trig_dests[n] & (1<<i)) != 0) && !m.freezes[i])
         cascades_trigger(i);
         // post("\ntrigger",n," -> ", m);
   }
 }
+
+
+static void mp_process_ii(uint8_t i, int d) {
+	switch(i) {
+		case MP_PRESET:
+			if(d<0 || d>8)
+				break;
+			preset_select = d;
+			flash_read();
+			break;
+		case MP_RESET:
+			if(d) {
+				m.positions[0] = m.points[0]+1;
+				for(int n=1;n<8;n++)
+					m.positions[n] = m.points[n];
+			}
+			break;
+		case MP_SYNC:
+			if(d) {
+				m.positions[0] = m.points[0]+1;
+				for(int n=1;n<8;n++)
+					m.positions[n] = m.points[n];
+				timer_set(&clockTimer,clock_time);
+				clock_phase = 1;
+				(*clock_pulse)(clock_phase);
+			}
+			break;
+		case MP_MUTE:
+			if(d<1 || d>9)
+				break;
+			d--;
+			m.mutes[d] = 1;
+			break;
+		case MP_UNMUTE:
+			if(d<1 || d>9)
+				break;
+			d--;
+			m.mutes[d] = 0;
+			break;
+		case MP_FREEZE:
+			if(d<1 || d>9)
+				break;
+			d--;
+			m.freezes[d] = 1;
+			break;
+		case MP_UNFREEZE:
+			if(d<1 || d>9)
+				break;
+			d--;
+			m.freezes[d] = 0;
+			break;
+		default:
+			break;
+	}
+  // print_dbg("\r\nmp: ");
+  // print_dbg_ulong(i);
+  // print_dbg(" ");
+  // print_dbg_ulong(d);
+}
+
+
+
 
 
 
@@ -741,13 +824,15 @@ void flash_read(void) {
 
 
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // main
 
-int main(void)
-{
+
+int main(void) {
 	u8 i1;
 
 	sysclk_init();
@@ -768,6 +853,7 @@ int main(void)
 	init_usb_host();
 	init_monome();
 
+	init_i2c_slave(0x30);
 
 	print_dbg("\r\n\n// meadowphysics //////////////////////////////// ");
 	print_dbg_ulong(sizeof(flashy));
@@ -815,6 +901,8 @@ int main(void)
 	SIZE = 16;
 
 	re = &refresh;
+
+	process_ii = &mp_process_ii;
 
 	clock_pulse = &clock;
 	clock_external = !gpio_get_pin_value(B09);
