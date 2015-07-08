@@ -33,3 +33,20 @@
 #define ES_STOP		0x57
 #define ES_TRIPLE	0x58
 #define ES_MAGIC	0x59
+
+#define ORCA			0x40
+#define ORCA_TRACK		0x41
+#define ORCA_CLOCK		0x42
+#define ORCA_DIVISOR	0x43
+#define ORCA_PHASE		0x44
+#define ORCA_RESET		0x45
+#define ORCA_WEIGHT		0x46
+#define ORCA_MUTE		0x47
+#define ORCA_SCALE		0x48
+#define ORCA_RANDOM		0x49
+#define ORCA_BANK		0x4A
+#define ORCA_PRESET		0x4B
+#define ORCA_ROTATES	0x4C
+#define ORCA_ROTATEW	0x4D
+#define ORCA_MUTATE		0x4E
+#define ORCA_GRESET		0x4F
