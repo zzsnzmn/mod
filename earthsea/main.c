@@ -1162,11 +1162,11 @@ static void shape(u8 s, u8 x, u8 y) {
 	// print_dbg_ulong(s);
 
 	// PATTERN PLAY MODE
-	if(arp && r_status == rOff && s<5) {
+	if(arp && r_status == rOff && s<4) {
 		es.p[p_select].x = x - es.p[p_select].e[0].x;
 		es.p[p_select].y = y - es.p[p_select].e[0].y;
 	}
-	else if(s<5) {
+	else if(s<4) {
 		// cv_pos = SCALES[0][x] + (7-y)*170;
 		// cv_pos = SEMI[x+(7-y)*5];
 		aout[3].target = SEMI[x+(7-y)*5];
@@ -1474,17 +1474,23 @@ static void refresh() {
 
 		if(all_edit) {
 			monomeLedBuffer[(root_y)*16+root_x] = 7 + 4 * (blinker < 24);
-			monomeLedBuffer[(root_y-1)*16+root_x] = 7 + 4 * (blinker < 24);
-			monomeLedBuffer[(root_y-1)*16+root_x+1] = 7 + 4 * (blinker < 24);
-			monomeLedBuffer[(root_y)*16+root_x+1] = 7 + 4 * (blinker < 24);
+			if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x] = 7 + 4 * (blinker < 24);
+			if(root_y > 0 && root_x < 15) monomeLedBuffer[(root_y-1)*16+root_x+1] = 7 + 4 * (blinker < 24);
+			if(root_x < 15) monomeLedBuffer[(root_y)*16+root_x+1] = 7 + 4 * (blinker < 24);
 		}
 		else if(!singled) {
-			if(shape_on == 0) monomeLedBuffer[(root_y-1)*16+root_x] = 11;
-			else if(shape_on == 1) monomeLedBuffer[(root_y-1)*16+root_x+1] = 11;
+			if(shape_on == 0) 
+				{ if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x] = 11; }
+			else if(shape_on == 1)
+				{ if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x+1] = 11; }
 			else if(shape_on == 2) monomeLedBuffer[(root_y)*16+root_x+1] = 11;
 			else if(shape_on == 3) monomeLedBuffer[(root_y+1)*16+root_x+1] = 11;
-			else if(shape_on == 4) { monomeLedBuffer[(root_y-1)*16+root_x] = 11; monomeLedBuffer[(root_y-2)*16+root_x] = 11; }
-			else if(shape_on == 5) { monomeLedBuffer[(root_y-1)*16+root_x+1] = 11; monomeLedBuffer[(root_y-2)*16+root_x+2] = 11; }
+			else if(shape_on == 4) {
+				if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x] = 11; 
+				if(root_y > 1) monomeLedBuffer[(root_y-2)*16+root_x] = 11; }
+			else if(shape_on == 5) { 
+				if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x+1] = 11; 
+				if(root_y > 1) monomeLedBuffer[(root_y-2)*16+root_x+2] = 11; }
 			else if(shape_on == 6) { monomeLedBuffer[(root_y)*16+root_x+1] = 11; monomeLedBuffer[(root_y)*16+root_x+2] = 11; }
 			else if(shape_on == 7) { monomeLedBuffer[(root_y+1)*16+root_x+1] = 11; monomeLedBuffer[(root_y+2)*16+root_x+2] = 11; }
 		}
@@ -1616,11 +1622,16 @@ static void refresh_mono() {
 		}
 		else if(!singled) {
 			if(shape_on == 0) monomeLedBuffer[(root_y-1)*16+root_x] = 15;
-			else if(shape_on == 1) monomeLedBuffer[(root_y-1)*16+root_x+1] = 15;
+			else if(shape_on == 1) 
+				{ if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x+1] = 15; }
 			else if(shape_on == 2) monomeLedBuffer[(root_y)*16+root_x+1] = 15;
 			else if(shape_on == 3) monomeLedBuffer[(root_y+1)*16+root_x+1] = 15;
-			else if(shape_on == 4) { monomeLedBuffer[(root_y-1)*16+root_x] = 15; monomeLedBuffer[(root_y-2)*16+root_x] = 15; }
-			else if(shape_on == 5) { monomeLedBuffer[(root_y-1)*16+root_x+1] = 15; monomeLedBuffer[(root_y-2)*16+root_x+2] = 15; }
+			else if(shape_on == 4) { 
+				if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x] = 15; 
+				if(root_y > 1) monomeLedBuffer[(root_y-2)*16+root_x] = 15; }
+			else if(shape_on == 5) { 
+				if(root_y > 0) monomeLedBuffer[(root_y-1)*16+root_x+1] = 15; 
+				if(root_y > 1) monomeLedBuffer[(root_y-2)*16+root_x+2] = 15; }
 			else if(shape_on == 6) { monomeLedBuffer[(root_y)*16+root_x+1] = 15; monomeLedBuffer[(root_y)*16+root_x+2] = 15; }
 			else if(shape_on == 7) { monomeLedBuffer[(root_y+1)*16+root_x+1] = 15; monomeLedBuffer[(root_y+2)*16+root_x+2] = 15; }
 		}
