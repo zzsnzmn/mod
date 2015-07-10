@@ -584,8 +584,10 @@ void pattern_linearize() {
 void pattern_time_half() {
 	u8 i;
 
-	for(i=0;i<es.p[p_select].length+1;i++)
-			es.p[p_select].e[i].interval = es.p[p_select].e[i].interval / 2;
+	for(i=0;i<es.p[p_select].length+1;i++) {
+		es.p[p_select].e[i].interval = es.p[p_select].e[i].interval >> 1;
+		if(!es.p[p_select].e[i].interval) es.p[p_select].e[i].interval = 1;
+	}
 
 	es.p[p_select].total_time = 0;
 
@@ -598,7 +600,7 @@ void pattern_time_double() {
 	u8 i;
 
 	for(i=0;i<es.p[p_select].length+1;i++)
-			es.p[p_select].e[i].interval = es.p[p_select].e[i].interval * 2;
+			es.p[p_select].e[i].interval = es.p[p_select].e[i].interval << 1;
 
 	es.p[p_select].total_time = 0;
 
@@ -1340,6 +1342,7 @@ static void pattern_shape(u8 s, u8 x, u8 y) {
 				// print_dbg_ulong(edge_counter);
 			}
 		}
+
 
 		root_x = x;
 		root_y = y;
