@@ -20,7 +20,7 @@
 static const char * errordesc[] = {
 	"OK",
 	WELCOME,
-	"UNKOWN WORD",
+	"UNKNOWN WORD",
 	"COMMAND TOO LONG",
 	"NOT ENOUGH PARAMS",
 	"TOO MANY PARAMS",
