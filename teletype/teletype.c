@@ -97,7 +97,7 @@ void push(int16_t data) {
 // VARS ARRAYS KEYS /////////////////////////////////////////////
 
 
-#define KEYS 30
+#define KEYS 46
 static tele_key_t tele_keys[KEYS] = {
 	{"WW.PRESET",WW_PRESET},
 	{"WW.POS",WW_POS},
@@ -128,7 +128,23 @@ static tele_key_t tele_keys[KEYS] = {
 	{"ES.TRANS",ES_TRANS},
 	{"ES.STOP",ES_STOP},
 	{"ES.TRIPLE",ES_TRIPLE},
-	{"ES.MAGIC",ES_MAGIC}
+	{"ES.MAGIC",ES_MAGIC},
+	{"OR.TRK",ORCA_TRACK},
+	{"OR.CLK",ORCA_CLOCK},
+	{"OR.DIV",ORCA_DIVISOR},
+	{"OR.PHASE",ORCA_PHASE},
+	{"OR.RST",ORCA_RESET},
+	{"OR.WGT",ORCA_WEIGHT},
+	{"OR.MUTE",ORCA_MUTE},
+	{"OR.SCALE",ORCA_SCALE},
+	{"OR.BANK",ORCA_BANK},
+	{"OR.PRESET",ORCA_PRESET},
+	{"OR.RELOAD",ORCA_RELOAD},
+	{"OR.ROTS",ORCA_ROTATES},
+	{"OR.ROTW",ORCA_ROTATEW},
+	{"OR.GRST",ORCA_GRESET},
+	{"OR.CVA",ORCA_CVA},
+	{"OR.CVB",ORCA_CVB}
 };
 
 
