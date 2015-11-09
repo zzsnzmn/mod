@@ -1,4 +1,5 @@
 #include <stdio.h>	//sprintf
+#include <ctype.h>  //toupper
 #include <string.h> //memcpy
 
 // asf
@@ -12,6 +13,13 @@
 #include "gpio.h"
 #include "spi.h"
 #include "sysclk.h"
+#include "uhi_msc.h"
+#include "fat.h"
+#include "file.h"
+#include "fs_com.h"
+#include "navigation.h"
+#include "usb_protocol_msc.h"
+#include "uhi_msc_mem.h"
 
 // system
 #include "types.h"
@@ -45,6 +53,9 @@
 #define SCENE_SLOTS 32
 #define SCENE_SLOTS_ 31
 
+#define SCENE_TEXT_LINES 32
+#define SCENE_TEXT_CHARS 32
+
 
 uint8_t preset, preset_select, front_timer, preset_edit_line, preset_edit_offset, offset_view;
 
@@ -75,7 +86,7 @@ uint8_t knob_last;
 tele_script_t script[10];
 tele_script_t history;
 uint8_t edit, edit_line, edit_index, edit_pattern, offset_index;
-char scene_text[32][SCENE_SLOTS];
+char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 
 uint8_t metro_act;
 unsigned int metro_time;
@@ -99,7 +110,7 @@ uint8_t help_length[8] = {HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH, HELP4_LENGTH
 typedef const struct {
 	tele_script_t script[10];
 	tele_pattern_t patterns[4];
-	char text[32][SCENE_SLOTS];
+	char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 } tele_scene_t;
 
 typedef const struct {
@@ -190,6 +201,8 @@ static void tele_ii(uint8_t i, int16_t d);
 static void tele_scene(uint8_t i);
 static void tele_pi(void);
 
+static void tele_usb(void);
+static void tele_mem_clear(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1693,6 +1706,265 @@ static void tele_pi() {
 
 
 
+static void tele_usb() {
+	uint8_t usb_retry = 10;
+	print_dbg("\r\nusb");
+	while(usb_retry--) {
+		print_dbg(".");
+
+		if(!uhi_msc_is_available()) {
+			uint8_t lun, lun_state=0;
+			#define MSG_TEST "here we be"
+
+			for (lun = 0; (lun < uhi_msc_mem_get_lun()) && (lun < 8); lun++) {
+				print_dbg("\r\nlun: ");
+				print_dbg_ulong(lun);
+
+				// Mount drive
+				nav_drive_set(lun);
+				if (!nav_partition_mount()) {
+					if (fs_g_status == FS_ERR_HW_NO_PRESENT) {
+						// The test can not be done, if LUN is not present
+						lun_state &= ~(1 << lun); // LUN test reseted
+						continue;
+					}
+					lun_state |= (1 << lun); // LUN test is done.
+					print_dbg("\r\nfail");
+					// ui_test_finish(false); // Test fail
+					continue;
+				}
+				// Check if LUN has been already tested
+				if (lun_state & (1 << lun)) {
+					continue;
+				}
+
+				// Create a test file on the disk
+				if (!nav_file_create((FS_STRING) "tele_test.txt")) {
+					if (fs_g_status != FS_ERR_FILE_EXIST) {
+						if (fs_g_status == FS_LUN_WP) {
+							// Test can be done only on no write protected device
+							continue;
+						}
+						lun_state |= (1 << lun); // LUN test is done.
+						// ui_test_finish(false); // Test fail
+						print_dbg("\r\nfail");
+						continue;
+					}
+				}
+				if (!file_open(FOPEN_MODE_APPEND)) {
+					if (fs_g_status == FS_LUN_WP) {
+						// Test can be done only on no write protected device
+						continue;
+					}
+					lun_state |= (1 << lun); // LUN test is done.
+					// ui_test_finish(false); // Test fail
+					print_dbg("\r\nfail");
+					continue;
+				}
+				if (!file_write_buf((uint8_t*)MSG_TEST, sizeof(MSG_TEST))) {
+					lun_state |= (1 << lun); // LUN test is done.
+					// ui_test_finish(false); // Test fail
+					print_dbg("\r\nfail");
+					continue;
+				}
+				file_close();
+				lun_state |= (1 << lun); // LUN test is done.
+				// ui_test_finish(true); // Test pass
+				print_dbg("\r\npass");
+
+				// READ SCENES
+				char f[13];
+				strcpy(f,"tt00.txt");
+				for(int i=0;i<32;i++) {
+					if(nav_filelist_findname(f,0)) {
+						print_dbg("\r\nfound: ");
+						print_dbg(f);
+						if(!file_open(FOPEN_MODE_R))
+							print_dbg("\r\ncan't open");
+						else {
+							tele_mem_clear();
+
+							char c;
+							uint8_t l = 0;
+							uint8_t p = 0;
+							int8_t s = 99;
+							uint8_t b = 0;
+							uint16_t num = 0;
+							int8_t neg = 1;
+
+							while(!file_eof() && s != -1) {
+								c = toupper(file_getc());
+								// print_dbg_char(c);
+
+								if(c == '#') {
+									if(!file_eof()) {
+										c = toupper(file_getc());
+										// print_dbg_char(c);
+
+										if(c == 'M')
+											s = 8;
+										else if(c == 'I')
+											s = 9;
+										else if(c == 'P')
+											s = 10;
+										else {
+											s = c - 49;
+											if(s < 0 || s > 7)
+												s = -1;
+										}
+
+										l = 0;
+										p = 0;
+
+										if(!file_eof())
+											c = toupper(file_getc());
+									}
+									else s = -1;
+
+									print_dbg("\r\nsection: ");
+									print_dbg_ulong(s);
+
+								}
+								// SCENE TEXT
+								else if(s == 99) {
+									if(c == '\n') {
+										l++;
+										p=0;
+									}
+									else {
+										if(l < SCENE_TEXT_LINES && p < SCENE_TEXT_CHARS) {
+											scene_text[l][p] = c;
+											p++;
+										}
+									}
+								}
+								// SCRIPTS
+								else if(s >= 0  && s <= 9) {
+									if(c == '\n') {
+										if(p && l < SCRIPT_MAX_COMMANDS) {
+ 											status = parse(input);
+
+					     					if(status == E_OK) {
+					     						print_dbg("\r\nparsed: ");
+					     						print_dbg(input);
+												status = validate(&temp);
+
+												if(status == E_OK) {
+													memcpy(&script[s].c[l], &temp, sizeof(tele_command_t));
+													print_dbg("\r\nvalidated: ");
+													print_dbg(print_command(&script[s].c[l]));
+													memset(input,0,sizeof(input));			
+													script[s].l++;
+												}
+												else {
+													print_dbg("\r\nvalidate: ");
+													print_dbg(tele_error(status));
+					 							}
+											}
+											else {
+												print_dbg("\r\nERROR: ");
+												print_dbg(tele_error(status));
+											}
+
+											l++;
+											p = 0;
+										}
+									}
+									else {
+										if(p < 32)
+											input[p] = c;
+										p++;
+									}
+								}
+								// PATTERNS
+								// tele_patterns[]. l wrap start end v[64]
+								else if(s == 10) {
+									if(c == '\n' || c == '\t') {
+										if(b < 4) {
+											if(l>3) {
+												tele_patterns[b].v[l-4] = neg * num;
+
+												print_dbg("\r\nset: ");
+												print_dbg_ulong(b);
+												print_dbg(" ");
+												print_dbg_ulong(l-4);
+												print_dbg(" ");
+												print_dbg_ulong(num);
+											}
+											else if(l==0) {
+												tele_patterns[b].l = num;
+											}
+											else if(l==1) {
+												tele_patterns[b].wrap = num;
+											}
+											else if(l==2) {
+												tele_patterns[b].start = num;
+											}
+											else if(l==3) {
+												tele_patterns[b].end = num;
+											}
+										}
+
+										b++;
+										num = 0;
+										neg = 1;
+
+										if(c == '\n') {
+											if(p) 
+												l++;
+											if(l > 68)
+												s = -1;
+											b = 0;
+											p = 0;
+										}
+									}
+									else {
+										if(c == '-')
+											neg = -1;
+										else if(c >= '0' && c <= '9') {
+											num = num * 10 + (c-48);
+											print_dbg("\r\nnum: ");
+											print_dbg_ulong(num);
+										}
+										p++;
+									}
+								}
+							} 
+							
+
+							file_close();
+
+							preset_select = i;
+							flash_write();
+						}
+					}
+					else
+						nav_filelist_reset();
+
+					if(f[3] == '9') {
+						f[3] = '0';
+						f[2]++;
+					}
+					else f[3]++;
+
+					preset_select = 0;
+				}
+			}
+
+			usb_retry = 0;
+
+			nav_exit();
+			tele_mem_clear();
+		}
+		delay_ms(100);
+	}
+}
+
+void tele_mem_clear(void) {
+	memset(&script,0,sizeof(script));
+	memset(&tele_patterns,0,sizeof(tele_patterns));
+	memset(&scene_text,0,sizeof(scene_text));
+}
 
 
 
@@ -1736,10 +2008,12 @@ int main(void)
 	tele_init();
 
 	if(flash_is_fresh()) {
-		print_dbg("\r\n:::: first run.");
+		print_dbg("\r\n:::: first run, clearing flash");
 
-		for(preset_select=0;preset_select<SCENE_SLOTS;preset_select++)
+		for(preset_select=0;preset_select<SCENE_SLOTS;preset_select++) {
 			flash_write();
+			print_dbg(".");
+		}
 		preset_select = 0;
 		flashc_memset8((void*)&(f.scene), preset_select, 1, true);
 		flash_unfresh();
@@ -1759,6 +2033,8 @@ int main(void)
 		flash_read();
 		// load from flash at startup
 	}
+
+	tele_usb();
 
 	// setup daisy chain for two dacs
 	spi_selectChip(SPI,DAC_SPI);
