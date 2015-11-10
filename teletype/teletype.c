@@ -35,7 +35,7 @@ const char * tele_error(error_t e) {
 	return errordesc[e];
 }
 
-static char dbg[32];
+// static char dbg[32];
 static char pcmd[32];
 
 
@@ -1404,8 +1404,8 @@ void process(tele_command_t *c) {
 	if(top) {
 		output = pop();
 		output_new++;
-		sprintf(dbg,"\r\n>>> %d", output);
-		DBG
+		// sprintf(dbg,"\r\n>>> %d", output);
+		// DBG
 		// to_v(output);
 	}
 }

@@ -201,7 +201,7 @@ static void tele_ii(uint8_t i, int16_t d);
 static void tele_scene(uint8_t i);
 static void tele_pi(void);
 
-static void tele_usb(void);
+static void tele_usb_disk(void);
 static void tele_mem_clear(void);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1369,7 +1369,7 @@ static void handler_ScreenRefresh(s32 data) {
 			sdirty++;
 		}	
 	}
-	else {
+	else if(mode == M_LIVE || mode == M_EDIT) {
 		if(r_edit_dirty & R_INPUT) {
 			s[0] = '>';
 	 		s[1] = ' ';
@@ -1706,7 +1706,7 @@ static void tele_pi() {
 
 
 
-static void tele_usb() {
+static void tele_usb_disk() {
 	uint8_t usb_retry = 10;
 	print_dbg("\r\nusb");
 	while(usb_retry--) {
@@ -1714,11 +1714,10 @@ static void tele_usb() {
 
 		if(!uhi_msc_is_available()) {
 			uint8_t lun, lun_state=0;
-			#define MSG_TEST "here we be"
 
 			for (lun = 0; (lun < uhi_msc_mem_get_lun()) && (lun < 8); lun++) {
-				print_dbg("\r\nlun: ");
-				print_dbg_ulong(lun);
+				// print_dbg("\r\nlun: ");
+				// print_dbg_ulong(lun);
 
 				// Mount drive
 				nav_drive_set(lun);
@@ -1738,47 +1737,150 @@ static void tele_usb() {
 					continue;
 				}
 
-				// Create a test file on the disk
-				if (!nav_file_create((FS_STRING) "tele_test.txt")) {
-					if (fs_g_status != FS_ERR_FILE_EXIST) {
+				// WRITE SCENES
+				char filename[13];
+				strcpy(filename,"tt00s.txt");
+
+				print_dbg("\r\nwriting scenes");
+				strcpy(input_buffer,"WRITE");
+				region_fill(&line[0], 0);
+				font_string_region_clip_tab(&line[0], input_buffer, 2, 0, 0xa, 0);
+				region_draw(&line[0]);
+
+				for(int i=0;i<SCENE_SLOTS;i++) {
+					strcat(input_buffer,".");
+					region_fill(&line[0], 0);
+					font_string_region_clip_tab(&line[0], input_buffer, 2, 0, 0xa, 0);
+					region_draw(&line[0]);
+
+					memcpy(&script,&f.s[i].script,sizeof(script));
+					memcpy(&tele_patterns,&f.s[i].patterns,sizeof(tele_patterns));
+					memcpy(&scene_text,&f.s[i].text,sizeof(scene_text));
+
+					if (!nav_file_create((FS_STRING) filename)) {
+						if (fs_g_status != FS_ERR_FILE_EXIST) {
+							if (fs_g_status == FS_LUN_WP) {
+								// Test can be done only on no write protected device
+								continue;
+							}
+							lun_state |= (1 << lun); // LUN test is done.
+							print_dbg("\r\nfail");
+							continue;
+						}
+					}
+					if (!file_open(FOPEN_MODE_W)) {
 						if (fs_g_status == FS_LUN_WP) {
 							// Test can be done only on no write protected device
 							continue;
 						}
 						lun_state |= (1 << lun); // LUN test is done.
-						// ui_test_finish(false); // Test fail
 						print_dbg("\r\nfail");
 						continue;
 					}
-				}
-				if (!file_open(FOPEN_MODE_APPEND)) {
-					if (fs_g_status == FS_LUN_WP) {
-						// Test can be done only on no write protected device
-						continue;
+
+					char blank=0;
+					for(int l=0;l<SCENE_TEXT_LINES;l++) {
+						if(strlen(scene_text[l])) {
+							file_write_buf((uint8_t*) scene_text[l], strlen(scene_text[l]));
+							file_putc('\n');
+							blank=0;
+						}
+						else if(!blank) { file_putc('\n'); blank=1;}
 					}
+					
+					char input[36];
+					for(int s=0;s<10;s++) {
+						file_putc('\n');
+						file_putc('\n');
+						file_putc('#');
+						if(s==8) file_putc('M');
+						else if(s==9) file_putc('I');
+						else file_putc(s+49);
+
+						for(int l=0;l<script[s].l;l++) {
+							file_putc('\n');
+							strcpy(input,print_command(&script[s].c[l]));
+							file_write_buf((uint8_t*) input,strlen(input));
+						}
+					}
+
+					file_putc('\n');
+					file_putc('\n');
+					file_putc('#');
+					file_putc('P');
+					file_putc('\n');
+
+					for(int b=0;b<4;b++) {
+						itoa(tele_patterns[b].l, input, 10);
+						file_write_buf((uint8_t*) input, strlen(input));
+						if(b==3) file_putc('\n');
+						else file_putc('\t');
+					}
+
+					for(int b=0;b<4;b++) {
+						itoa(tele_patterns[b].wrap, input, 10);
+						file_write_buf((uint8_t*) input, strlen(input));
+						if(b==3) file_putc('\n');
+						else file_putc('\t');
+					}
+
+					for(int b=0;b<4;b++) {
+						itoa(tele_patterns[b].start, input, 10);
+						file_write_buf((uint8_t*) input, strlen(input));
+						if(b==3) file_putc('\n');
+						else file_putc('\t');
+					}
+
+					for(int b=0;b<4;b++) {
+						itoa(tele_patterns[b].end, input, 10);
+						file_write_buf((uint8_t*) input, strlen(input));
+						if(b==3) file_putc('\n');
+						else file_putc('\t');
+					}
+
+					file_putc('\n');
+
+					for(int l=0;l<64;l++) {
+						for(int b=0;b<4;b++) {
+							itoa(tele_patterns[b].v[l], input, 10);
+							file_write_buf((uint8_t*) input, strlen(input));
+							if(b==3) file_putc('\n');
+							else file_putc('\t');
+						}
+					}
+
+					file_close();
 					lun_state |= (1 << lun); // LUN test is done.
-					// ui_test_finish(false); // Test fail
-					print_dbg("\r\nfail");
-					continue;
+
+					if(filename[3] == '9') {
+						filename[3] = '0';
+						filename[2]++;
+					}
+					else filename[3]++;
+
+					print_dbg(".");
 				}
-				if (!file_write_buf((uint8_t*)MSG_TEST, sizeof(MSG_TEST))) {
-					lun_state |= (1 << lun); // LUN test is done.
-					// ui_test_finish(false); // Test fail
-					print_dbg("\r\nfail");
-					continue;
-				}
-				file_close();
-				lun_state |= (1 << lun); // LUN test is done.
-				// ui_test_finish(true); // Test pass
-				print_dbg("\r\npass");
+
+				nav_filelist_reset();
+
 
 				// READ SCENES
-				char f[13];
-				strcpy(f,"tt00.txt");
-				for(int i=0;i<32;i++) {
-					if(nav_filelist_findname(f,0)) {
+				strcpy(filename,"tt00.txt");
+				print_dbg("\r\nreading scenes...");
+
+				strcpy(input_buffer,"READ");
+				region_fill(&line[1], 0);
+				font_string_region_clip_tab(&line[1], input_buffer, 2, 0, 0xa, 0);
+				region_draw(&line[1]);
+
+				for(int i=0;i<SCENE_SLOTS;i++) {
+					strcat(input_buffer,".");
+					region_fill(&line[1], 0);
+					font_string_region_clip_tab(&line[1], input_buffer, 2, 0, 0xa, 0);
+					region_draw(&line[1]);
+					if(nav_filelist_findname(filename,0)) {
 						print_dbg("\r\nfound: ");
-						print_dbg(f);
+						print_dbg(filename);
 						if(!file_open(FOPEN_MODE_R))
 							print_dbg("\r\ncan't open");
 						else {
@@ -1821,8 +1923,8 @@ static void tele_usb() {
 									}
 									else s = -1;
 
-									print_dbg("\r\nsection: ");
-									print_dbg_ulong(s);
+									// print_dbg("\r\nsection: ");
+									// print_dbg_ulong(s);
 
 								}
 								// SCENE TEXT
@@ -1845,14 +1947,14 @@ static void tele_usb() {
  											status = parse(input);
 
 					     					if(status == E_OK) {
-					     						print_dbg("\r\nparsed: ");
-					     						print_dbg(input);
+					     						// print_dbg("\r\nparsed: ");
+					     						// print_dbg(input);
 												status = validate(&temp);
 
 												if(status == E_OK) {
 													memcpy(&script[s].c[l], &temp, sizeof(tele_command_t));
-													print_dbg("\r\nvalidated: ");
-													print_dbg(print_command(&script[s].c[l]));
+													// print_dbg("\r\nvalidated: ");
+													// print_dbg(print_command(&script[s].c[l]));
 													memset(input,0,sizeof(input));			
 													script[s].l++;
 												}
@@ -1864,6 +1966,8 @@ static void tele_usb() {
 											else {
 												print_dbg("\r\nERROR: ");
 												print_dbg(tele_error(status));
+												print_dbg(" >> ");
+												print_dbg(print_command(&script[s].c[l]));
 											}
 
 											l++;
@@ -1884,12 +1988,12 @@ static void tele_usb() {
 											if(l>3) {
 												tele_patterns[b].v[l-4] = neg * num;
 
-												print_dbg("\r\nset: ");
-												print_dbg_ulong(b);
-												print_dbg(" ");
-												print_dbg_ulong(l-4);
-												print_dbg(" ");
-												print_dbg_ulong(num);
+												// print_dbg("\r\nset: ");
+												// print_dbg_ulong(b);
+												// print_dbg(" ");
+												// print_dbg_ulong(l-4);
+												// print_dbg(" ");
+												// print_dbg_ulong(num);
 											}
 											else if(l==0) {
 												tele_patterns[b].l = num;
@@ -1915,7 +2019,7 @@ static void tele_usb() {
 											if(l > 68)
 												s = -1;
 											b = 0;
-											p = 0;
+											p = 0;	
 										}
 									}
 									else {
@@ -1923,8 +2027,8 @@ static void tele_usb() {
 											neg = -1;
 										else if(c >= '0' && c <= '9') {
 											num = num * 10 + (c-48);
-											print_dbg("\r\nnum: ");
-											print_dbg_ulong(num);
+											// print_dbg("\r\nnum: ");
+											// print_dbg_ulong(num);
 										}
 										p++;
 									}
@@ -1941,11 +2045,11 @@ static void tele_usb() {
 					else
 						nav_filelist_reset();
 
-					if(f[3] == '9') {
-						f[3] = '0';
-						f[2]++;
+					if(filename[3] == '9') {
+						filename[3] = '0';
+						filename[2]++;
 					}
-					else f[3]++;
+					else filename[3]++;
 
 					preset_select = 0;
 				}
@@ -1954,6 +2058,8 @@ static void tele_usb() {
 			usb_retry = 0;
 
 			nav_exit();
+			region_fill(&line[0], 0);
+			region_fill(&line[1], 0);
 			tele_mem_clear();
 		}
 		delay_ms(100);
@@ -2034,7 +2140,11 @@ int main(void)
 		// load from flash at startup
 	}
 
-	tele_usb();
+	// screen init
+	render_init();
+
+	// usb disk check
+	tele_usb_disk();
 
 	// setup daisy chain for two dacs
 	spi_selectChip(SPI,DAC_SPI);
@@ -2044,17 +2154,14 @@ int main(void)
 	spi_unselectChip(SPI,DAC_SPI);
 
 	timer_add(&clockTimer, RATE_CLOCK, &clockTimer_callback, NULL);
-	timer_add(&refreshTimer, 63, &refreshTimer_callback, NULL);
 	timer_add(&cvTimer, RATE_CV, &cvTimer_callback, NULL);
 	timer_add(&keyTimer, 71, &keyTimer_callback, NULL);
 	timer_add(&adcTimer, 61, &adcTimer_callback, NULL);
+	timer_add(&refreshTimer, 63, &refreshTimer_callback, NULL);
 	
 	metro_act = 1;
 	metro_time = 1000;
 	timer_add(&metroTimer, metro_time ,&metroTimer_callback, NULL);
-
-
-	render_init();
 
 	clear_delays();
 
@@ -2064,6 +2171,7 @@ int main(void)
 	aout[3].slew = 1;
 
 	status = 1;
+	error_detail[0] = 0;
 	mode = M_LIVE;
 	edit_line = SCRIPT_MAX_COMMANDS;
 	r_edit_dirty = R_MESSAGE | R_INPUT;
