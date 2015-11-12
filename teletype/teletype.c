@@ -715,9 +715,10 @@ static void op_LSH(void);
 static void op_S_L(void);
 static void op_CV_SET(void);
 static void op_EXP(void);
+static void op_ABS(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 42
+#define OPS 43
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -761,7 +762,8 @@ static const tele_op_t tele_ops[OPS] = {
 	{"LSH", op_LSH, 2, 1, "LEFT SHIFT"},
 	{"S.L", op_S_L, 0, 1, "STACK LENGTH"},
 	{"CV.SET", op_CV_SET, 2, 0, "CV SET"},
-	MAKEOP(EXP, 1, 1, "EXPONENTIATE")
+	MAKEOP(EXP, 1, 1, "EXPONENTIATE"),
+	MAKEOP(ABS, 1, 1, "ABSOLUTE VALUE")
 };
 
 static void op_ADD() {
@@ -1112,6 +1114,14 @@ static void op_EXP() {
 	}
 	else 
 		push(table_exp[a]);
+}
+static void op_ABS() {
+	int16_t a = pop();
+
+	if(a < 0)
+		push(-a);
+	else 
+		push(a);
 }
 
 /////////////////////////////////////////////////////////////////
