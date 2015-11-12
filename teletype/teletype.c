@@ -453,6 +453,7 @@ static tele_array_t tele_arrays[ARRAYS] = {
 static void a_TR(uint8_t i) {
 	int16_t a = pop();
 	a = (a != 0);
+
 	tele_arrays[0].v[i] = a;
 	(*update_tr)(i, a);
 }
@@ -1403,7 +1404,7 @@ void process(tele_command_t *c) {
 			i = pop();
 
 			// saturate for 1-4 indexing
-			if(i<1) i=0;
+			if(i<1) i=1;
 			else if(i>3) i=4;
 			i--;
 

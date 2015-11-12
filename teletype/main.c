@@ -414,6 +414,9 @@ static void handler_KeyTimer(s32 data) {
 		if(front_timer == 1) {
 			flash_read();
 
+			for(int i=0;i<script[INIT_SCRIPT].l;i++)
+				process(&script[INIT_SCRIPT].c[i]);
+
 			mode = M_LIVE;
 			r_edit_dirty = R_ALL;
 
