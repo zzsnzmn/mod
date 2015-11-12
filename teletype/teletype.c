@@ -1026,7 +1026,7 @@ static void op_P_PUSH() {
 	int16_t a;
 	a = pop();
 
-	if(tele_patterns[pn].l < 63) {
+	if(tele_patterns[pn].l < 64) {
 		tele_patterns[pn].v[tele_patterns[pn].l] = a;
 		tele_patterns[pn].l++;
 		(*update_pi)();
