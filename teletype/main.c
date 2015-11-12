@@ -1217,7 +1217,7 @@ static void handler_HidTimer(s32 data) {
      						}
 	     				}
 	     				else {	/// NORMAL TEXT ENTRY
-	 						if(pos<31) {
+	 						if(pos<29) {
 		     					// print_dbg_char(hid_to_ascii(frame[i], frame[0]));
 		     					n = hid_to_ascii(frame[i], frame[0]);
 		     					if(n) {
