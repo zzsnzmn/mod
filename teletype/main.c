@@ -1686,9 +1686,15 @@ static void tele_cv(uint8_t i, int16_t v, uint8_t s) {
 	else if(t > 16383)
 		t = 16383;
 	aout[i].target = t;
- 	if(s) aout[i].step = aout[i].slew;
- 	else aout[i].step = 1;
-	aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
+ 	if(s) {
+ 		aout[i].step = aout[i].slew;
+ 		aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
+ 	}
+ 	else {
+ 		aout[i].step = 1;
+ 		aout[i].now = aout[i].target;
+ 	}
+	
 	aout[i].a = aout[i].now<<16;
 }
 
