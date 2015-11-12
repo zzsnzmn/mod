@@ -2182,6 +2182,7 @@ int main(void)
 	}
 	else {
 		preset_select = f.scene;
+		tele_set_val(V_SCENE, preset_select);
 		flash_read();
 		// load from flash at startup
 	}

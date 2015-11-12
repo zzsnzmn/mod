@@ -11,3 +11,4 @@ v1.1	NEW usb flash drive read/write
 		FIX CV wrapping with negative CV.OFF values
 		FIX INIT script executed now on keyboardless scene recall
 		FIX Q.AVG overflow no more
+		FIX P.PUSH will fully fill a pattern
