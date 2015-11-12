@@ -7,4 +7,5 @@ v1.1	NEW usb flash drive read/write
 		FIX EXP OP now exists
 		NEW ABS OP absolute value, single argument
 		FIX P and PN parse error
-		
+		FIX possible crash on excess length line entry
+		FIX CV wrapping with negative CV.OFF values

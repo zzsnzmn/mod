@@ -1677,11 +1677,12 @@ static void tele_tr(uint8_t i, int16_t v) {
 }
 
 static void tele_cv(uint8_t i, int16_t v, uint8_t s) {
-	aout[i].target = v + aout[i].off;
-	if(aout[i].target < 0)
-		aout[i].target = 0;
-	else if(aout[i].target > 16383)
-		aout[i].target = 16383;
+	int16_t t = v + aout[i].off;
+	if(t < 0)
+		t = 0;
+	else if(t > 16383)
+		t = 16383;
+	aout[i].target = t;
  	if(s) aout[i].step = aout[i].slew;
  	else aout[i].step = 1;
 	aout[i].delta = ((aout[i].target - aout[i].now)<<16) / aout[i].step;
