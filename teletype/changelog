@@ -1,0 +1,7 @@
+changelog
+
+v1.0	initial
+
+v1.1	NEW usb flash drive read/write
+		FIX bug in command history in live mode
+		FIX EXP OP now exists
