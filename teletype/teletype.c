@@ -969,13 +969,13 @@ static void op_P() {
 	}
 	if(a > 63) a = 63;
 
-	if(top == 0) {
-		push(tele_patterns[pn].v[a]);
-	}
-	else if(top == 1) {
+	if(left == 0 && top > 0) {
 		b = pop();
 		tele_patterns[pn].v[a] = b;
 		(*update_pi)();
+	}
+	else {
+		push(tele_patterns[pn].v[a]);
 	}
 }
 static void op_P_INS() {
@@ -1055,13 +1055,13 @@ static void op_PN() {
 	}
 	if(b > 63) b = 63;
 
-	if(top == 0) {
-		push(tele_patterns[a].v[b]);
-	}
-	else if(top == 1) {
+	if(left == 0 && top > 0) {
 		c = pop();
 		tele_patterns[a].v[b] = c;
 		(*update_pi)();
+	}
+	else {
+		push(tele_patterns[a].v[b]);
 	}
 }
 static void op_TR_PULSE() {

@@ -6,4 +6,5 @@ v1.1	NEW usb flash drive read/write
 		FIX bug in command history in live mode
 		FIX EXP OP now exists
 		NEW ABS OP absolute value, single argument
+		FIX P and PN parse error
 		
