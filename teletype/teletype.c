@@ -409,7 +409,7 @@ static void v_Q_N(uint8_t n) {
 
 static void v_Q_AVG(uint8_t n) {
 	if(left || top == 0) {
-		int16_t avg = 0;
+		int32_t avg = 0;
 		for(int16_t i = 0;i<tele_vars[V_Q_N].v;i++)
 			avg += tele_q[i];
 		avg /= tele_vars[V_Q_N].v;

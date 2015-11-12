@@ -9,3 +9,5 @@ v1.1	NEW usb flash drive read/write
 		FIX P and PN parse error
 		FIX possible crash on excess length line entry
 		FIX CV wrapping with negative CV.OFF values
+		FIX INIT script executed now on keyboardless scene recall
+		FIX Q.AVG overflow no more
