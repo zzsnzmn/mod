@@ -66,6 +66,8 @@ volatile update_ii_t update_ii;
 volatile update_scene_t update_scene;
 volatile update_pi_t update_pi;
 
+volatile run_script_t run_script;
+
 
 const char * to_v(int16_t);
 
@@ -773,9 +775,10 @@ static void op_AND(void);
 static void op_OR(void);
 static void op_XOR(void);
 static void op_JI(void);
+static void op_SCRIPT(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 47
+#define OPS 48
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -824,7 +827,8 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(AND, 2, 1,"LOGIC: AND"),
 	MAKEOP(OR, 2, 1,"LOGIC: OR"),
 	MAKEOP(XOR, 2, 1,"LOGIC: XOR"),
-	MAKEOP(JI, 2, 1,"JUST INTONE DIVISON")
+	MAKEOP(JI, 2, 1,"JUST INTONE DIVISON"),
+	MAKEOP(SCRIPT, 1, 0,"CALL SCRIPT")
 };
 
 static void op_ADD() {
@@ -1198,6 +1202,12 @@ static void op_JI() {
 		ji >>= 1;
 	push(ji);
 }
+static void op_SCRIPT() {
+	uint16_t a = pop();
+	if(a > 0 && a < 9)
+		(*run_script)(a);
+}
+
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////

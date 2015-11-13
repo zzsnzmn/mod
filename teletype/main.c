@@ -200,6 +200,7 @@ static void tele_cv_off(uint8_t i, int16_t v);
 static void tele_ii(uint8_t i, int16_t d);
 static void tele_scene(uint8_t i);
 static void tele_pi(void);
+static void tele_script(uint8_t a);
 
 static void tele_usb_disk(void);
 static void tele_mem_clear(void);
@@ -1173,8 +1174,9 @@ static void handler_HidTimer(s32 data) {
 	     						n = hid_to_ascii_raw(frame[i]);
 
 	     						if(n > 0x30 && n < 0x039) {
-	     							for(int i=0;i<script[n - 0x31].l;i++)
-										process(&script[n - 0x31].c[i]);
+	     							tele_script(n - 0x32);
+	     							// for(int i=0;i<script[n - 0x31].l;i++)
+										// process(&script[n - 0x31].c[i]);
 	     						}
 	     						else if(n == 'M') {
 	     							for(int i=0;i<script[METRO_SCRIPT].l;i++)
@@ -1741,6 +1743,30 @@ static void tele_pi() {
 		r_edit_dirty |= R_ALL;
 }
 
+int8_t script_caller;
+static void tele_script(uint8_t a) {
+	print_dbg("\r\ntry ");
+	print_dbg_ulong(a);
+
+	if(!script_caller) {
+		script_caller = a;
+		print_dbg("\r\nexec ");
+		print_dbg_ulong(a);
+
+		for(int i=0;i<script[a-1].l;i++)
+			process(&script[a-1].c[i]);
+	}
+	else if(a != script_caller) {
+		print_dbg("\r\nexec ");
+		print_dbg_ulong(a);
+
+		for(int i=0;i<script[a-1].l;i++)
+			process(&script[a-1].c[i]);
+	}
+
+	script_caller = 0;
+}
+
 
 
 
@@ -2241,7 +2267,7 @@ int main(void)
 	update_ii = &tele_ii;
 	update_scene = &tele_scene;
 	update_pi = &tele_pi;
-
+	run_script = &tele_script;
 
 	for(int i=0;i<script[INIT_SCRIPT].l;i++)
 		process(&script[INIT_SCRIPT].c[i]);

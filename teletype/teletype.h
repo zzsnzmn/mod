@@ -145,6 +145,9 @@ extern volatile update_scene_t update_scene;
 typedef void (*update_pi_t)(void);
 extern volatile update_pi_t update_pi;
 
+typedef void (*run_script_t)(uint8_t);
+extern volatile run_script_t run_script;
+
 extern char error_detail[16];
 extern int16_t output, output_new;
 
