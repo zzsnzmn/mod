@@ -14,7 +14,9 @@
 #define FALSE 0
 
 enum varnames {V_I, V_TIME, V_TIME_ACT, V_IN, V_PARAM, V_PRESET, V_M, V_M_ACT,
-	V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O, V_DRUNK, V_Q, V_Q_N, V_Q_AVG, V_SCENE, V_P_N };
+	V_X, V_Y, V_Z, V_T, V_A, V_B, V_C, V_D, V_O, V_DRUNK, V_Q, V_Q_N, V_Q_AVG, V_SCENE, V_P_N,
+	V_P_L, V_P_I, V_P_HERE, V_P_NEXT, V_P_PREV, V_P_WRAP, V_P_START, V_P_END, V_FLIP, 
+	V_O_MIN, V_O_MAX, V_O_WRAP, V_O_DIR, V_DRUNK_MIN, V_DRUNK_MAX, V_DRUNK_WRAP };
 
 typedef enum { 
 	E_OK,

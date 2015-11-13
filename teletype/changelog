@@ -6,6 +6,8 @@ v1.1	NEW usb flash drive read/write
 		NEW ABS OP absolute value, single argument
 		NEW FLIP OP variable which changes state (0/1) on each read
 		NEW LOGIC OPS: AND, OR, XOR
+		NEW O OPS: O.MIN, O.MAX, O.WRAP, O.DIR for counter range control
+		NEW DRUNK OPS: DRUNK.MIN, DRUNK.MAX, DRUNK.WRAP for range control
 		NEW TR.POL specifies the polarity of TR.PULSE
 		IMP TR.PULSE retrigger behavior now predictable
 		FIX bug in command history in live mode

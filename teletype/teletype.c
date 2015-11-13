@@ -173,7 +173,7 @@ static void v_FLIP(uint8_t);
 
 static int16_t tele_q[16];
 
-#define VARS 32
+#define VARS 39
 static tele_var_t tele_vars[VARS] = {
 	{"I",NULL,0},	// gets overwritten by ITER
 	{"TIME",NULL,0},
@@ -206,7 +206,14 @@ static tele_var_t tele_vars[VARS] = {
 	{"P.WRAP",v_P_WRAP,0},
 	{"P.START",v_P_START,0},
 	{"P.END",v_P_END,0},
-	{"FLIP",v_FLIP,0}
+	{"FLIP",v_FLIP,0},
+	{"O.MIN",NULL,0},
+	{"O.MAX",NULL,63},
+	{"O.WRAP",NULL,1},
+	{"O.DIR",NULL,1},
+	{"DRUNK.MIN",NULL,0},
+	{"DRUNK.MAX",NULL,255},
+	{"DRUNK.WRAP",NULL,0}
 };
 
 static void v_M(uint8_t n) {
@@ -369,8 +376,21 @@ static void v_P_END(uint8_t n) {
 
 static void v_O(uint8_t n) {
 	if(left || top == 0) {
+		tele_vars[V_O].v += tele_vars[V_O_DIR].v;
+		if(tele_vars[V_O].v > tele_vars[V_O_MAX].v) {
+			if(tele_vars[V_O_WRAP].v)
+				tele_vars[V_O].v = tele_vars[V_O_MIN].v;
+			else
+				tele_vars[V_O].v = tele_vars[V_O_MAX].v;
+		}
+		else if(tele_vars[V_O].v < tele_vars[V_O_MIN].v) {
+			if(tele_vars[V_O_WRAP].v)
+				tele_vars[V_O].v = tele_vars[V_O_MAX].v;
+			else
+				tele_vars[V_O].v = tele_vars[V_O_MIN].v;
+		}
+
 		push(tele_vars[V_O].v);
-		tele_vars[V_O].v++;
 	}
 	else {
 		tele_vars[V_O].v = pop();
@@ -381,6 +401,18 @@ static void v_DRUNK(uint8_t n) {
 	if(left || top == 0) {
 		push(tele_vars[V_DRUNK].v);
 		tele_vars[V_DRUNK].v += (rand() % 3) - 1;
+		if(tele_vars[V_DRUNK].v < tele_vars[V_DRUNK_MIN].v) {
+			if(tele_vars[V_DRUNK_WRAP].v)
+				tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MAX].v;
+			else
+				tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MIN].v;
+		}
+		else if(tele_vars[V_DRUNK].v > tele_vars[V_DRUNK_MAX].v) {
+			if(tele_vars[V_DRUNK_WRAP].v)
+				tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MIN].v;
+			else
+				tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MAX].v;
+		}
 	}
 	else {
 		tele_vars[V_DRUNK].v = pop();
