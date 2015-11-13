@@ -43,6 +43,8 @@ int16_t output, output_new;
 
 char error_detail[16];
 
+uint8_t mutes[8];
+
 tele_command_t temp;
 tele_pattern_t tele_patterns[4];
 
@@ -66,6 +68,7 @@ volatile update_ii_t update_ii;
 volatile update_scene_t update_scene;
 volatile update_pi_t update_pi;
 volatile update_kill_t update_kill;
+volatile update_mute_t update_mute;
 
 volatile run_script_t run_script;
 
@@ -786,10 +789,12 @@ static void op_XOR(void);
 static void op_JI(void);
 static void op_SCRIPT(void);
 static void op_KILL(void);
+static void op_MUTE(void);
+static void op_UNMUTE(void);
 
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 49
+#define OPS 51
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -840,7 +845,9 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(XOR, 2, 1,"LOGIC: XOR"),
 	MAKEOP(JI, 2, 1,"JUST INTONE DIVISON"),
 	MAKEOP(SCRIPT, 1, 0,"CALL SCRIPT"),
-	MAKEOP(KILL, 0, 0,"CLEAR DELAYS, STACK, SLEW")
+	MAKEOP(KILL, 0, 0,"CLEAR DELAYS, STACK, SLEW"),
+	MAKEOP(MUTE, 1, 0,"MUTE INPUT"),
+	MAKEOP(UNMUTE, 1, 0,"UNMUTE INPUT")
 };
 
 static void op_ADD() {
@@ -1222,6 +1229,22 @@ static void op_SCRIPT() {
 static void op_KILL() {
 	clear_delays();
 	(*update_kill)();
+}
+static void op_MUTE() {
+	int16_t a;
+	a = pop();
+
+	if(a > 0 && a < 9) {
+		(*update_mute)(a-1,0);
+	}
+}
+static void op_UNMUTE() {
+	int16_t a;
+	a = pop();
+
+	if(a > 0 && a < 9) {
+		(*update_mute)(a-1,1);
+	}
 }
 
 
@@ -1605,7 +1628,6 @@ void tele_set_val(uint8_t i, uint16_t v) {
 	tele_vars[i].v = v;
 }
 
-
 void tele_tick(uint8_t i) {
 	process_delays(i);
 
@@ -1624,6 +1646,9 @@ void tele_init() {
 		tele_patterns[i].start = 0;
 		tele_patterns[i].end = 63;
 	}
+
+	for(i=0;i<8;i++)
+		mutes[i] = 1;
 }
 
 

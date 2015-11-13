@@ -73,6 +73,8 @@ typedef struct {
 
 aout_t aout[4];
 
+u8 mutes[8];
+
 error_t status;
 
 char input[32];
@@ -148,6 +150,7 @@ uint8_t r_edit_dirty;
 #define A_Q 0x10
 #define A_X 0x20
 #define A_REFRESH 0x40
+#define A_MUTES 0x80
 uint8_t activity;
 uint8_t activity_prev;
 
@@ -202,6 +205,7 @@ static void tele_scene(uint8_t i);
 static void tele_pi(void);
 static void tele_script(uint8_t a);
 static void tele_kill(void);
+static void tele_mute(uint8_t, uint8_t);
 
 static void tele_usb_disk(void);
 static void tele_mem_clear(void);
@@ -1175,7 +1179,12 @@ static void handler_HidTimer(s32 data) {
      						n = hid_to_ascii_raw(frame[i]);
 
      						if(n > 0x30 && n < 0x039) {
-     							tele_script(n - 0x30);
+     							if(mod_SH) {
+     								mutes[n-0x31] ^= 1;
+     								activity |= A_MUTES;
+     							}
+     							else
+     								tele_script(n - 0x30);
      						}
      						else if(n == 'M') {
      							for(int i=0;i<script[METRO_SCRIPT].l;i++)
@@ -1264,13 +1273,13 @@ static void handler_HidPacket(s32 data) {
 
 
 static void handler_Trigger(s32 data) {
-	uint8_t i;
 	// print_dbg("*");
 
 	// for(int n=0;n<script.l;n++)
-	for(i=0;i<script[data].l;i++) {
-		process(&script[data].c[i]);
-	}
+	if(mutes[data])
+		for(int i=0;i<script[data].l;i++) {
+			process(&script[data].c[i]);
+		}
 }
 
 
@@ -1534,12 +1543,24 @@ static void handler_ScreenRefresh(s32 data) {
 			line[0].data[ 122 + 4 + 384 ] = a;
 			line[0].data[ 122 + 4 + 512 ] = a;
 
+			// mutes
+
+			line[0].data[ 87 + 0 + 128 ] = 15 - mutes[0] * 12;
+			line[0].data[ 87 + 1 + 384 ] = 15 - mutes[1] * 12;
+			line[0].data[ 87 + 2 + 128 ] = 15 - mutes[2] * 12;
+			line[0].data[ 87 + 3 + 384 ] = 15 - mutes[3] * 12;
+			line[0].data[ 87 + 4 + 128 ] = 15 - mutes[4] * 12;
+			line[0].data[ 87 + 5 + 384 ] = 15 - mutes[5] * 12;
+			line[0].data[ 87 + 6 + 128 ] = 15 - mutes[6] * 12;
+			line[0].data[ 87 + 7 + 384 ] = 15 - mutes[7] * 12;
+
+			activity &= ~A_MUTES;
+			activity &= ~A_REFRESH;
+
 			activity_prev = activity;
 
 			// activity &= ~A_X;
 
-			activity &= ~A_REFRESH;
-				
 			sdirty++;
 		}
 	}
@@ -1762,6 +1783,11 @@ static void tele_script(uint8_t a) {
 static void tele_kill() {
 	for(int i = 0;i<4;i++)
 		aout[i].step = 1;
+}
+
+static void tele_mute(uint8_t i, uint8_t s) {
+	mutes[i] = s;
+	activity |= A_MUTES;
 }
 
 
@@ -2207,7 +2233,6 @@ int main(void)
 		// 	glyph[i1] = (1<<i1);
 		// 	flashc_memcpy((void *)&flashy.glyph[i1], &glyph, sizeof(glyph), true);
 		// }
-
 	}
 	else {
 		preset_select = f.scene;
@@ -2251,6 +2276,7 @@ int main(void)
 	update_pi = &tele_pi;
 	run_script = &tele_script;
 	update_kill = &tele_kill;
+	update_mute = &tele_mute;
 
 	clear_delays();
 
@@ -2258,6 +2284,9 @@ int main(void)
 	aout[1].slew = 1;
 	aout[2].slew = 1;
 	aout[3].slew = 1;
+
+	for(int i=0;i<8;i++)
+		mutes[i] = 1;
 
 	status = 1;
 	error_detail[0] = 0;

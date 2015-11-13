@@ -151,6 +151,9 @@ extern volatile run_script_t run_script;
 typedef void (*update_kill_t)(void);
 extern volatile update_kill_t update_kill;
 
+typedef void (*update_mute_t)(uint8_t, uint8_t);
+extern volatile update_mute_t update_mute;
+
 extern char error_detail[16];
 extern int16_t output, output_new;
 
