@@ -584,6 +584,8 @@ void mod_DEL(tele_command_t *c) {
 	int16_t i = 0;
 	int16_t a = pop();
 
+	if(a < 1) a = 1;
+
 	while(delay_t[i] != 0 && i != TELE_D_SIZE)
 		i++;
 
