@@ -169,10 +169,11 @@ static void v_Q(uint8_t);
 static void v_Q_N(uint8_t);
 static void v_Q_AVG(uint8_t);
 static void v_SCENE(uint8_t);
+static void v_FLIP(uint8_t);
 
 static int16_t tele_q[16];
 
-#define VARS 31
+#define VARS 32
 static tele_var_t tele_vars[VARS] = {
 	{"I",NULL,0},	// gets overwritten by ITER
 	{"TIME",NULL,0},
@@ -204,7 +205,8 @@ static tele_var_t tele_vars[VARS] = {
 	{"P.PREV",v_P_PREV,0},
 	{"P.WRAP",v_P_WRAP,0},
 	{"P.START",v_P_START,0},
-	{"P.END",v_P_END,0}
+	{"P.END",v_P_END,0},
+	{"FLIP",v_FLIP,0}
 };
 
 static void v_M(uint8_t n) {
@@ -429,6 +431,15 @@ static void v_SCENE(uint8_t n) {
 	else {
 		tele_vars[V_SCENE].v = pop();
 		(*update_scene)(tele_vars[V_SCENE].v);
+	}
+}
+static void v_FLIP(uint8_t n) {
+	if(left || top == 0) {
+		push(tele_vars[V_O].v);
+		tele_vars[V_O].v = (tele_vars[V_O].v == 0);
+	}
+	else {
+		tele_vars[V_O].v = (pop() != 0);
 	}
 }
 
