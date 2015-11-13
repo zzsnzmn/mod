@@ -201,6 +201,7 @@ static void tele_ii(uint8_t i, int16_t d);
 static void tele_scene(uint8_t i);
 static void tele_pi(void);
 static void tele_script(uint8_t a);
+static void tele_kill(void);
 
 static void tele_usb_disk(void);
 static void tele_mem_clear(void);
@@ -600,6 +601,12 @@ static void handler_HidTimer(s32 data) {
      						edit_line = SCRIPT_MAX_COMMANDS;
      						mode = M_LIVE;
      						r_edit_dirty = R_ALL;
+     					}
+     					else if(mod_META) {
+     						clear_delays();
+     						for(int i=0;i<4;i++) {
+     							aout[i].step = 1;
+     						}
      					}
      					else {
      						preset_edit_offset = 0;
@@ -1165,28 +1172,19 @@ static void handler_HidTimer(s32 data) {
 
 	     				}
 	     				else if(mod_META) {
-	     					if(frame[i] == ESCAPE) {
-	     						// kill slews/delays/etc
-	     					}else if(frame[i] == TILDE) {
-	     						// mute triggers
-	     					}
-	     					else {
-	     						n = hid_to_ascii_raw(frame[i]);
+     						n = hid_to_ascii_raw(frame[i]);
 
-	     						if(n > 0x30 && n < 0x039) {
-	     							tele_script(n - 0x32);
-	     							// for(int i=0;i<script[n - 0x31].l;i++)
-										// process(&script[n - 0x31].c[i]);
-	     						}
-	     						else if(n == 'M') {
-	     							for(int i=0;i<script[METRO_SCRIPT].l;i++)
-										process(&script[METRO_SCRIPT].c[i]);
-	     						}
-	     						else if(n == 'I') {
-	     							for(int i=0;i<script[INIT_SCRIPT].l;i++)
-										process(&script[INIT_SCRIPT].c[i]);
-	     						}
-	     					}
+     						if(n > 0x30 && n < 0x039) {
+     							tele_script(n - 0x30);
+     						}
+     						else if(n == 'M') {
+     							for(int i=0;i<script[METRO_SCRIPT].l;i++)
+									process(&script[METRO_SCRIPT].c[i]);
+     						}
+     						else if(n == 'I') {
+     							for(int i=0;i<script[INIT_SCRIPT].l;i++)
+									process(&script[INIT_SCRIPT].c[i]);
+     						}
 	     				}
 	     				else if(mode == M_TRACK) {
 	     					n = hid_to_ascii(frame[i], frame[0]);
@@ -1761,6 +1759,11 @@ static void tele_script(uint8_t a) {
 	script_caller = 0;
 }
 
+static void tele_kill() {
+	for(int i = 0;i<4;i++)
+		aout[i].step = 1;
+}
+
 
 
 
@@ -2236,6 +2239,19 @@ int main(void)
 	metro_time = 1000;
 	timer_add(&metroTimer, metro_time ,&metroTimer_callback, NULL);
 
+	update_metro = &tele_metro;
+	update_tr = &tele_tr;
+	update_cv = &tele_cv;
+	update_cv_slew = &tele_cv_slew;
+	update_delay = &tele_delay;
+	update_s = &tele_s;
+	update_cv_off = &tele_cv_off;
+	update_ii = &tele_ii;
+	update_scene = &tele_scene;
+	update_pi = &tele_pi;
+	run_script = &tele_script;
+	update_kill = &tele_kill;
+
 	clear_delays();
 
 	aout[0].slew = 1;
@@ -2250,18 +2266,6 @@ int main(void)
 	r_edit_dirty = R_MESSAGE | R_INPUT;
 	activity = 0;
 	activity_prev = 0xff;
-
-	update_metro = &tele_metro;
-	update_tr = &tele_tr;
-	update_cv = &tele_cv;
-	update_cv_slew = &tele_cv_slew;
-	update_delay = &tele_delay;
-	update_s = &tele_s;
-	update_cv_off = &tele_cv_off;
-	update_ii = &tele_ii;
-	update_scene = &tele_scene;
-	update_pi = &tele_pi;
-	run_script = &tele_script;
 
 	for(int i=0;i<script[INIT_SCRIPT].l;i++)
 		process(&script[INIT_SCRIPT].c[i]);

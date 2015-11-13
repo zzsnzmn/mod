@@ -6,6 +6,8 @@ v1.1	NEW usb flash drive read/write
 		NEW SCRIPT OP for scripted execution of other scripts!
 		NEW JI OP just intonation helper
 		NEW keypad executes scripts (works for standalone usb keypads and full-sized keyboards)
+		NEW KILL OP clears delays, stack, cv slews, pulses
+		NEW hotkey meta+ESC executes KILL
 		NEW ABS OP absolute value, single argument
 		NEW FLIP OP variable which changes state (0/1) on each read
 		NEW LOGIC OPS: AND, OR, XOR

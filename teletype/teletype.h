@@ -148,6 +148,9 @@ extern volatile update_pi_t update_pi;
 typedef void (*run_script_t)(uint8_t);
 extern volatile run_script_t run_script;
 
+typedef void (*update_kill_t)(void);
+extern volatile update_kill_t update_kill;
+
 extern char error_detail[16];
 extern int16_t output, output_new;
 

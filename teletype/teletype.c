@@ -65,6 +65,7 @@ volatile update_cv_off_t update_cv_off;
 volatile update_ii_t update_ii;
 volatile update_scene_t update_scene;
 volatile update_pi_t update_pi;
+volatile update_kill_t update_kill;
 
 volatile run_script_t run_script;
 
@@ -579,11 +580,19 @@ static void process_delays(uint8_t v) {
 }
 
 void clear_delays(void) {
+	for(int16_t i=0;i<4;i++)
+		tr_pulse[i] = 0;
+
 	for(int16_t i=0;i<TELE_D_SIZE;i++) {
 		delay_t[i] = 0;
 	}
 
 	delay_count = 0;
+
+	tele_stack_top = 0;
+
+	(*update_delay)(0);
+	(*update_s)(0);
 }
 
 
@@ -776,9 +785,11 @@ static void op_OR(void);
 static void op_XOR(void);
 static void op_JI(void);
 static void op_SCRIPT(void);
+static void op_KILL(void);
+
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 48
+#define OPS 49
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -828,7 +839,8 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(OR, 2, 1,"LOGIC: OR"),
 	MAKEOP(XOR, 2, 1,"LOGIC: XOR"),
 	MAKEOP(JI, 2, 1,"JUST INTONE DIVISON"),
-	MAKEOP(SCRIPT, 1, 0,"CALL SCRIPT")
+	MAKEOP(SCRIPT, 1, 0,"CALL SCRIPT"),
+	MAKEOP(KILL, 0, 0,"CLEAR DELAYS, STACK, SLEW")
 };
 
 static void op_ADD() {
@@ -1206,6 +1218,10 @@ static void op_SCRIPT() {
 	uint16_t a = pop();
 	if(a > 0 && a < 9)
 		(*run_script)(a);
+}
+static void op_KILL() {
+	clear_delays();
+	(*update_kill)();
 }
 
 
