@@ -439,15 +439,17 @@ static void a_CV(uint8_t);
 static void a_CV_SLEW(uint8_t);
 static void a_CV_OFF(uint8_t);
 static void a_TR_TIME(uint8_t);
+static void a_TR_POL(uint8_t);
 
 #define MAKEARRAY(name, func) {#name, {0,0,0,0}, func}
-#define ARRAYS 5
+#define ARRAYS 6
 static tele_array_t tele_arrays[ARRAYS] = {
 	MAKEARRAY(TR,a_TR),
 	MAKEARRAY(CV,a_CV),
 	MAKEARRAY(CV.SLEW,a_CV_SLEW),
 	MAKEARRAY(CV.OFF,a_CV_OFF),
-	{"TR.TIME", {100,100,100,100}, a_TR_TIME}
+	{"TR.TIME", {100,100,100,100}, a_TR_TIME},
+	{"TR.POL", {1,1,1,1}, a_TR_POL}
 };
 
 static void a_TR(uint8_t i) {
@@ -483,7 +485,12 @@ static void a_TR_TIME(uint8_t i) {
 	if(a<1) a = 1;
 	tele_arrays[4].v[i] = a;
 }
-
+static void a_TR_POL(uint8_t i) {
+	int16_t a = pop();
+	if(a>1) a = 1;
+	else if(a<0) a = 0;
+	tele_arrays[5].v[i] = a;
+}
 
 
 /////////////////////////////////////////////////////////////////
@@ -518,8 +525,8 @@ static void process_delays(uint8_t v) {
 			tr_pulse[i] -= v;
 			if(tr_pulse[i] <= 0) {
 				tr_pulse[i] = 0;
-				if(tele_arrays[0].v[i]) tele_arrays[0].v[i] = 0;
-				else tele_arrays[0].v[i] = 1;
+				// if(tele_arrays[0].v[i]) tele_arrays[0].v[i] = 0;
+				tele_arrays[0].v[i] = (tele_arrays[5].v[i] == 0);
 				(*update_tr)(i,tele_arrays[0].v[i]);
 			}
 		}
@@ -1071,8 +1078,7 @@ static void op_TR_PULSE() {
 	if(a < 1) a = 1;
 	else if(a > 4) a = 4;
 	a--;
-	if(tele_arrays[0].v[a]) tele_arrays[0].v[a] = 0;
-	else tele_arrays[0].v[a] = 1;
+	tele_arrays[0].v[a] = tele_arrays[5].v[a];
 	tr_pulse[a] = tele_arrays[4].v[a]; // set time
 	update_tr(a,tele_arrays[0].v[a]);
 }

@@ -3,12 +3,15 @@ changelog
 v1.0	initial
 
 v1.1	NEW usb flash drive read/write
+		NEW ABS OP absolute value, single argument
+		NEW TR.POL specifies the polarity of TR.PULSE
+		IMP TR.PULSE retrigger behavior now predictable
 		FIX bug in command history in live mode
 		FIX EXP OP now exists
-		NEW ABS OP absolute value, single argument
 		FIX P and PN parse error
 		FIX possible crash on excess length line entry
 		FIX CV wrapping with negative CV.OFF values
 		FIX INIT script executed now on keyboardless scene recall
 		FIX Q.AVG overflow no more
 		FIX P.PUSH will fully fill a pattern
+		FIX CV.SET followed by slewed CV in one command works
