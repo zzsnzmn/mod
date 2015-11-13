@@ -1222,6 +1222,9 @@ static void handler_HidTimer(s32 data) {
      						}
 	     				}
 	     				else {	/// NORMAL TEXT ENTRY
+	     					if(frame[i] > 0x58 && frame[i] < 0x61) {
+	     						tele_script(frame[i] - 0x58);
+	     					}
 	 						if(pos<29) {
 		     					// print_dbg_char(hid_to_ascii(frame[i], frame[0]));
 		     					n = hid_to_ascii(frame[i], frame[0]);
@@ -1745,21 +1748,12 @@ static void tele_pi() {
 
 int8_t script_caller;
 static void tele_script(uint8_t a) {
-	print_dbg("\r\ntry ");
-	print_dbg_ulong(a);
-
 	if(!script_caller) {
 		script_caller = a;
-		print_dbg("\r\nexec ");
-		print_dbg_ulong(a);
-
 		for(int i=0;i<script[a-1].l;i++)
 			process(&script[a-1].c[i]);
 	}
 	else if(a != script_caller) {
-		print_dbg("\r\nexec ");
-		print_dbg_ulong(a);
-
 		for(int i=0;i<script[a-1].l;i++)
 			process(&script[a-1].c[i]);
 	}
