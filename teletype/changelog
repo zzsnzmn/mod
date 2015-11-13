@@ -5,6 +5,7 @@ v1.0	initial
 v1.1	NEW usb flash drive read/write
 		NEW ABS OP absolute value, single argument
 		NEW FLIP OP variable which changes state (0/1) on each read
+		NEW LOGIC OPS: AND, OR, XOR
 		NEW TR.POL specifies the polarity of TR.PULSE
 		IMP TR.PULSE retrigger behavior now predictable
 		FIX bug in command history in live mode
