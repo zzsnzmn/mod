@@ -772,9 +772,10 @@ static void op_ABS(void);
 static void op_AND(void);
 static void op_OR(void);
 static void op_XOR(void);
+static void op_JI(void);
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 46
+#define OPS 47
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -822,7 +823,8 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ABS, 1, 1, "ABSOLUTE VALUE"),
 	MAKEOP(AND, 2, 1,"LOGIC: AND"),
 	MAKEOP(OR, 2, 1,"LOGIC: OR"),
-	MAKEOP(XOR, 2, 1,"LOGIC: XOR")
+	MAKEOP(XOR, 2, 1,"LOGIC: XOR"),
+	MAKEOP(JI, 2, 1,"JUST INTONE DIVISON")
 };
 
 static void op_ADD() {
@@ -1189,6 +1191,12 @@ static void op_OR() {
 }
 static void op_XOR() {
 	push(pop() ^ pop());
+}
+static void op_JI() { 
+	uint32_t ji = (((pop()<<8) / pop()) * 1684) >> 8;
+	while(ji > 1683)
+		ji >>= 1;
+	push(ji);
 }
 
 /////////////////////////////////////////////////////////////////
