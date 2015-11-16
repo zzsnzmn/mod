@@ -18,7 +18,9 @@ v1.1	NEW usb flash drive read/write
 		NEW O OPS: O.MIN, O.MAX, O.WRAP, O.DIR for counter range control
 		NEW DRUNK OPS: DRUNK.MIN, DRUNK.MAX, DRUNK.WRAP for range control
 		NEW TR.POL specifies the polarity of TR.PULSE
+		NEW if powered down in tracker mode, will power up in tracker mode
 		IMP TR.PULSE retrigger behavior now predictable
+		IMP mode switch keys more consistent (not contanstly resetting to live mode)
 		FIX bug in command history in live mode
 		FIX EXP OP now exists
 		FIX P and PN parse error

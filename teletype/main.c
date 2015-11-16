@@ -57,7 +57,7 @@
 #define SCENE_TEXT_CHARS 32
 
 
-uint8_t preset, preset_select, front_timer, preset_edit_line, preset_edit_offset, offset_view;
+uint8_t preset, preset_select, front_timer, preset_edit_line, preset_edit_offset, offset_view, last_mode;
 
 u16 adc[4];
 
@@ -118,6 +118,7 @@ typedef const struct {
 typedef const struct {
 	tele_scene_t s[SCENE_SLOTS];
 	uint8_t scene;
+	uint8_t mode;
 	uint8_t fresh;
 } nvram_data_t;
 
@@ -192,6 +193,8 @@ static void flash_write(void);
 static void flash_read(void);
 
 static void render_init(void);
+
+static void set_mode(uint8_t);
 
 static void tele_metro(int16_t, int16_t, uint8_t);
 static void tele_tr(uint8_t i, int16_t v);
@@ -559,52 +562,23 @@ static void handler_HidTimer(s32 data) {
      			// print_dbg_hex(frame[0]);
      			switch(frame[i]) {
      				case 0x2B: // tab
-     					if(mode == M_LIVE) {
-     						mode = M_EDIT;
- 							edit_line = 0;
-	     					strcpy(input,print_command(&script[edit].c[edit_line]));
-	 						pos = strlen(input);
-	 						for(n = pos;n < 32;n++) input[n] = 0;
-     						r_edit_dirty |= R_LIST | R_MESSAGE;
-     					}
-     					else {
-     						for(n = 0;n < 32;n++) input[n] = 0;
-		 					pos = 0;
-     						mode = M_LIVE;
-     						edit_line = SCRIPT_MAX_COMMANDS;
-     						activity |= A_REFRESH;
-     						r_edit_dirty |= R_LIST | R_MESSAGE;
-     					}
+     					if(mode == M_LIVE)
+     						set_mode(M_EDIT);
+     					else
+     						set_mode(M_LIVE);
      					break;
      				case 0x35: // ~
-     					if(mode == M_TRACK) {
-     						for(n = 0;n < 32;n++) input[n] = 0;
-		 					pos = 0;
-     						mode = M_LIVE;
-     						edit_line = SCRIPT_MAX_COMMANDS;
-     						activity |= A_REFRESH;
-     						r_edit_dirty |= R_LIST | R_MESSAGE;
-     					}
+     					if(mode == M_TRACK)
+     						set_mode(last_mode);
      					else {
-     						mode = M_TRACK;
-     						r_edit_dirty = R_ALL;
+     						last_mode = mode;
+     						set_mode(M_TRACK);
      					}
      					break;
      				case 0x29: // ESC
      					if(mod_ALT) {
-     						preset_edit_line = 0;
-     						preset_edit_offset = 0;
-     						strcpy(input,scene_text[preset_edit_line + preset_edit_offset]);
-     						pos = strlen(input);
-     						mode = M_PRESET_W;
-     						r_edit_dirty = R_ALL;
-     					}
-     					else if(mode == M_PRESET_R) {
-     						for(n = 0;n < 32;n++) input[n] = 0;
-		 					pos = 0;
-     						edit_line = SCRIPT_MAX_COMMANDS;
-     						mode = M_LIVE;
-     						r_edit_dirty = R_ALL;
+     						last_mode = mode;
+     						set_mode(M_PRESET_W);
      					}
      					else if(mod_META) {
      						clear_delays();
@@ -612,25 +586,20 @@ static void handler_HidTimer(s32 data) {
      							aout[i].step = 1;
      						}
      					}
+     					else if(mode == M_PRESET_R)
+     						set_mode(last_mode);
      					else {
-     						preset_edit_offset = 0;
-     						knob_last = adc[1]>>7;
-     						mode = M_PRESET_R;
-     						r_edit_dirty = R_ALL;
+     						last_mode = mode;
+     						set_mode(M_PRESET_R);
      					}
 
      					break;
      				case 0x3A: // F1
-     					if(mode == M_HELP) {
-     						for(n = 0;n < 32;n++) input[n] = 0;
-		 					pos = 0;
-     						edit_line = SCRIPT_MAX_COMMANDS;
-     						mode = M_LIVE;
-     						r_edit_dirty = R_ALL;
-     					}
+     					if(mode == M_HELP) 
+     						set_mode(last_mode);
      					else {
-     						mode = M_HELP;
-     						r_edit_dirty = R_ALL;
+     						last_mode = mode;
+     						set_mode(M_HELP);
      					}
      					break;
      				case 0x51: // down
@@ -1617,6 +1586,51 @@ void check_events(void) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 // funcs
 
+void set_mode(uint8_t m) {
+	switch(m) {
+		case M_LIVE:
+			for(int n = 0;n < 32;n++) input[n] = 0;
+			pos = 0;
+			mode = M_LIVE;
+			flashc_memset8((void*)&(f.mode), mode, 1, true);
+			edit_line = SCRIPT_MAX_COMMANDS;
+			activity |= A_REFRESH;
+			r_edit_dirty |= R_LIST | R_MESSAGE;
+			break;
+		case M_EDIT:
+			mode = M_EDIT;
+			edit_line = 0;
+			strcpy(input,print_command(&script[edit].c[edit_line]));
+			pos = strlen(input);
+			for(int n = pos;n < 32;n++) input[n] = 0;
+			r_edit_dirty |= R_LIST | R_MESSAGE;
+			break;
+		case M_TRACK:
+			mode = M_TRACK;
+			flashc_memset8((void*)&(f.mode), mode, 1, true);
+			r_edit_dirty = R_ALL;
+			break;
+		case M_PRESET_W:
+			preset_edit_line = 0;
+			preset_edit_offset = 0;
+			strcpy(input,scene_text[preset_edit_line + preset_edit_offset]);
+			pos = strlen(input);
+			mode = M_PRESET_W;
+			r_edit_dirty = R_ALL;
+			break;
+		case M_PRESET_R:
+			preset_edit_offset = 0;
+			knob_last = adc[1]>>7;
+			mode = M_PRESET_R;
+			r_edit_dirty = R_ALL;
+			break;
+		case M_HELP:
+			mode = M_HELP;
+			r_edit_dirty = R_ALL;
+			break;
+	}
+}
+
 
 u8 flash_is_fresh(void) {
   return (f.fresh != FIRSTRUN_KEY);
@@ -2223,6 +2237,7 @@ int main(void)
 		}
 		preset_select = 0;
 		flashc_memset8((void*)&(f.scene), preset_select, 1, true);
+		flashc_memset8((void*)&(f.mode), M_LIVE, 1, true);
 		flash_unfresh();
 
 		// clear out some reasonable defaults
@@ -2290,7 +2305,7 @@ int main(void)
 
 	status = 1;
 	error_detail[0] = 0;
-	mode = M_LIVE;
+	mode = f.mode;
 	edit_line = SCRIPT_MAX_COMMANDS;
 	r_edit_dirty = R_MESSAGE | R_INPUT;
 	activity = 0;
