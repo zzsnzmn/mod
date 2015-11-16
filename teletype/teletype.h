@@ -154,7 +154,12 @@ extern volatile update_kill_t update_kill;
 typedef void (*update_mute_t)(uint8_t, uint8_t);
 extern volatile update_mute_t update_mute;
 
+typedef void (*update_input_t)(uint8_t);
+extern volatile update_input_t update_input;
+
 extern char error_detail[16];
 extern int16_t output, output_new;
+
+extern volatile uint8_t input_states[8];
 
 #endif

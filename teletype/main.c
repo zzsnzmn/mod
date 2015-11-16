@@ -73,6 +73,8 @@ typedef struct {
 
 aout_t aout[4];
 
+volatile uint8_t input_states[8];
+
 u8 mutes[8];
 
 error_t status;
@@ -209,6 +211,7 @@ static void tele_pi(void);
 static void tele_script(uint8_t a);
 static void tele_kill(void);
 static void tele_mute(uint8_t, uint8_t);
+static void tele_input_state(uint8_t);
 
 static void tele_usb_disk(void);
 static void tele_mem_clear(void);
@@ -370,16 +373,15 @@ static void handler_Front(s32 data) {
 		if(mode != M_PRESET_R) {
 			front_timer = 0;
 			knob_last = adc[1]>>7;
-			mode = M_PRESET_R;
-			r_edit_dirty = R_ALL;
+			last_mode = mode;
+			set_mode(M_PRESET_R);
 		}
 		else
 			front_timer = 15;
 	}
 	else {
 		if(front_timer) {
-			mode = M_LIVE;
-			r_edit_dirty = R_ALL;
+			set_mode(last_mode);
 		}
 		front_timer = 0;
 	}
@@ -426,8 +428,7 @@ static void handler_KeyTimer(s32 data) {
 			for(int i=0;i<script[INIT_SCRIPT].l;i++)
 				process(&script[INIT_SCRIPT].c[i]);
 
-			mode = M_LIVE;
-			r_edit_dirty = R_ALL;
+			set_mode(last_mode);
 
 			front_timer--;
 		}
@@ -956,9 +957,7 @@ static void handler_HidTimer(s32 data) {
  								flash_write();
  								for(n = 0;n < 32;n++) input[n] = 0;
 		 							pos = 0;
- 								mode = M_LIVE;
- 								edit_line = SCRIPT_MAX_COMMANDS;
- 								r_edit_dirty |= R_ALL;
+ 								set_mode(last_mode);
 	     					}
 	     					else {
 		     					strcpy(scene_text[preset_edit_line+preset_edit_offset],input);
@@ -982,9 +981,7 @@ static void handler_HidTimer(s32 data) {
 
 							for(n = 0;n < 32;n++) input[n] = 0;
 	 							pos = 0;
-							mode = M_LIVE;
-							edit_line = SCRIPT_MAX_COMMANDS;
-							r_edit_dirty |= R_ALL;
+							set_mode(last_mode);
 	     				}
 	     				else if(mode == M_TRACK) {
 	     					if(mod_SH) {
@@ -1312,7 +1309,8 @@ static void handler_ScreenRefresh(s32 data) {
 	else if(mode == M_PRESET_W) {
 		if(r_edit_dirty & R_ALL) {
 			
-			itoa(preset_select,s,10);
+			strcpy(s,">>> ");
+			itoa(preset_select,s+4,10);
 			region_fill(&line[0], 1);
 			font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
 			font_string_region_clip(&line[0], "WRITE", 2, 0, 0xf, 1);
@@ -2181,6 +2179,10 @@ void tele_mem_clear(void) {
 	memset(&scene_text,0,sizeof(scene_text));
 }
 
+void tele_input_state(uint8_t n) {
+	input_states[n] = gpio_get_pin_value(A00+n);
+}
+
 
 
 
@@ -2292,6 +2294,7 @@ int main(void)
 	run_script = &tele_script;
 	update_kill = &tele_kill;
 	update_mute = &tele_mute;
+	update_input = &tele_input_state;
 
 	clear_delays();
 
