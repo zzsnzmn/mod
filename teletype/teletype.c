@@ -791,10 +791,11 @@ static void op_SCRIPT(void);
 static void op_KILL(void);
 static void op_MUTE(void);
 static void op_UNMUTE(void);
+static void op_SCALE(void);
 
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 51
+#define OPS 52
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -847,7 +848,8 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(SCRIPT, 1, 0,"CALL SCRIPT"),
 	MAKEOP(KILL, 0, 0,"CLEAR DELAYS, STACK, SLEW"),
 	MAKEOP(MUTE, 1, 0,"MUTE INPUT"),
-	MAKEOP(UNMUTE, 1, 0,"UNMUTE INPUT")
+	MAKEOP(UNMUTE, 1, 0,"UNMUTE INPUT"),
+	MAKEOP(SCALE, 5, 1,"SCALE NUMBER RANGES")
 };
 
 static void op_ADD() {
@@ -1245,6 +1247,16 @@ static void op_UNMUTE() {
 	if(a > 0 && a < 9) {
 		(*update_mute)(a-1,1);
 	}
+}
+static void op_SCALE() {
+	int16_t a, b, x, y, i;
+	a = pop();
+	b = pop();
+	x = pop();
+	y = pop();
+	i = pop();
+
+	push(i * (y-x) / (b-a));
 }
 
 

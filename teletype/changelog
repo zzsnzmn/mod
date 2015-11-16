@@ -6,6 +6,8 @@ v1.1	NEW usb flash drive read/write
 		NEW SCRIPT OP for scripted execution of other scripts!
 		NEW MUTE and UNMUTE OPS for disabling trigger input
 		NEW hotkeys for MUTE toggle per input (meta-shift-number)
+		NEW screen indication in live mode for MUTE status
+		NEW SCALE OP for scaling number from one range to another
 		NEW JI OP just intonation helper
 		NEW keypad executes scripts (works for standalone usb keypads and full-sized keyboards)
 		NEW KILL OP clears delays, stack, cv slews, pulses
