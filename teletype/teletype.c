@@ -407,7 +407,6 @@ static void v_O(uint8_t n) {
 
 static void v_DRUNK(uint8_t n) {
 	if(left || top == 0) {
-		push(tele_vars[V_DRUNK].v);
 		tele_vars[V_DRUNK].v += (rand() % 3) - 1;
 		if(tele_vars[V_DRUNK].v < tele_vars[V_DRUNK_MIN].v) {
 			if(tele_vars[V_DRUNK_WRAP].v)
@@ -421,6 +420,7 @@ static void v_DRUNK(uint8_t n) {
 			else
 				tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MAX].v;
 		}
+		push(tele_vars[V_DRUNK].v);
 	}
 	else {
 		tele_vars[V_DRUNK].v = pop();
@@ -1260,7 +1260,7 @@ static void op_SCALE() {
 	y = pop();
 	i = pop();
 
-	push(i * (y-x) / (b-a));
+	push((i-a) * (y-x) / (b-a) + x);
 }
 static void op_STATE() {
 	int16_t a = pop();
