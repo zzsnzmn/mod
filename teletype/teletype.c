@@ -105,7 +105,7 @@ void push(int16_t data) {
 // VARS ARRAYS KEYS /////////////////////////////////////////////
 
 
-#define KEYS 46
+#define KEYS 47
 static tele_key_t tele_keys[KEYS] = {
 	{"WW.PRESET",WW_PRESET},
 	{"WW.POS",WW_POS},
@@ -128,6 +128,7 @@ static tele_key_t tele_keys[KEYS] = {
 	{"MP.UNMUTE",MP_UNMUTE},
 	{"MP.FREEZE",MP_FREEZE},
 	{"MP.UNFREEZE",MP_UNFREEZE},
+	{"MP.STOP",MP_STOP},
 	{"ES.PRESET",ES_PRESET},
 	{"ES.MODE",ES_MODE},
 	{"ES.CLOCK",ES_CLOCK},
