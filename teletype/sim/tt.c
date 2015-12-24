@@ -16,8 +16,6 @@ int main(int argc, char *argv[]) {
 	error_t status;
 	int i;
 
-	char *s;
-
 	srand((unsigned) time(&t));
 
 	tele_command_t stored;
