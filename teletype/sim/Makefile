@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -I. -I.. -I../../system -DSIM
+CFLAGS=-g -Wall -I. -I.. -I../../system -DSIM
 DEPS =
 OBJ = tt.o ../teletype.o ../table.o ../../system/util.o
 
