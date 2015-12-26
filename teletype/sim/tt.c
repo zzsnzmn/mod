@@ -38,9 +38,9 @@ int main(int argc, char *argv[]) {
 
 		i = 0;
 		while(in[i]) {
-		    in[i] = toupper(in[i]);
-		    i++;
-		 }
+			in[i] = toupper(in[i]);
+			i++;
+		}
 
 		status = parse(in);
 		if(status == E_OK) {
@@ -64,9 +64,10 @@ int main(int argc, char *argv[]) {
 	while(in[0] != 10);
 
 	free(in);
-	
+
 	printf("\nstored process: ");
 	process(&stored);
 
 	printf("\n(teletype exit.)\n");
 }
+
