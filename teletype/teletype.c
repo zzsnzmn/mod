@@ -833,7 +833,7 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(VV, 1, 1, "TO VOLT WITH PRECISION"),
 	{"P", op_P, 1, 1, "PATTERN: GET/SET"},
 	{"P.INS", op_P_INS, 2, 0, "PATTERN: INSERT"},
-	{"P.RM", op_P_RM, 1, 0, "PATTERN: REMOVE"},
+	{"P.RM", op_P_RM, 1, 1, "PATTERN: REMOVE"},
 	{"P.PUSH", op_P_PUSH, 1, 0, "PATTERN: PUSH"},
 	{"P.POP", op_P_POP, 0, 1, "PATTERN: POP"},
 	{"PN", op_PN, 2, 1, "PATTERN: GET/SET N"},
@@ -1105,11 +1105,13 @@ static void op_P_RM() {
 	else if(a > tele_patterns[pn].l) a = tele_patterns[pn].l;
 
 	if(tele_patterns[pn].l > 0) {
+		push(tele_patterns[pn].v[a]);
 		for(i = a;i<tele_patterns[pn].l;i++)
 			tele_patterns[pn].v[i] = tele_patterns[pn].v[i+1];
 
 		tele_patterns[pn].l--;
 	}
+	else push(0);
 	(*update_pi)();
 }
 static void op_P_PUSH() {
