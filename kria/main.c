@@ -295,8 +295,10 @@ static void sc0Timer_callback(void* o) {
 
 	t = calctimes[0][tScale] + timeerrors[0][tScale];
     timeerrors[0][tScale] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&sc0Timer, t >> 16);
+    timer_set(&sc0Timer, t);
 
 	if(pos[0][tScale] == k.kp[0][p].lend[tScale])
 		pos[0][tScale] = k.kp[0][p].lstart[tScale];
@@ -319,8 +321,10 @@ static void trans0Timer_callback(void* o) {
 
 	t = calctimes[0][tTrans] + timeerrors[0][tTrans];
     timeerrors[0][tTrans] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&trans0Timer, t >> 16);
+    timer_set(&trans0Timer, t);
 
 	if(pos[0][tTrans] == k.kp[0][p].lend[tTrans])
 		pos[0][tTrans] = k.kp[0][p].lstart[tTrans];
@@ -340,8 +344,10 @@ static void note0Timer_callback(void* o) {
 
 	t = calctimes[0][tNote] + timeerrors[0][tNote];
     timeerrors[0][tNote] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&note0Timer, t >> 16);
+    timer_set(&note0Timer, t);
 
 	if(pos[0][tNote] == k.kp[0][p].lend[tNote])
 		pos[0][tNote] = k.kp[0][p].lstart[tNote];
@@ -361,8 +367,10 @@ static void dur0Timer_callback(void* o) {
 
 	t = calctimes[0][tDur] + timeerrors[0][tDur];
     timeerrors[0][tDur] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&dur0Timer, t >> 16);
+    timer_set(&dur0Timer, t);
 
 	if(pos[0][tDur] == k.kp[0][p].lend[tDur])
 		pos[0][tDur] = k.kp[0][p].lstart[tDur];
@@ -382,8 +390,10 @@ static void oct0Timer_callback(void* o) {
 
 	t = calctimes[0][tOct] + timeerrors[0][tOct];
     timeerrors[0][tOct] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&oct0Timer, t >> 16);
+    timer_set(&oct0Timer, t);
 
 	if(pos[0][tOct] == k.kp[0][p].lend[tOct])
 		pos[0][tOct] = k.kp[0][p].lstart[tOct];
@@ -403,8 +413,10 @@ static void ac0Timer_callback(void* o) {
 
 	t = calctimes[0][tAc] + timeerrors[0][tAc];
     timeerrors[0][tAc] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&ac0Timer, t >> 16);
+    timer_set(&ac0Timer, t);
 
     // print_dbg("\r\nt ");
 	// print_dbg_ulong(t >> 16);
@@ -429,8 +441,10 @@ static void tr0Timer_callback(void* o) {
 
 	t = calctimes[0][tTr] + timeerrors[0][tTr];
     timeerrors[0][tTr] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&tr0Timer, t >> 16);
+    timer_set(&tr0Timer, t);
 
 	if(pos[0][tTr] == k.kp[0][p].lend[tTr])
 		pos[0][tTr] = k.kp[0][p].lstart[tTr];
@@ -482,8 +496,10 @@ static void sc1Timer_callback(void* o) {
 
 	t = calctimes[1][tScale] + timeerrors[1][tScale];
     timeerrors[1][tScale] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&sc1Timer, t >> 16);
+    timer_set(&sc1Timer, t);
 
 	if(pos[1][tScale] == k.kp[1][p].lend[tScale])
 		pos[1][tScale] = k.kp[1][p].lstart[tScale];
@@ -506,8 +522,10 @@ static void trans1Timer_callback(void* o) {
 
 	t = calctimes[1][tTrans] + timeerrors[1][tTrans];
     timeerrors[1][tTrans] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&trans1Timer, t >> 16);
+    timer_set(&trans1Timer, t);
 
 	if(pos[1][tTrans] == k.kp[1][p].lend[tTrans])
 		pos[1][tTrans] = k.kp[1][p].lstart[tTrans];
@@ -527,8 +545,10 @@ static void note1Timer_callback(void* o) {
 
 	t = calctimes[1][tNote] + timeerrors[1][tNote];
     timeerrors[1][tNote] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&note1Timer, t >> 16);
+    timer_set(&note1Timer, t);
 
 	if(pos[1][tNote] == k.kp[1][p].lend[tNote])
 		pos[1][tNote] = k.kp[1][p].lstart[tNote];
@@ -548,8 +568,10 @@ static void dur1Timer_callback(void* o) {
 
 	t = calctimes[1][tDur] + timeerrors[1][tDur];
     timeerrors[1][tDur] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&dur1Timer, t >> 16);
+    timer_set(&dur1Timer, t);
 
 	if(pos[1][tDur] == k.kp[1][p].lend[tDur])
 		pos[1][tDur] = k.kp[1][p].lstart[tDur];
@@ -569,8 +591,10 @@ static void oct1Timer_callback(void* o) {
 
 	t = calctimes[1][tOct] + timeerrors[1][tOct];
     timeerrors[1][tOct] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&oct1Timer, t >> 16);
+    timer_set(&oct1Timer, t);
 
 	if(pos[1][tOct] == k.kp[1][p].lend[tOct])
 		pos[1][tOct] = k.kp[1][p].lstart[tOct];
@@ -590,8 +614,10 @@ static void ac1Timer_callback(void* o) {
 
 	t = calctimes[1][tAc] + timeerrors[1][tAc];
     timeerrors[1][tAc] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&ac1Timer, t >> 16);
+    timer_set(&ac1Timer, t);
 
     // print_dbg("\r\nt ");
 	// print_dbg_ulong(t >> 16);
@@ -616,8 +642,10 @@ static void tr1Timer_callback(void* o) {
 
 	t = calctimes[1][tTr] + timeerrors[1][tTr];
     timeerrors[1][tTr] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
 
-    timer_set(&tr1Timer, t >> 16);
+    timer_set(&tr1Timer, t);
 
 	if(pos[1][tTr] == k.kp[1][p].lend[tTr])
 		pos[1][tTr] = k.kp[1][p].lstart[tTr];
