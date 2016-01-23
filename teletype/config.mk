@@ -67,6 +67,8 @@ CSRCS = \
        ../$(THIS)/main.c    \
        ../$(THIS)/table.c    \
        ../$(THIS)/teletype.c    \
+       ../$(THIS)/euclidean/euclidean.c    \
+       ../$(THIS)/euclidean/data.c    \
        ../system/adc.c     \
        ../system/events.c     \
        ../system/fix.c     \

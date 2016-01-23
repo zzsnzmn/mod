@@ -8,6 +8,7 @@
 #include "table.h"
 #include "util.h"
 #include "ii.h"
+#include "euclidean/euclidean.h"
 
 #ifdef SIM
 #define DBG printf("%s",dbg);
@@ -796,10 +797,11 @@ static void op_MUTE(void);
 static void op_UNMUTE(void);
 static void op_SCALE(void);
 static void op_STATE(void);
+static void op_ER(void);
 
 
 #define MAKEOP(name, params, returns, doc) {#name, op_ ## name, params, returns, doc}
-#define OPS 53
+#define OPS 54
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(ADD, 2, 1,"[A B] ADD A TO B"),
@@ -854,7 +856,8 @@ static const tele_op_t tele_ops[OPS] = {
 	MAKEOP(MUTE, 1, 0,"MUTE INPUT"),
 	MAKEOP(UNMUTE, 1, 0,"UNMUTE INPUT"),
 	MAKEOP(SCALE, 5, 1,"SCALE NUMBER RANGES"),
-	MAKEOP(STATE, 1, 1,"GET INPUT STATE")
+	MAKEOP(STATE, 1, 1,"GET INPUT STATE"),
+	MAKEOP(ER, 3, 1,"EUCLIDEAN RHYTHMS")
 };
 
 static void op_ADD() {
@@ -1275,6 +1278,12 @@ static void op_STATE() {
 	push(input_states[a]);	
 }
 
+static void op_ER() {
+	int16_t fill = pop();
+	int16_t len = pop();
+	int16_t step = pop();
+	push(euclidean(fill, len, step));
+}
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
