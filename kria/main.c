@@ -53,13 +53,13 @@ const u16 ET[120] = {
 };
 
 const u8 SCALE[49] = {
-	2, 2, 1, 2, 2, 2, 1,
-	2, 1, 2, 2, 2, 1, 2,
-	1, 2, 2, 2, 1, 2, 2,
-	2, 2, 2, 1, 2, 2, 1,
-	2, 2, 1, 2, 2, 1, 2,
- 	2, 1, 2, 2, 1, 2, 2,
-	1, 2, 2, 1, 2, 2, 2
+	2, 2, 1, 2, 2, 2, 1,	// ionian
+	2, 1, 2, 2, 2, 1, 2,	// dorian
+	1, 2, 2, 2, 1, 2, 2,	// phyrgian
+	2, 2, 2, 1, 2, 2, 1,	// lydian
+	2, 2, 1, 2, 2, 1, 2,	// mixolydian
+ 	2, 1, 2, 2, 1, 2, 2,	// aeolian
+	1, 2, 2, 1, 2, 2, 2 	// locrian
 };
 
 typedef enum {
@@ -99,6 +99,7 @@ typedef struct {
 // TO 96
 typedef struct {
 	kria_pattern kp[2][16];
+	u8 pscale[7];
 } kria_set;
 
 typedef const struct {
@@ -107,6 +108,7 @@ typedef const struct {
 	u8 preset_select;
 	u8 glyph[8][8];
 	kria_set k[8];
+	u8 scales[42][7];
 } nvram_data_t;
 
 kria_set k;
@@ -116,10 +118,12 @@ u8 glyph[8];
 
 modes mode = mTr;
 mod_modes mod_mode = modNone;
-u8 p;
+u8 p, p_next;
 u8 ch;
 u8 pos[2][NUM_PARAMS];
 u8 trans_edit;
+u8 pscale_edit;
+u8 scales[42][7];
 
 u8 key_alt, mod1, mod2;
 u8 held_keys[32], key_count, key_times[256];
@@ -139,6 +143,7 @@ u8 cur_scale[2][7];
 
 u16 adc[4];
 
+u8 tr[2];
 u8 ac[2];
 u8 oct[2];
 u16 dur[2];
@@ -439,6 +444,13 @@ static void ac0Timer_callback(void* o) {
 static void tr0Timer_callback(void* o) {
 	static u32 t;
 
+	if(p_next != p) {
+		p = p_next;
+		phase_reset0();
+		phase_reset1();
+		return;
+	}
+
 	t = calctimes[0][tTr] + timeerrors[0][tTr];
     timeerrors[0][tTr] = t & 0xffff;
     t >>= 16;
@@ -463,7 +475,11 @@ static void tr0Timer_callback(void* o) {
 
 		need0off = 1;
 		timer_reset(&note0offTimer, dur[0]);
+
+		tr[0] = 1;
 	}
+	else
+		tr[0] = 0;
 
 	monomeFrameDirty++;
 
@@ -664,7 +680,11 @@ static void tr1Timer_callback(void* o) {
 
 		need1off = 1;
 		timer_reset(&note1offTimer, dur[1]);
+
+		tr[1] = 1;
 	}
+	else
+		tr[1] = 0;
 
 	monomeFrameDirty++;
 
@@ -1208,6 +1228,95 @@ static void handler_MonomeGridKey(s32 data) {
 				monomeFrameDirty++;
 			}
 		}
+		else if(mode == mScaleEdit) {
+			if(z) {
+				if(x==0) {
+					pscale_edit = y;
+				}
+				else if(y == 6 && x < 8) {
+					for(i1=0;i1<6;i1++)
+						scales[k.pscale[pscale_edit]][i1+1] = SCALE[(x-1)*7+i1];
+					scales[k.pscale[pscale_edit]][0] = 0;
+
+					if(sc[0] == pscale_edit)
+						calc_scale(0);
+					if(sc[1] == pscale_edit)
+						calc_scale(1);
+				}
+				else if(x > 0 && x < 8) {
+					if(key_alt) {
+						for(i1=0;i1<7;i1++)
+							scales[k.pscale[x-1 + y*7]][i1] = scales[k.pscale[pscale_edit]][i1];
+					}
+
+					k.pscale[pscale_edit] = x-1 + y*7;
+
+					if(sc[0] == pscale_edit)
+						calc_scale(0);
+					if(sc[1] == pscale_edit)
+						calc_scale(1);
+					
+				}
+				else if(x>7) {
+					if(key_alt) {
+						if(y!=0) {
+							s8 diff, change;
+							diff = (x-8) - scales[k.pscale[pscale_edit]][6-y];
+							change = scales[k.pscale[pscale_edit]][6-y+1] - diff;
+							if(change<0) change = 0;
+							if(change>7) change = 7;
+							scales[k.pscale[pscale_edit]][6-y+1] = change;
+						}
+
+						scales[k.pscale[pscale_edit]][6-y] = x-8;
+					}
+					else scales[k.pscale[pscale_edit]][6-y] = x-8;
+
+					if(sc[0] == pscale_edit)
+						calc_scale(0);
+					if(sc[1] == pscale_edit)
+						calc_scale(1);
+				}
+
+				monomeFrameDirty++;
+			}
+		}
+		else if(mode==mPattern) {
+			if(z && y==0) {
+				if(key_alt) {
+					p_next = x;
+
+					for(i1=0;i1<2;i1++) {
+						for(u8 i2=0;i2<16;i2++) {
+							k.kp[i1][p_next].tr[i2] = k.kp[i1][p].tr[i2];
+							k.kp[i1][p_next].ac[i2] = k.kp[i1][p].ac[i2];
+							k.kp[i1][p_next].oct[i2] = k.kp[i1][p].oct[i2];
+							k.kp[i1][p_next].dur[i2] = k.kp[i1][p].dur[i2];
+							k.kp[i1][p_next].note[i2] = k.kp[i1][p].note[i2];
+							k.kp[i1][p_next].sc[i2] = k.kp[i1][p].sc[i2];
+							k.kp[i1][p_next].trans[i2] = k.kp[i1][p].trans[i2];
+						}
+
+						k.kp[i1][p_next].dur_mul = k.kp[i1][p].dur_mul;
+
+						for(u8 i2=0;i2<NUM_PARAMS;i2++) {
+							k.kp[i1][p_next].lstart[i2] = k.kp[i1][p].lstart[i2];
+							k.kp[i1][p_next].lend[i2] = k.kp[i1][p].lend[i2];
+							k.kp[i1][p_next].llen[i2] = k.kp[i1][p].llen[i2];
+							k.kp[i1][p_next].lswap[i2] = k.kp[i1][p].lswap[i2];
+							k.kp[i1][p_next].tmul[i2] = k.kp[i1][p].tmul[i2];
+							k.kp[i1][p_next].tdiv[i2] = k.kp[i1][p].tdiv[i2];
+						}
+					}
+
+					p = p_next;
+				}
+				else 
+					p_next = x;
+
+				monomeFrameDirty++;
+			}
+		}
 	}
 }
 
@@ -1259,10 +1368,12 @@ static void adjust_loop_end(u8 x, u8 m) {
 
 static void calc_scale(u8 c) {
 	static u8 i1;
-	cur_scale[c][0] = SCALE[sc[c]*7];
+	// cur_scale[c][0] = SCALE[sc[c]*7];
+	cur_scale[c][0] = scales[k.pscale[sc[c]]][0];
 
 	for(i1=1;i1<7;i1++)
-		cur_scale[c][i1] = cur_scale[c][i1-1] + SCALE[sc[c]*7 + i1];
+		// cur_scale[c][i1] = cur_scale[c][i1-1] + SCALE[sc[c]*7 + i1];
+		cur_scale[c][i1] = cur_scale[c][i1-1] + scales[k.pscale[sc[c]]][i1];
 	// print_dbg("\r\nscale: ");
 	// for(i1=0;i1<7;i1++) {
 	// 	print_dbg_ulong(cur_scale[c][i1]);
@@ -1542,6 +1653,48 @@ static void refresh() {
 			monomeLedBuffer[k.kp[ch][p].tdiv[tScale] - 1 + 16] = L1;
 		}
 	}
+	else if(mode==mScaleEdit) {
+		monomeLedBuffer[112] = L1;
+		monomeLedBuffer[113] = L1;
+
+		for(i1=0;i1<112;i1++)
+				monomeLedBuffer[i1] = 0;
+		for(i1=0;i1<7;i1++) {
+			monomeLedBuffer[i1*16] = 4;
+			monomeLedBuffer[97+i1] = L0;
+			monomeLedBuffer[8+16*i1] = L0;
+		}
+		monomeLedBuffer[k.kp[0][p].sc[pos[0][tScale]] * 16] = L1;
+		monomeLedBuffer[k.kp[1][p].sc[pos[1][tScale]] * 16] = L1;
+		monomeLedBuffer[pscale_edit * 16] = L2;
+
+		monomeLedBuffer[(k.pscale[pscale_edit] / 7) * 16 + 1 + (k.pscale[pscale_edit] % 7)] = L2;
+
+		for(i1=0;i1<7;i1++)
+			monomeLedBuffer[scales[k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L1;
+
+		if(sc[0] == pscale_edit && tr[0]) {
+			i1 = k.kp[0][p].note[pos[0][tNote]];
+			monomeLedBuffer[scales[k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L2;
+		}
+
+		if(sc[1] == pscale_edit && tr[1]) {
+			i1 = k.kp[1][p].note[pos[1][tNote]];
+			monomeLedBuffer[scales[k.pscale[pscale_edit]][i1] + 8 + (6-i1)*16] = L2;
+		}
+	}
+	else if(mode==mPattern) {
+		monomeLedBuffer[112] = L1;
+		monomeLedBuffer[113] = L1;
+		
+		for(i1=0;i1<112;i1++)
+			monomeLedBuffer[i1] = 0;
+		for(i1=0;i1<16;i1++)
+			monomeLedBuffer[i1] = L0;
+		if(p_next != p)
+			monomeLedBuffer[p_next] = L1;
+		monomeLedBuffer[p] = L2;
+	}
 
 	monome_set_quadrant_flag(0);
 	monome_set_quadrant_flag(1);
@@ -1625,6 +1778,7 @@ void flash_write(void) {
 	// print_dbg("\r write preset ");
 	// print_dbg_ulong(preset_select);
 	flashc_memcpy((void *)&flashy.k[preset_select], &k, sizeof(k), true);
+	flashc_memcpy((void *)&flashy.scales, &scales, sizeof(scales), true);
 	flashc_memcpy((void *)&flashy.glyph[preset_select], &glyph, sizeof(glyph), true);
 	flashc_memset8((void*)&(flashy.preset_select), preset_select, 1, true);
 	// flashc_memset32((void*)&(flashy.edit_mode), edit_mode, 4, true);
@@ -1656,10 +1810,16 @@ void flash_read(void) {
 				k.kp[c][i1].tmul[i2] = flashy.k[preset_select].kp[c][i1].tmul[i2];
 				k.kp[c][i1].tdiv[i2] = flashy.k[preset_select].kp[c][i1].tdiv[i2];
 			}
-
 			// k.kp[c][i1].sync = flashy.k[preset_select].kp[c][i1].sync;
 		}
 	}
+
+	for(i1=0;i1<7;i1++)
+		k.pscale[i1] = flashy.k[preset_select].pscale[i1];
+
+	for(i1=0;i1<42;i1++)
+		for(i2=0;i2<7;i2++)
+			scales[i1][i2] = flashy.scales[i1][i2];
 
 	calc_scale(0);
 	calc_scale(1);
@@ -1727,6 +1887,7 @@ int main(void)
 					k.kp[c][i1].ac[i2] = 0;
 					k.kp[c][i1].oct[i2] = 0;
 					k.kp[c][i1].dur[i2] = 0;
+					k.kp[c][i1].note[i2] = 0;
 					k.kp[c][i1].sc[i2] = 0;
 					k.kp[c][i1].trans[i2] = 0;
 				}
@@ -1745,12 +1906,23 @@ int main(void)
 			}
 		}
 
+		for(i1=0;i1<7;i1++)
+			k.pscale[i1] = i1;
+
+		for(i1=0;i1<42;i1++) {
+			scales[i1][0] = 0;
+			for(i2=0;i2<6;i2++)
+				scales[i1][i2+1] = 1;
+		}
+
 		// save all presets, clear glyphs
 		for(i1=0;i1<8;i1++) {
 			flashc_memcpy((void *)&flashy.k[i1], &k, sizeof(k), true);
 			glyph[i1] = (1<<i1);
 			flashc_memcpy((void *)&flashy.glyph[i1], &glyph, sizeof(glyph), true);
 		}
+
+		flashc_memcpy((void *)&flashy.scales, &scales, sizeof(scales), true);
 	}
 	else {
 		// load from flash at startup
