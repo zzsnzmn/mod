@@ -227,7 +227,7 @@ static tele_var_t tele_vars[VARS] = {
 };
 
 static void v_M(uint8_t n) {
-	if(left || left || top == 0)
+	if(left || top == 0)
 		push(tele_vars[V_M].v);
 	else {
 		tele_vars[V_M].v = pop();
