@@ -63,7 +63,7 @@ const u8 SCALE[49] = {
 };
 
 typedef enum {
-	mTr, mDur, mNote, mTrans, mScale, mScaleEdit, mPattern
+	mTr, mDur, mNote, mScale, mTrans, mScaleEdit, mPattern
 } modes;
 
 typedef enum {
@@ -71,7 +71,7 @@ typedef enum {
 } time_params;
 
 typedef enum {
-	modNone, modLoopSt, modLoopEnd, modTime
+	modNone, modLoop, modTime
 } mod_modes;
 
 #define NUM_PARAMS 7
@@ -129,6 +129,8 @@ u8 key_alt, mod1, mod2;
 u8 held_keys[32], key_count, key_times[256];
 u8 keyfirst_pos, keysecond_pos;
 s8 keycount_pos;
+s8 loop_count;
+u8 loop_edit;
 
 u8 clock_phase;
 u16 clock_time, clock_temp;
@@ -212,8 +214,8 @@ static softTimer_t monomePollTimer = { .next = NULL, .prev = NULL };
 static softTimer_t monomeRefreshTimer  = { .next = NULL, .prev = NULL };
 
 static softTimer_t note0offTimer = { .next = NULL, .prev = NULL };
-static softTimer_t sc0Timer = { .next = NULL, .prev = NULL };
 static softTimer_t trans0Timer = { .next = NULL, .prev = NULL };
+static softTimer_t sc0Timer = { .next = NULL, .prev = NULL };
 static softTimer_t note0Timer = { .next = NULL, .prev = NULL };
 static softTimer_t dur0Timer = { .next = NULL, .prev = NULL };
 static softTimer_t oct0Timer = { .next = NULL, .prev = NULL };
@@ -221,8 +223,8 @@ static softTimer_t ac0Timer = { .next = NULL, .prev = NULL };
 static softTimer_t tr0Timer = { .next = NULL, .prev = NULL };
 
 static softTimer_t note1offTimer = { .next = NULL, .prev = NULL };
-static softTimer_t sc1Timer = { .next = NULL, .prev = NULL };
 static softTimer_t trans1Timer = { .next = NULL, .prev = NULL };
+static softTimer_t sc1Timer = { .next = NULL, .prev = NULL };
 static softTimer_t note1Timer = { .next = NULL, .prev = NULL };
 static softTimer_t dur1Timer = { .next = NULL, .prev = NULL };
 static softTimer_t oct1Timer = { .next = NULL, .prev = NULL };
@@ -295,6 +297,29 @@ static void note0offTimer_callback(void* o) {
 	}
 }
 
+static void trans0Timer_callback(void* o) {
+	static u32 t;
+
+	t = calctimes[0][tTrans] + timeerrors[0][tTrans];
+    timeerrors[0][tTrans] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
+
+    timer_set(&trans0Timer, t);
+
+	if(pos[0][tTrans] == k.kp[0][p].lend[tTrans])
+		pos[0][tTrans] = k.kp[0][p].lstart[tTrans];
+	else {
+		pos[0][tTrans]++;
+		if(pos[0][tTrans] > 15)
+			pos[0][tTrans] = 0;
+	}
+
+	trans[0] = k.kp[0][p].trans[pos[0][tTrans]];
+
+	monomeFrameDirty++;
+}
+
 static void sc0Timer_callback(void* o) {
 	static u32 t;
 
@@ -317,29 +342,6 @@ static void sc0Timer_callback(void* o) {
 		sc[0] = k.kp[0][p].sc[pos[0][tScale]];
 		calc_scale(0);
 	}
-
-	monomeFrameDirty++;
-}
-
-static void trans0Timer_callback(void* o) {
-	static u32 t;
-
-	t = calctimes[0][tTrans] + timeerrors[0][tTrans];
-    timeerrors[0][tTrans] = t & 0xffff;
-    t >>= 16;
-    if(t<10) t = 10;
-
-    timer_set(&trans0Timer, t);
-
-	if(pos[0][tTrans] == k.kp[0][p].lend[tTrans])
-		pos[0][tTrans] = k.kp[0][p].lstart[tTrans];
-	else {
-		pos[0][tTrans]++;
-		if(pos[0][tTrans] > 15)
-			pos[0][tTrans] = 0;
-	}
-
-	trans[0] = k.kp[0][p].trans[pos[0][tTrans]];
 
 	monomeFrameDirty++;
 }
@@ -507,6 +509,29 @@ static void note1offTimer_callback(void* o) {
 	}
 }
 
+static void trans1Timer_callback(void* o) {
+	static u32 t;
+
+	t = calctimes[1][tTrans] + timeerrors[1][tTrans];
+    timeerrors[1][tTrans] = t & 0xffff;
+    t >>= 16;
+    if(t<10) t = 10;
+
+    timer_set(&trans1Timer, t);
+
+	if(pos[1][tTrans] == k.kp[1][p].lend[tTrans])
+		pos[1][tTrans] = k.kp[1][p].lstart[tTrans];
+	else {
+		pos[1][tTrans]++;
+		if(pos[1][tTrans] > 15)
+			pos[1][tTrans] = 0;
+	}
+
+	trans[1] = k.kp[1][p].trans[pos[1][tTrans]];
+
+	monomeFrameDirty++;
+}
+
 static void sc1Timer_callback(void* o) {
 	static u32 t;
 
@@ -529,29 +554,6 @@ static void sc1Timer_callback(void* o) {
 		sc[1] = k.kp[1][p].sc[pos[1][tScale]];
 		calc_scale(1);
 	}
-
-	monomeFrameDirty++;
-}
-
-static void trans1Timer_callback(void* o) {
-	static u32 t;
-
-	t = calctimes[1][tTrans] + timeerrors[1][tTrans];
-    timeerrors[1][tTrans] = t & 0xffff;
-    t >>= 16;
-    if(t<10) t = 10;
-
-    timer_set(&trans1Timer, t);
-
-	if(pos[1][tTrans] == k.kp[1][p].lend[tTrans])
-		pos[1][tTrans] = k.kp[1][p].lstart[tTrans];
-	else {
-		pos[1][tTrans]++;
-		if(pos[1][tTrans] > 15)
-			pos[1][tTrans] = 0;
-	}
-
-	trans[1] = k.kp[1][p].trans[pos[1][tTrans]];
 
 	monomeFrameDirty++;
 }
@@ -703,8 +705,8 @@ static void tr1Timer_callback(void* o) {
 }
 
 static void phase_reset0() {
-	timer_manual(&sc0Timer);
 	timer_manual(&trans0Timer);
+	timer_manual(&sc0Timer);
 	timer_manual(&note0Timer);
 	timer_manual(&dur0Timer);
 	timer_manual(&oct0Timer);
@@ -715,8 +717,8 @@ static void phase_reset0() {
 }
 
 static void phase_reset1() {
-	timer_manual(&sc1Timer);
 	timer_manual(&trans1Timer);
+	timer_manual(&sc1Timer);
 	timer_manual(&note1Timer);
 	timer_manual(&dur1Timer);
 	timer_manual(&oct1Timer);
@@ -810,19 +812,19 @@ static void handler_PollADC(s32 data) {
 		clock_time = i;
 		basetime = i << 16;
 
-		calctimes[0][tScale] = (basetime * k.kp[0][p].tmul[tScale]) / k.kp[0][p].tdiv[tScale];;
-		calctimes[0][tTrans] = (basetime * k.kp[0][p].tmul[tTrans]) / k.kp[0][p].tdiv[tTrans];;
-		calctimes[0][tNote] = (basetime * k.kp[0][p].tmul[tNote]) / k.kp[0][p].tdiv[tNote];;
-		calctimes[0][tDur] = (basetime * k.kp[0][p].tmul[tDur]) / k.kp[0][p].tdiv[tDur];;
-		calctimes[0][tOct] = (basetime * k.kp[0][p].tmul[tOct]) / k.kp[0][p].tdiv[tOct];;
+		calctimes[0][tTrans] = (basetime * k.kp[0][p].tmul[tTrans]) / k.kp[0][p].tdiv[tTrans];
+		calctimes[0][tScale] = (basetime * k.kp[0][p].tmul[tScale]) / k.kp[0][p].tdiv[tScale];
+		calctimes[0][tNote] = (basetime * k.kp[0][p].tmul[tNote]) / k.kp[0][p].tdiv[tNote];
+		calctimes[0][tDur] = (basetime * k.kp[0][p].tmul[tDur]) / k.kp[0][p].tdiv[tDur];
+		calctimes[0][tOct] = (basetime * k.kp[0][p].tmul[tOct]) / k.kp[0][p].tdiv[tOct];
 		calctimes[0][tAc] = (basetime * k.kp[0][p].tmul[tAc]) / k.kp[0][p].tdiv[tAc];
 		calctimes[0][tTr] = (basetime * k.kp[0][p].tmul[tTr]) / k.kp[0][p].tdiv[tTr];
 
-		calctimes[1][tScale] = (basetime * k.kp[1][p].tmul[tScale]) / k.kp[1][p].tdiv[tScale];;
-		calctimes[1][tTrans] = (basetime * k.kp[1][p].tmul[tTrans]) / k.kp[1][p].tdiv[tTrans];;
-		calctimes[1][tNote] = (basetime * k.kp[1][p].tmul[tNote]) / k.kp[1][p].tdiv[tNote];;
-		calctimes[1][tDur] = (basetime * k.kp[1][p].tmul[tDur]) / k.kp[1][p].tdiv[tDur];;
-		calctimes[1][tOct] = (basetime * k.kp[1][p].tmul[tOct]) / k.kp[1][p].tdiv[tOct];;
+		calctimes[1][tTrans] = (basetime * k.kp[1][p].tmul[tTrans]) / k.kp[1][p].tdiv[tTrans];
+		calctimes[1][tScale] = (basetime * k.kp[1][p].tmul[tScale]) / k.kp[1][p].tdiv[tScale];
+		calctimes[1][tNote] = (basetime * k.kp[1][p].tmul[tNote]) / k.kp[1][p].tdiv[tNote];
+		calctimes[1][tDur] = (basetime * k.kp[1][p].tmul[tDur]) / k.kp[1][p].tdiv[tDur];
+		calctimes[1][tOct] = (basetime * k.kp[1][p].tmul[tOct]) / k.kp[1][p].tdiv[tOct];
 		calctimes[1][tAc] = (basetime * k.kp[1][p].tmul[tAc]) / k.kp[1][p].tdiv[tAc];
 		calctimes[1][tTr] = (basetime * k.kp[1][p].tmul[tTr]) / k.kp[1][p].tdiv[tTr];
 		// print_dbg("\r\nnew clock (ms): ");
@@ -1023,18 +1025,24 @@ static void handler_MonomeGridKey(s32 data) {
 				if(z) mode = mNote;
 			}
 			else if(x == 6) {
-				if(z) mode = mTrans;
-			}
-			else if(x == 7) {
 				if(z) mode = mScale;
 			}
+			else if(x == 7) {
+				if(z) mode = mTrans;
+			}
 			else if(x == 9) {
-				mod1 = z;
-				mod_mode = mod1 + (mod2 << 1);
+				if(z) {
+					mod_mode = modLoop;
+					loop_count = 0;
+				}
+				else
+					mod_mode = modNone;
 			}
 			else if(x == 10) {
-				mod2 = z;
-				mod_mode = mod1 + (mod2 << 1);
+				if(z)
+					mod_mode = modTime;
+				else
+					mod_mode = modNone;
 			}
 			else if(x == 0) {
 				if(z) {
@@ -1074,26 +1082,45 @@ static void handler_MonomeGridKey(s32 data) {
 					monomeFrameDirty++;
 				}
 			}
-			else if(mod_mode == modLoopSt) {
+			else if(mod_mode == modLoop) {
 				if(z) {
-					if(y==0)
-						adjust_loop_start(x, tTr);
-					else if(y==1)
-						adjust_loop_start(x, tAc);
-					else if(y>1)
-						adjust_loop_start(x, tOct);
+					loop_count++;
+
+					if(key_alt) {
+						if(y==0) {
+							adjust_loop_start(x, tTr);
+							adjust_loop_end(x, tTr);
+						}
+						else if(y==1) {
+							adjust_loop_start(x, tAc);
+							adjust_loop_end(x, tAc);
+						}
+						else if(y>1) {
+							adjust_loop_start(x, tOct);
+							adjust_loop_end(x, tOct);
+						}
+					}
+					else if(loop_count == 1) {
+						loop_edit = y;
+						if(y==0)
+							adjust_loop_start(x, tTr);
+						else if(y==1)
+							adjust_loop_start(x, tAc);
+						else if(y>1)
+							adjust_loop_start(x, tOct);
+					}
+					else if(y == loop_edit) {
+						if(y==0)
+							adjust_loop_end(x, tTr);
+						else if(y==1)
+							adjust_loop_end(x, tAc);
+						else if(y>1)
+							adjust_loop_end(x, tOct);
+					}
 					monomeFrameDirty++;
 				}
-			}
-			else if(mod_mode == modLoopEnd) {
-				if(z) {
-					if(y==0)
-						adjust_loop_end(x, tTr);
-					else if(y==1)
-						adjust_loop_end(x, tAc);
-					else if(y>1)
-						adjust_loop_end(x, tOct);
-					monomeFrameDirty++;
+				else {
+					loop_count--;
 				}
 			}
 			else if(mod_mode == modTime) {
@@ -1133,10 +1160,16 @@ static void handler_MonomeGridKey(s32 data) {
 					else {
 						if(mod_mode == modNone)
 							k.kp[ch][p].dur[x] = y-1;
-						else if(mod_mode == modLoopSt)
-							adjust_loop_start(x, tDur);
-						else if(mod_mode == modLoopEnd)
-							adjust_loop_end(x, tDur);
+						else if(mod_mode == modLoop) {
+							loop_count++;
+							if(key_alt) {
+								adjust_loop_start(x, tDur);
+								adjust_loop_end(x, tDur);
+							}
+							else if(loop_count == 1) 
+								adjust_loop_start(x, tDur);
+							else adjust_loop_end(x, tDur);
+						}
 					}
 				}
 				else {
@@ -1152,16 +1185,23 @@ static void handler_MonomeGridKey(s32 data) {
 
 				monomeFrameDirty++;
 			}
+			else if(mod_mode == modLoop) loop_count--;
 		}
 		else if(mode == mNote) {
 			if(z) {
 				if(mod_mode != modTime) {
 					if(mod_mode == modNone)
 						k.kp[ch][p].note[x] = 6-y;
-					else if(mod_mode == modLoopSt)
-						adjust_loop_start(x, tNote);
-					else if(mod_mode == modLoopEnd)
-						adjust_loop_end(x, tNote);
+					else if(mod_mode == modLoop) {
+						loop_count++;
+						if(key_alt) {
+							adjust_loop_start(x, tNote);
+							adjust_loop_end(x, tNote);
+						}
+						else if(loop_count == 1)
+							adjust_loop_start(x, tNote);
+						else adjust_loop_end(x, tNote);
+					}
 				}
 				else {
 					if(y == 0) {
@@ -1176,6 +1216,38 @@ static void handler_MonomeGridKey(s32 data) {
 
 				monomeFrameDirty++;
 			}
+			else if(mod_mode == modLoop) loop_count--;
+		}
+		else if(mode == mScale) {
+			if(z) {
+				if(mod_mode != modTime) {
+					if(mod_mode == modNone)
+						k.kp[ch][p].sc[x] = y;
+					else if(mod_mode == modLoop) {
+						loop_count++;
+						if(key_alt) {
+							adjust_loop_start(x, tScale);
+							adjust_loop_end(x, tScale);
+						}
+						else if(loop_count == 1) 
+							adjust_loop_start(x, tScale);
+						else adjust_loop_end(x, tScale);
+					}
+				}
+				else {
+					if(y == 0) {
+						k.kp[ch][p].tmul[tScale] = x+1;
+						calctimes[ch][tScale] = (basetime * k.kp[ch][p].tmul[tScale]) / k.kp[ch][p].tdiv[tScale];
+					}
+					else if(y == 1) {
+						k.kp[ch][p].tdiv[tScale] = x+1;
+						calctimes[ch][tScale] = (basetime * k.kp[ch][p].tmul[tScale]) / k.kp[ch][p].tdiv[tScale];
+					}
+				}
+				
+				monomeFrameDirty++;
+			}
+			else if(mod_mode == modLoop) loop_count--;
 		}
 		else if(mode == mTrans) {
 			if(z) {
@@ -1183,10 +1255,16 @@ static void handler_MonomeGridKey(s32 data) {
 					if(y == 0) {
 						if(mod_mode == modNone)
 							trans_edit = x;
-						else if(mod_mode == modLoopSt)
-							adjust_loop_start(x, tTrans);
-						else if(mod_mode == modLoopEnd)
-							adjust_loop_end(x, tTrans);
+						else if(mod_mode == modLoop) {
+							loop_count++;
+							if(key_alt) {
+								adjust_loop_start(x, tTrans);
+								adjust_loop_end(x, tTrans);
+							}
+							else if(loop_count == 1) 
+								adjust_loop_start(x, tTrans);
+							else adjust_loop_end(x, tTrans);
+						}
 					}
 					else
 						k.kp[ch][p].trans[trans_edit] = x + ((6-y)<<4);
@@ -1203,30 +1281,7 @@ static void handler_MonomeGridKey(s32 data) {
 				}
 				monomeFrameDirty++;
 			}
-		}
-		else if(mode == mScale) {
-			if(z) {
-				if(mod_mode != modTime) {
-					if(mod_mode == modNone)
-						k.kp[ch][p].sc[x] = y;
-					else if(mod_mode == modLoopSt)
-						adjust_loop_start(x, tScale);
-					else if(mod_mode == modLoopEnd)
-						adjust_loop_end(x, tScale);
-				}
-				else {
-					if(y == 0) {
-						k.kp[ch][p].tmul[tScale] = x+1;
-						calctimes[ch][tScale] = (basetime * k.kp[ch][p].tmul[tScale]) / k.kp[ch][p].tdiv[tScale];
-					}
-					else if(y == 1) {
-						k.kp[ch][p].tdiv[tScale] = x+1;
-						calctimes[ch][tScale] = (basetime * k.kp[ch][p].tmul[tScale]) / k.kp[ch][p].tdiv[tScale];
-					}
-				}
-				
-				monomeFrameDirty++;
-			}
+			else if(mod_mode == modLoop) loop_count--;
 		}
 		else if(mode == mScaleEdit) {
 			if(z) {
@@ -1280,6 +1335,7 @@ static void handler_MonomeGridKey(s32 data) {
 
 				monomeFrameDirty++;
 			}
+			else if(mod_mode == modLoop) loop_count--;
 		}
 		else if(mode==mPattern) {
 			if(z && y==0) {
@@ -1293,8 +1349,8 @@ static void handler_MonomeGridKey(s32 data) {
 							k.kp[i1][p_next].oct[i2] = k.kp[i1][p].oct[i2];
 							k.kp[i1][p_next].dur[i2] = k.kp[i1][p].dur[i2];
 							k.kp[i1][p_next].note[i2] = k.kp[i1][p].note[i2];
-							k.kp[i1][p_next].sc[i2] = k.kp[i1][p].sc[i2];
 							k.kp[i1][p_next].trans[i2] = k.kp[i1][p].trans[i2];
+							k.kp[i1][p_next].sc[i2] = k.kp[i1][p].sc[i2];
 						}
 
 						k.kp[i1][p_next].dur_mul = k.kp[i1][p].dur_mul;
@@ -1393,11 +1449,11 @@ static void refresh() {
 
 	for(i1=0;i1<5;i1++)
 		monomeLedBuffer[115+i1] = L0;
-	if(mode <= mScale) 
+	if(mode <= mTrans) 
 		monomeLedBuffer[115 + mode] = L2;
 
-	monomeLedBuffer[121] = L0 + (mod1 << 2);
-	monomeLedBuffer[122] = L0 + (mod2 << 2);
+	monomeLedBuffer[121] = L0 + ((mod_mode == modLoop) << 2);
+	monomeLedBuffer[122] = L0 + ((mod_mode == modTime) << 2);
 
 	monomeLedBuffer[124] = L0 + ((mode == mScaleEdit) << 2);
 	monomeLedBuffer[125] = L0 + ((mode == mPattern) << 2);
@@ -1412,7 +1468,7 @@ static void refresh() {
 			for(i1=0;i1<112;i1++)
 				monomeLedBuffer[i1] = 0;
 			
-			if(mod_mode == modLoopSt || mod_mode == modLoopEnd) {
+			if(mod_mode == modLoop) {
 				if(k.kp[ch][p].lswap[tTr]) {
 					for(i1=0;i1<k.kp[ch][p].llen[tTr];i1++)
 						monomeLedBuffer[(i1+k.kp[ch][p].lstart[tTr])%16] = L0;
@@ -1577,43 +1633,6 @@ static void refresh() {
 			monomeLedBuffer[k.kp[ch][p].tdiv[tNote] - 1 + 16] = L1;
 		}
 	}
-	else if(mode == mTrans) {
-		if(mod_mode != modTime) {
-			for(i1=0;i1<112;i1++)
-				monomeLedBuffer[i1] = 0;
-
-			if(mod_mode == modLoopSt || mod_mode == modLoopEnd) {
-				if(k.kp[ch][p].lswap[tTrans]) {
-					for(i1=0;i1<k.kp[ch][p].llen[tTrans];i1++)
-						monomeLedBuffer[(i1+k.kp[ch][p].lstart[tTrans])%16] = L0;
-				}
-				else {
-					for(i1=k.kp[ch][p].lstart[tTrans];i1<=k.kp[ch][p].lend[tTrans];i1++)
-						monomeLedBuffer[i1] = L0;
-				}
-			}
-
-			monomeLedBuffer[trans_edit] = L1;
-			monomeLedBuffer[pos[ch][tTrans]] += 4;
-
-			for(i1=0;i1<16;i1++) {
-				monomeLedBuffer[(k.kp[ch][p].trans[i1] & 0xf) + 16*(6-(k.kp[ch][p].trans[i1] >> 4))] = L0;
-			}
-
-			monomeLedBuffer[(k.kp[ch][p].trans[pos[ch][tTrans]] & 0xf) + 16*(6-(k.kp[ch][p].trans[pos[ch][tTrans]] >> 4))] += 4;
-			monomeLedBuffer[(k.kp[ch][p].trans[trans_edit] & 0xf) + 16*(6-(k.kp[ch][p].trans[trans_edit] >> 4))] = L2;
-		}
-		else {
-			for(i1=0;i1<112;i1++)
-				monomeLedBuffer[i1] = 0;
-
-			monomeLedBuffer[pos[ch][tTrans]] = L0;
-			monomeLedBuffer[pos[ch][tTrans]+16] = L0;
-
-			monomeLedBuffer[k.kp[ch][p].tmul[tTrans] - 1] = L2;
-			monomeLedBuffer[k.kp[ch][p].tdiv[tTrans] - 1 + 16] = L1;
-		}
-	}
 	else if(mode == mScale) {
 		if(mod_mode != modTime) {
 			for(i1=0;i1<112;i1++)
@@ -1651,6 +1670,43 @@ static void refresh() {
 
 			monomeLedBuffer[k.kp[ch][p].tmul[tScale] - 1] = L2;
 			monomeLedBuffer[k.kp[ch][p].tdiv[tScale] - 1 + 16] = L1;
+		}
+	}
+	else if(mode == mTrans) {
+		if(mod_mode != modTime) {
+			for(i1=0;i1<112;i1++)
+				monomeLedBuffer[i1] = 0;
+
+			if(mod_mode == modLoop) {
+				if(k.kp[ch][p].lswap[tTrans]) {
+					for(i1=0;i1<k.kp[ch][p].llen[tTrans];i1++)
+						monomeLedBuffer[(i1+k.kp[ch][p].lstart[tTrans])%16] = L0;
+				}
+				else {
+					for(i1=k.kp[ch][p].lstart[tTrans];i1<=k.kp[ch][p].lend[tTrans];i1++)
+						monomeLedBuffer[i1] = L0;
+				}
+			}
+
+			monomeLedBuffer[trans_edit] = L1;
+			monomeLedBuffer[pos[ch][tTrans]] += 4;
+
+			for(i1=0;i1<16;i1++) {
+				monomeLedBuffer[(k.kp[ch][p].trans[i1] & 0xf) + 16*(6-(k.kp[ch][p].trans[i1] >> 4))] = L0;
+			}
+
+			monomeLedBuffer[(k.kp[ch][p].trans[pos[ch][tTrans]] & 0xf) + 16*(6-(k.kp[ch][p].trans[pos[ch][tTrans]] >> 4))] += 4;
+			monomeLedBuffer[(k.kp[ch][p].trans[trans_edit] & 0xf) + 16*(6-(k.kp[ch][p].trans[trans_edit] >> 4))] = L2;
+		}
+		else {
+			for(i1=0;i1<112;i1++)
+				monomeLedBuffer[i1] = 0;
+
+			monomeLedBuffer[pos[ch][tTrans]] = L0;
+			monomeLedBuffer[pos[ch][tTrans]+16] = L0;
+
+			monomeLedBuffer[k.kp[ch][p].tmul[tTrans] - 1] = L2;
+			monomeLedBuffer[k.kp[ch][p].tdiv[tTrans] - 1 + 16] = L1;
 		}
 	}
 	else if(mode==mScaleEdit) {
@@ -1798,8 +1854,8 @@ void flash_read(void) {
 				k.kp[c][i1].oct[i2] = flashy.k[preset_select].kp[c][i1].oct[i2];
 				k.kp[c][i1].dur[i2] = flashy.k[preset_select].kp[c][i1].dur[i2];
 				k.kp[c][i1].note[i2] = flashy.k[preset_select].kp[c][i1].note[i2];
-				k.kp[c][i1].trans[i2] = flashy.k[preset_select].kp[c][i1].trans[i2];
 				k.kp[c][i1].sc[i2] = flashy.k[preset_select].kp[c][i1].sc[i2];
+				k.kp[c][i1].trans[i2] = flashy.k[preset_select].kp[c][i1].trans[i2];
 			}
 			k.kp[c][i1].dur_mul = flashy.k[preset_select].kp[c][i1].dur_mul;
 			for(i2=0;i2<NUM_PARAMS;i2++) {
@@ -1942,16 +1998,16 @@ int main(void)
 
 	timer_add(&note0offTimer,10000,&note0offTimer_callback, NULL);
 	timer_add(&sc0Timer,1000,&sc0Timer_callback, NULL);
-	timer_add(&trans0Timer,1000,&trans0Timer_callback, NULL);
 	timer_add(&note0Timer,1000,&note0Timer_callback, NULL);
+	timer_add(&trans0Timer,1000,&trans0Timer_callback, NULL);
 	timer_add(&dur0Timer,1000,&dur0Timer_callback, NULL);
 	timer_add(&oct0Timer,1000,&oct0Timer_callback, NULL);
 	timer_add(&ac0Timer,1000,&ac0Timer_callback, NULL);
 	timer_add(&tr0Timer,1000,&tr0Timer_callback, NULL);
 
 	timer_add(&note1offTimer,10000,&note1offTimer_callback, NULL);
-	timer_add(&sc1Timer,1000,&sc1Timer_callback, NULL);
 	timer_add(&trans1Timer,1000,&trans1Timer_callback, NULL);
+	timer_add(&sc1Timer,1000,&sc1Timer_callback, NULL);
 	timer_add(&note1Timer,1000,&note1Timer_callback, NULL);
 	timer_add(&dur1Timer,1000,&dur1Timer_callback, NULL);
 	timer_add(&oct1Timer,1000,&oct1Timer_callback, NULL);
