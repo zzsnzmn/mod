@@ -241,7 +241,7 @@ void clock(u8 phase) {
             cv_chosen[0] = found[0];
         else
             cv_chosen[0] = found[rnd() % count];
-        cv0 = w.wp[pattern].cv_values[cv_chosen[0]];
+        /* cv0 = w.wp[pattern].cv_values[cv_chosen[0]]; */
 
 
         // PARAM 1
@@ -544,530 +544,574 @@ static void handler_ClockNormal(s32 data) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // application grid code
-
+//
+//
 static void handler_MonomeGridKey(s32 data) {
+
+    /* 0, 68, 136, 170, 238, 306, 375, 409, 477, 545, 579, 647, 715, 784, 818,    886,                    // ionian [2, 2, 1, 2, 2, 2, 1] */
+
     u8 x, y, z, index, i1, found, count;
     s16 delta;
     monome_grid_key_parse_event_data(data, &x, &y, &z);
-    // print_dbg("\r\n monome event; x: ");
-    // print_dbg_hex(x);
-    // print_dbg("; y: 0x");
-    // print_dbg_hex(y);
-    // print_dbg("; z: 0x");
-    // print_dbg_hex(z);
 
-    //// TRACK LONG PRESSES
-    index = y*16 + x;
-    if(z) {
-        held_keys[key_count] = index;
-        key_count++;
-        key_times[index] = 10;        //// THRESHOLD key hold time
-    } else {
-        found = 0; // "found"
-        for(i1 = 0; i1<key_count; i1++) {
-            if(held_keys[i1] == index)
-                found++;
-            if(found)
-                held_keys[i1] = held_keys[i1+1];
-        }
-        key_count--;
-
-        // FAST PRESS
-        if(key_times[index] > 0) {
-            if(edit_mode != mSeries && preset_mode == 0) {
-                if(index/16 == 2) {
-                    i1 = index % 16;
-                    if(key_alt)
-                        next_pattern = i1;
-                    else {
-                        pattern = i1;
-                        next_pattern = i1;
-                    }
-                }
-            }
-            // PRESET MODE FAST PRESS DETECT
-            else if(preset_mode == 1) {
-                if(x == 0 && y != preset_select) {
-                    preset_select = y;
-                    for(i1=0;i1<8;i1++)
-                        glyph[i1] = flashy.glyph[preset_select][i1];
-                }
-                 else if(x==0 && y == preset_select) {
-                    flash_read();
-
-                    preset_mode = 0;
-                }
-            }
-            // print_dbg("\r\nfast press: ");
-            // print_dbg_ulong(index);
-            // print_dbg(": ");
-            // print_dbg_ulong(key_times[index]);
-        }
-    }
-
-    // PRESET SCREEN
-    if(preset_mode) {
-        // glyph magic
-        if(z && x>7) {
-            glyph[y] ^= 1<<(x-8);
-            monomeFrameDirty++;
-        }
-    }
-    // NOT PRESET
-    else {
-
-        // OPTIMIZE: order this if-branch by common priority/use
-        //// SORT
-
-        // cut position
-        if(y == 1) {
-            keycount_pos += z * 2 - 1;
-            if(keycount_pos < 0) keycount_pos = 0;
-            // print_dbg("\r\nkeycount: ");
-            // print_dbg_ulong(keycount_pos);
-
-            if(keycount_pos == 1 && z) {
-                if(key_alt == 0) {
-                    if(key_meta != 1) {
-                        next_pos = x;
-                        cut_pos++;
-                        monomeFrameDirty++;
-                    }
-                    keyfirst_pos = x;
-                }
-                else if(key_alt == 1) {
-                    if(x == LENGTH)
-                        w.wp[pattern].step_mode = mForward;
-                    else if(x == LENGTH-1)
-                        w.wp[pattern].step_mode = mReverse;
-                    else if(x == LENGTH-2)
-                        w.wp[pattern].step_mode = mDrunk;
-                    else if(x == LENGTH-3)
-                        w.wp[pattern].step_mode = mRandom;
-                    // FIXME
-                    else if(x == 0) {
-                        if(pos == w.wp[pattern].loop_start)
-                            next_pos = w.wp[pattern].loop_end;
-                        else if(pos == 0)
-                            next_pos = LENGTH;
-                        else next_pos--;
-                        cut_pos = 1;
-                        monomeFrameDirty++;
-                    }
-                    // FIXME
-                    else if(x == 1) {
-                        if(pos == w.wp[pattern].loop_end) next_pos = w.wp[pattern].loop_start;
-                        else if(pos == LENGTH) next_pos = 0;
-                        else next_pos++;
-                        cut_pos = 1;
-                        monomeFrameDirty++;
-                    }
-                    else if(x == 2 ) {
-                        next_pos = (rnd() % (w.wp[pattern].loop_len + 1)) + w.wp[pattern].loop_start;
-                        cut_pos = 1;
-                        monomeFrameDirty++;
-                    }
-                }
-            }
-            else if(keycount_pos == 2 && z) {
-                w.wp[pattern].loop_start = keyfirst_pos;
-                w.wp[pattern].loop_end = x;
-                 monomeFrameDirty++;
-                 if(w.wp[pattern].loop_start > w.wp[pattern].loop_end) w.wp[pattern].loop_dir = 2;
-                 else if(w.wp[pattern].loop_start == 0 && w.wp[pattern].loop_end == LENGTH) w.wp[pattern].loop_dir = 0;
-                 else w.wp[pattern].loop_dir = 1;
-
-                 w.wp[pattern].loop_len = w.wp[pattern].loop_end - w.wp[pattern].loop_start;
-
-                 if(w.wp[pattern].loop_dir == 2)
-                     w.wp[pattern].loop_len = (LENGTH - w.wp[pattern].loop_start) + w.wp[pattern].loop_end + 1;
-
-                // print_dbg("\r\nloop_len: ");
-                // print_dbg_ulong(w.wp[pattern].loop_len);
-            }
-        }
-
-        // top row
-        else if(y == 0) {
-            // XXX: alt key is pressed
-            // always top right 0
-            if(x == LENGTH) {
-                key_alt = z;
-                if(z == 0) {
-                    param_accept = 0;
-                    live_in = 0;
-                }
-                monomeFrameDirty++;
-            }
-            else if(x < 4 && z) {
-                if(key_alt)
-                    w.wp[pattern].tr_mode ^= 1;
-                else if(key_meta)
-                    w.tr_mute[x] ^= 1;
-                else
-                    edit_mode = mTrig;
-                edit_prob = 0;
-                param_accept = 0;
-                monomeFrameDirty++;
-            }
-            // XXX: 128
-            else if(SIZE==16 && x > 3 && x < 12 && z) {
-                // XXX: ZZ CODE
-                //
-                // next_pos = 0;
-                //
-                param_accept = 0;
-                edit_cv_ch = (x-4)/4;
-                edit_prob = 0;
-
-                if(key_alt)
-                    w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
-                else if(key_meta)
-                    w.cv_mute[edit_cv_ch] ^= 1;
-                else
-                    edit_mode = mMap;
-
-                monomeFrameDirty++;
-            }
-            // XXX: 64
-            else if(SIZE==8 && (x == 4 || x == 5) && z) {
-                param_accept = 0;
-                edit_cv_ch = x-4;
-                edit_mode = mMap;
-                edit_prob = 0;
-
-                if(key_alt)
-                    w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
-                else if(key_meta)
-                    w.cv_mute[edit_cv_ch] ^= 1;
-
-                monomeFrameDirty++;
-            }
-            else if(x == LENGTH-1 && z && key_alt) {
-                edit_mode = mSeries;
-                monomeFrameDirty++;
-            }
-            else if(x == LENGTH-1)
-                key_meta = z;
-        }
-
-
-        // toggle steps and prob control
-        else if(edit_mode == mTrig) {
-            if(z && y>3 && edit_prob == 0) {
-                if(key_alt)
-                    w.wp[pattern].steps[pos] |=  1 << (y-4);
-                else if(key_meta) {
-                    w.wp[pattern].step_choice ^= (1<<x);
-                }
-                else
-                    w.wp[pattern].steps[x] ^= (1<<(y-4));
-                monomeFrameDirty++;
-            }
-            // step probs
-            else if(z && y==3) {
-                if(key_alt)
-                    edit_prob = 1;
-                else {
-                    if(w.wp[pattern].step_probs[x] == 255) w.wp[pattern].step_probs[x] = 0;
-                    else w.wp[pattern].step_probs[x] = 255;
-                }
-                monomeFrameDirty++;
-            }
-            else if(edit_prob == 1) {
-                if(z) {
-                    if(y == 4) w.wp[pattern].step_probs[x] = 192;
-                    else if(y == 5) w.wp[pattern].step_probs[x] = 128;
-                    else if(y == 6) w.wp[pattern].step_probs[x] = 64;
-                    else w.wp[pattern].step_probs[x] = 0;
-                }
-            }
-        }
-
-        // edit map and probs
-        else if(edit_mode == mMap) {
-            // step probs
-            if(z && y==3) {
-                if(key_alt)
-                    edit_prob = 1;
-                else  {
-                    if(w.wp[pattern].cv_probs[edit_cv_ch][x] == 255) w.wp[pattern].cv_probs[edit_cv_ch][x] = 0;
-                    else w.wp[pattern].cv_probs[edit_cv_ch][x] = 255;
-                }
-
-                monomeFrameDirty++;
-            }
-            // edit data
-            else if(edit_prob == 0) {
-                // CURVES
-                // XXX: curves mode
-                if(w.wp[pattern].cv_mode[edit_cv_ch] == 0) {
-                    if(y == 4 && z) {
-                        if(center)
-                            delta = 3;
-                        else if(key_alt)
-                            delta = 409;
-                        else
-                            delta = 34;
-
-                        if(key_meta == 0) {
-                            // saturate
-                            if(w.wp[pattern].cv_curves[edit_cv_ch][x] + delta < 4092)
-                                w.wp[pattern].cv_curves[edit_cv_ch][x] += delta;
-                            else
-                                w.wp[pattern].cv_curves[edit_cv_ch][x] = 4092;
-                        }
-                        else {
-                            for(i1=0;i1<16;i1++) {
-                                // saturate
-                                if(w.wp[pattern].cv_curves[edit_cv_ch][i1] + delta < 4092)
-                                    w.wp[pattern].cv_curves[edit_cv_ch][i1] += delta;
-                                else
-                                    w.wp[pattern].cv_curves[edit_cv_ch][i1] = 4092;
-                            }
-                        }
-                    }
-                    else if(y == 6 && z) {
-                        if(center)
-                            delta = 3;
-                        else if(key_alt)
-                            delta = 409;
-                        else
-                            delta = 34;
-
-                        if(key_meta == 0) {
-                            // saturate
-                            if(w.wp[pattern].cv_curves[edit_cv_ch][x] > delta)
-                                w.wp[pattern].cv_curves[edit_cv_ch][x] -= delta;
-                            else
-                                w.wp[pattern].cv_curves[edit_cv_ch][x] = 0;
-                        }
-                        else {
-                            for(i1=0;i1<16;i1++) {
-                                // saturate
-                                if(w.wp[pattern].cv_curves[edit_cv_ch][i1] > delta)
-                                    w.wp[pattern].cv_curves[edit_cv_ch][i1] -= delta;
-                                else
-                                    w.wp[pattern].cv_curves[edit_cv_ch][i1] = 0;
-                            }
-                        }
-
-                    }
-                    else if(y == 5) {
-                        if(z == 1) {
-                             center = 1;
-                             if(quantize_in)
-                                 quantize_in = 0;
-                             else if(key_alt)
-                                w.wp[pattern].cv_curves[edit_cv_ch][x] = clip;
-                            else
-                                clip = w.wp[pattern].cv_curves[edit_cv_ch][x];
-                        }
-                        else
-                            center = 0;
-                    }
-                    else if(y == 7) {
-                        if(key_alt && z) {
-                            param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][pos];
-                            w.wp[pattern].cv_curves[edit_cv_ch][pos] = (adc[1] / 34) * 34;
-                            quantize_in = 1;
-                            param_accept = 1;
-                            live_in = 1;
-                        }
-                        else if(center && z) {
-                            if(key_meta == 0)
-                                w.wp[pattern].cv_curves[edit_cv_ch][x] = rand() % ((adc[1] / 34) * 34 + 1);
-                            else {
-                                for(i1=0;i1<16;i1++) {
-                                    w.wp[pattern].cv_curves[edit_cv_ch][i1] = rand() % ((adc[1] / 34) * 34 + 1);
-                                }
-                            }
-                        }
-                        else {
-                            param_accept = z;
-                            param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][x];
-                            if(z) {
-                                w.wp[pattern].cv_curves[edit_cv_ch][x] = (adc[1] / 34) * 34;
-                                quantize_in = 1;
-                            }
-                            else
-                                quantize_in = 0;
-                        }
-                        monomeFrameDirty++;
-                    }
-                }
-                // MAP
-                // XXX: map mode
-                else {
-                    if(scale_select && z) {
-                        // index -= 64;
-                        index = (y-4) * 8 + x;
-                        if(index < 24 && y<8) {
-                            for(i1=0;i1<16;i1++)
-                                w.wp[pattern].cv_values[i1] = SCALES[index][i1];
-                            print_dbg("\rNEW SCALE ");
-                            print_dbg_ulong(index);
-                        }
-
-                        scale_select = 0;
-                        monomeFrameDirty++;
-                    }
-                    else {
-                        if(z && y==4) {
-                            edit_cv_step = x;
-                            count = 0;
-                            for(i1=0;i1<16;i1++)
-                                    if((w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] >> i1) & 1) {
-                                        count++;
-                                        edit_cv_value = i1;
-                                    }
-                            if(count>1)
-                                edit_cv_value = -1;
-
-                            keycount_cv = 0;
-
-                            monomeFrameDirty++;
-                        }
-                        // load scale
-                        else if(key_alt && y==7 && x == 0 && z) {
-                            scale_select++;
-                            monomeFrameDirty++;
-                        }
-                        // read pot
-                        else if(y==7 && key_alt && edit_cv_value != -1 && x==LENGTH) {
-                            param_accept = z;
-                            param_dest = &(w.wp[pattern].cv_values[edit_cv_value]);
-                            // print_dbg("\r\nparam: ");
-                            // print_dbg_ulong(*param_dest);
-                        }
-                        else if((y == 5 || y == 6) && z && x<4 && edit_cv_step != -1) {
-                            delta = 0;
-                             if(x == 0)
-                                delta = 409;
-                            else if(x == 1)
-                                delta = 239;
-                            else if(x == 2)
-                                delta = 34;
-                            else if(x == 3)
-                                delta = 3;
-
-                            if(y == 6)
-                                delta *= -1;
-
-                            if(key_alt) {
-                                for(i1=0;i1<16;i1++) {
-                                    if(w.wp[pattern].cv_values[i1] + delta > 4092)
-                                        w.wp[pattern].cv_values[i1] = 4092;
-                                    else if(delta < 0 && w.wp[pattern].cv_values[i1] < -1*delta)
-                                        w.wp[pattern].cv_values[i1] = 0;
-                                    else
-                                        w.wp[pattern].cv_values[i1] += delta;
-                                }
-                            }
-                            else {
-                                if(w.wp[pattern].cv_values[edit_cv_value] + delta > 4092)
-                                    w.wp[pattern].cv_values[edit_cv_value] = 4092;
-                                else if(delta < 0 && w.wp[pattern].cv_values[edit_cv_value] < -1*delta)
-                                    w.wp[pattern].cv_values[edit_cv_value] = 0;
-                                else
-                                    w.wp[pattern].cv_values[edit_cv_value] += delta;
-                            }
-
-                            monomeFrameDirty++;
-                        }
-                        // choose values
-                        else if(y==7) {
-                            keycount_cv += z*2-1;
-                            if(keycount_cv < 0)
-                                keycount_cv = 0;
-
-                            if(z) {
-                                count = 0;
-                                for(i1=0;i1<16;i1++)
-                                    if((w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] >> i1) & 1)
-                                        count++;
-
-                                // single press toggle
-                                if(keycount_cv == 1 && count < 2) {
-                                    w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] = (1<<x);
-                                    edit_cv_value = x;
-                                }
-                                // multiselect
-                                else if(keycount_cv > 1 || count > 1) {
-                                    w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] ^= (1<<x);
-
-                                    if(!w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step])
-                                        w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] = (1<<x);
-
-                                    count = 0;
-                                    for(i1=0;i1<16;i1++)
-                                        if((w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] >> i1) & 1) {
-                                            count++;
-                                            edit_cv_value = i1;
-                                        }
-
-                                    if(count > 1)
-                                        edit_cv_value = -1;
-                                }
-
-                                monomeFrameDirty++;
-                            }
-                        }
-                    }
-                }
-            }
-            else if(edit_prob == 1) {
-                if(z) {
-                    if(y == 4) w.wp[pattern].cv_probs[edit_cv_ch][x] = 192;
-                    else if(y == 5) w.wp[pattern].cv_probs[edit_cv_ch][x] = 128;
-                    else if(y == 6) w.wp[pattern].cv_probs[edit_cv_ch][x] = 64;
-                    else w.wp[pattern].cv_probs[edit_cv_ch][x] = 0;
-                }
-            }
-        }
-
-        // series mode
-        else if(edit_mode == mSeries) {
-            if(z && key_alt) {
-                if(x == 0)
-                    series_next = y-2+scroll_pos;
-                else if(x == LENGTH-1)
-                    w.series_start = y-2+scroll_pos;
-                else if(x == LENGTH)
-                    w.series_end = y-2+scroll_pos;
-
-                if(w.series_end < w.series_start)
-                    w.series_end = w.series_start;
-            }
-            else {
-                keycount_series += z*2-1;
-                if(keycount_series < 0)
-                    keycount_series = 0;
-
-                if(z) {
-                    count = 0;
-                    for(i1=0;i1<16;i1++)
-                        count += (w.series_list[y-2+scroll_pos] >> i1) & 1;
-
-                    // single press toggle
-                    if(keycount_series == 1 && count < 2) {
-                        w.series_list[y-2+scroll_pos] = (1<<x);
-                    }
-                    // multi-select
-                    else if(keycount_series > 1 || count > 1) {
-                        w.series_list[y-2+scroll_pos] ^= (1<<x);
-
-                        // ensure not fully clear
-                        if(!w.series_list[y-2+scroll_pos])
-                            w.series_list[y-2+scroll_pos] = (1<<x);
-                    }
-                }
-            }
-
-            monomeFrameDirty++;
-        }
-    }
+    if(x == 0)
+        cv0 = 0;
+    if(x == 1)
+        cv0 = 68;
+    if(x == 2)
+        cv0 = 136;
+    if(x == 3)
+        cv0 = 170;
+    if(x == 4)
+        cv0 = 238;
+    if(x == 5)
+        cv0 = 306;
+    if(x == 6)
+        cv0 = 375;
+    if(x == 7)
+        cv0 = 409;
+    if(x == 8)
+        cv0 = 477;
+    if(x == 9)
+        cv0 = 545;
+    if(x == 10)
+        cv0 = 579;
+    if(x == 11)
+        cv0 = 647;
+    if(x == 12)
+        cv0 = 715;
+    if(x == 13)
+        cv0 = 784;
+    if(x == 14)
+        cv0 = 818;
+    if(x == 15)
+        cv0 = 886;
 }
+
+// XXX: monome event~
+// static void handler_MonomeGridKey(s32 data) {
+//     u8 x, y, z, index, i1, found, count;
+//     s16 delta;
+//     monome_grid_key_parse_event_data(data, &x, &y, &z);
+//     // print_dbg("\r\n monome event; x: ");
+//     // print_dbg_hex(x);
+//     // print_dbg("; y: 0x");
+//     // print_dbg_hex(y);
+//     // print_dbg("; z: 0x");
+//     // print_dbg_hex(z);
+//
+//     //// TRACK LONG PRESSES
+//     index = y*16 + x;
+//     if(z) {
+//         held_keys[key_count] = index;
+//         key_count++;
+//         key_times[index] = 10;        //// THRESHOLD key hold time
+//     } else {
+//         found = 0; // "found"
+//         for(i1 = 0; i1<key_count; i1++) {
+//             if(held_keys[i1] == index)
+//                 found++;
+//             if(found)
+//                 held_keys[i1] = held_keys[i1+1];
+//         }
+//         key_count--;
+//
+//         // FAST PRESS
+//         if(key_times[index] > 0) {
+//             if(edit_mode != mSeries && preset_mode == 0) {
+//                 if(index/16 == 2) {
+//                     i1 = index % 16;
+//                     if(key_alt)
+//                         next_pattern = i1;
+//                     else {
+//                         pattern = i1;
+//                         next_pattern = i1;
+//                     }
+//                 }
+//             }
+//             // PRESET MODE FAST PRESS DETECT
+//             else if(preset_mode == 1) {
+//                 if(x == 0 && y != preset_select) {
+//                     preset_select = y;
+//                     for(i1=0;i1<8;i1++)
+//                         glyph[i1] = flashy.glyph[preset_select][i1];
+//                 }
+//                  else if(x==0 && y == preset_select) {
+//                     flash_read();
+//
+//                     preset_mode = 0;
+//                 }
+//             }
+//             // print_dbg("\r\nfast press: ");
+//             // print_dbg_ulong(index);
+//             // print_dbg(": ");
+//             // print_dbg_ulong(key_times[index]);
+//         }
+//     }
+//
+//     // PRESET SCREEN
+//     if(preset_mode) {
+//         // glyph magic
+//         if(z && x>7) {
+//             glyph[y] ^= 1<<(x-8);
+//             monomeFrameDirty++;
+//         }
+//     }
+//     // NOT PRESET
+//     else {
+//
+//         // OPTIMIZE: order this if-branch by common priority/use
+//         //// SORT
+//
+//         // cut position
+//         if(y == 1) {
+//             keycount_pos += z * 2 - 1;
+//             if(keycount_pos < 0) keycount_pos = 0;
+//             // print_dbg("\r\nkeycount: ");
+//             // print_dbg_ulong(keycount_pos);
+//
+//             if(keycount_pos == 1 && z) {
+//                 if(key_alt == 0) {
+//                     if(key_meta != 1) {
+//                         next_pos = x;
+//                         cut_pos++;
+//                         monomeFrameDirty++;
+//                     }
+//                     keyfirst_pos = x;
+//                 }
+//                 else if(key_alt == 1) {
+//                     if(x == LENGTH)
+//                         w.wp[pattern].step_mode = mForward;
+//                     else if(x == LENGTH-1)
+//                         w.wp[pattern].step_mode = mReverse;
+//                     else if(x == LENGTH-2)
+//                         w.wp[pattern].step_mode = mDrunk;
+//                     else if(x == LENGTH-3)
+//                         w.wp[pattern].step_mode = mRandom;
+//                     // FIXME
+//                     else if(x == 0) {
+//                         if(pos == w.wp[pattern].loop_start)
+//                             next_pos = w.wp[pattern].loop_end;
+//                         else if(pos == 0)
+//                             next_pos = LENGTH;
+//                         else next_pos--;
+//                         cut_pos = 1;
+//                         monomeFrameDirty++;
+//                     }
+//                     // FIXME
+//                     else if(x == 1) {
+//                         if(pos == w.wp[pattern].loop_end) next_pos = w.wp[pattern].loop_start;
+//                         else if(pos == LENGTH) next_pos = 0;
+//                         else next_pos++;
+//                         cut_pos = 1;
+//                         monomeFrameDirty++;
+//                     }
+//                     else if(x == 2 ) {
+//                         next_pos = (rnd() % (w.wp[pattern].loop_len + 1)) + w.wp[pattern].loop_start;
+//                         cut_pos = 1;
+//                         monomeFrameDirty++;
+//                     }
+//                 }
+//             }
+//             else if(keycount_pos == 2 && z) {
+//                 w.wp[pattern].loop_start = keyfirst_pos;
+//                 w.wp[pattern].loop_end = x;
+//                  monomeFrameDirty++;
+//                  if(w.wp[pattern].loop_start > w.wp[pattern].loop_end) w.wp[pattern].loop_dir = 2;
+//                  else if(w.wp[pattern].loop_start == 0 && w.wp[pattern].loop_end == LENGTH) w.wp[pattern].loop_dir = 0;
+//                  else w.wp[pattern].loop_dir = 1;
+//
+//                  w.wp[pattern].loop_len = w.wp[pattern].loop_end - w.wp[pattern].loop_start;
+//
+//                  if(w.wp[pattern].loop_dir == 2)
+//                      w.wp[pattern].loop_len = (LENGTH - w.wp[pattern].loop_start) + w.wp[pattern].loop_end + 1;
+//
+//                 // print_dbg("\r\nloop_len: ");
+//                 // print_dbg_ulong(w.wp[pattern].loop_len);
+//             }
+//         }
+//
+//         // top row
+//         else if(y == 0) {
+//             // XXX: alt key is pressed
+//             // always top right 0
+//             if(x == LENGTH) {
+//                 key_alt = z;
+//                 if(z == 0) {
+//                     param_accept = 0;
+//                     live_in = 0;
+//                 }
+//                 monomeFrameDirty++;
+//             }
+//             else if(x < 4 && z) {
+//                 if(key_alt)
+//                     w.wp[pattern].tr_mode ^= 1;
+//                 else if(key_meta)
+//                     w.tr_mute[x] ^= 1;
+//                 else
+//                     edit_mode = mTrig;
+//                 edit_prob = 0;
+//                 param_accept = 0;
+//                 monomeFrameDirty++;
+//             }
+//             // XXX: 128
+//             else if(SIZE==16 && x > 3 && x < 12 && z) {
+//                 // XXX: ZZ CODE
+//                 //
+//                 // next_pos = 0;
+//                 //
+//                 param_accept = 0;
+//                 edit_cv_ch = (x-4)/4;
+//                 edit_prob = 0;
+//
+//                 if(key_alt)
+//                     w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
+//                 else if(key_meta)
+//                     w.cv_mute[edit_cv_ch] ^= 1;
+//                 else
+//                     edit_mode = mMap;
+//
+//                 monomeFrameDirty++;
+//             }
+//             // XXX: 64
+//             else if(SIZE==8 && (x == 4 || x == 5) && z) {
+//                 param_accept = 0;
+//                 edit_cv_ch = x-4;
+//                 edit_mode = mMap;
+//                 edit_prob = 0;
+//
+//                 if(key_alt)
+//                     w.wp[pattern].cv_mode[edit_cv_ch] ^= 1;
+//                 else if(key_meta)
+//                     w.cv_mute[edit_cv_ch] ^= 1;
+//
+//                 monomeFrameDirty++;
+//             }
+//             else if(x == LENGTH-1 && z && key_alt) {
+//                 edit_mode = mSeries;
+//                 monomeFrameDirty++;
+//             }
+//             else if(x == LENGTH-1)
+//                 key_meta = z;
+//         }
+//
+//
+//         // toggle steps and prob control
+//         else if(edit_mode == mTrig) {
+//             if(z && y>3 && edit_prob == 0) {
+//                 if(key_alt)
+//                     w.wp[pattern].steps[pos] |=  1 << (y-4);
+//                 else if(key_meta) {
+//                     w.wp[pattern].step_choice ^= (1<<x);
+//                 }
+//                 else
+//                     w.wp[pattern].steps[x] ^= (1<<(y-4));
+//                 monomeFrameDirty++;
+//             }
+//             // step probs
+//             else if(z && y==3) {
+//                 if(key_alt)
+//                     edit_prob = 1;
+//                 else {
+//                     if(w.wp[pattern].step_probs[x] == 255) w.wp[pattern].step_probs[x] = 0;
+//                     else w.wp[pattern].step_probs[x] = 255;
+//                 }
+//                 monomeFrameDirty++;
+//             }
+//             else if(edit_prob == 1) {
+//                 if(z) {
+//                     if(y == 4) w.wp[pattern].step_probs[x] = 192;
+//                     else if(y == 5) w.wp[pattern].step_probs[x] = 128;
+//                     else if(y == 6) w.wp[pattern].step_probs[x] = 64;
+//                     else w.wp[pattern].step_probs[x] = 0;
+//                 }
+//             }
+//         }
+//
+//         // edit map and probs
+//         else if(edit_mode == mMap) {
+//             // step probs
+//             if(z && y==3) {
+//                 if(key_alt)
+//                     edit_prob = 1;
+//                 else  {
+//                     if(w.wp[pattern].cv_probs[edit_cv_ch][x] == 255) w.wp[pattern].cv_probs[edit_cv_ch][x] = 0;
+//                     else w.wp[pattern].cv_probs[edit_cv_ch][x] = 255;
+//                 }
+//
+//                 monomeFrameDirty++;
+//             }
+//             // edit data
+//             else if(edit_prob == 0) {
+//                 // CURVES
+//                 // XXX: curves mode
+//                 if(w.wp[pattern].cv_mode[edit_cv_ch] == 0) {
+//                     if(y == 4 && z) {
+//                         if(center)
+//                             delta = 3;
+//                         else if(key_alt)
+//                             delta = 409;
+//                         else
+//                             delta = 34;
+//
+//                         if(key_meta == 0) {
+//                             // saturate
+//                             if(w.wp[pattern].cv_curves[edit_cv_ch][x] + delta < 4092)
+//                                 w.wp[pattern].cv_curves[edit_cv_ch][x] += delta;
+//                             else
+//                                 w.wp[pattern].cv_curves[edit_cv_ch][x] = 4092;
+//                         }
+//                         else {
+//                             for(i1=0;i1<16;i1++) {
+//                                 // saturate
+//                                 if(w.wp[pattern].cv_curves[edit_cv_ch][i1] + delta < 4092)
+//                                     w.wp[pattern].cv_curves[edit_cv_ch][i1] += delta;
+//                                 else
+//                                     w.wp[pattern].cv_curves[edit_cv_ch][i1] = 4092;
+//                             }
+//                         }
+//                     }
+//                     else if(y == 6 && z) {
+//                         if(center)
+//                             delta = 3;
+//                         else if(key_alt)
+//                             delta = 409;
+//                         else
+//                             delta = 34;
+//
+//                         if(key_meta == 0) {
+//                             // saturate
+//                             if(w.wp[pattern].cv_curves[edit_cv_ch][x] > delta)
+//                                 w.wp[pattern].cv_curves[edit_cv_ch][x] -= delta;
+//                             else
+//                                 w.wp[pattern].cv_curves[edit_cv_ch][x] = 0;
+//                         }
+//                         else {
+//                             for(i1=0;i1<16;i1++) {
+//                                 // saturate
+//                                 if(w.wp[pattern].cv_curves[edit_cv_ch][i1] > delta)
+//                                     w.wp[pattern].cv_curves[edit_cv_ch][i1] -= delta;
+//                                 else
+//                                     w.wp[pattern].cv_curves[edit_cv_ch][i1] = 0;
+//                             }
+//                         }
+//
+//                     }
+//                     else if(y == 5) {
+//                         if(z == 1) {
+//                              center = 1;
+//                              if(quantize_in)
+//                                  quantize_in = 0;
+//                              else if(key_alt)
+//                                 w.wp[pattern].cv_curves[edit_cv_ch][x] = clip;
+//                             else
+//                                 clip = w.wp[pattern].cv_curves[edit_cv_ch][x];
+//                         }
+//                         else
+//                             center = 0;
+//                     }
+//                     else if(y == 7) {
+//                         if(key_alt && z) {
+//                             param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][pos];
+//                             w.wp[pattern].cv_curves[edit_cv_ch][pos] = (adc[1] / 34) * 34;
+//                             quantize_in = 1;
+//                             param_accept = 1;
+//                             live_in = 1;
+//                         }
+//                         else if(center && z) {
+//                             if(key_meta == 0)
+//                                 w.wp[pattern].cv_curves[edit_cv_ch][x] = rand() % ((adc[1] / 34) * 34 + 1);
+//                             else {
+//                                 for(i1=0;i1<16;i1++) {
+//                                     w.wp[pattern].cv_curves[edit_cv_ch][i1] = rand() % ((adc[1] / 34) * 34 + 1);
+//                                 }
+//                             }
+//                         }
+//                         else {
+//                             param_accept = z;
+//                             param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][x];
+//                             if(z) {
+//                                 w.wp[pattern].cv_curves[edit_cv_ch][x] = (adc[1] / 34) * 34;
+//                                 quantize_in = 1;
+//                             }
+//                             else
+//                                 quantize_in = 0;
+//                         }
+//                         monomeFrameDirty++;
+//                     }
+//                 }
+//                 // MAP
+//                 // XXX: map mode
+//                 else {
+//                     if(scale_select && z) {
+//                         // index -= 64;
+//                         index = (y-4) * 8 + x;
+//                         if(index < 24 && y<8) {
+//                             for(i1=0;i1<16;i1++)
+//                                 w.wp[pattern].cv_values[i1] = SCALES[index][i1];
+//                             print_dbg("\rNEW SCALE ");
+//                             print_dbg_ulong(index);
+//                         }
+//
+//                         scale_select = 0;
+//                         monomeFrameDirty++;
+//                     }
+//                     else {
+//                         if(z && y==4) {
+//                             edit_cv_step = x;
+//                             count = 0;
+//                             for(i1=0;i1<16;i1++)
+//                                     if((w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] >> i1) & 1) {
+//                                         count++;
+//                                         edit_cv_value = i1;
+//                                     }
+//                             if(count>1)
+//                                 edit_cv_value = -1;
+//
+//                             keycount_cv = 0;
+//
+//                             monomeFrameDirty++;
+//                         }
+//                         // load scale
+//                         else if(key_alt && y==7 && x == 0 && z) {
+//                             scale_select++;
+//                             monomeFrameDirty++;
+//                         }
+//                         // read pot
+//                         else if(y==7 && key_alt && edit_cv_value != -1 && x==LENGTH) {
+//                             param_accept = z;
+//                             param_dest = &(w.wp[pattern].cv_values[edit_cv_value]);
+//                             // print_dbg("\r\nparam: ");
+//                             // print_dbg_ulong(*param_dest);
+//                         }
+//                         else if((y == 5 || y == 6) && z && x<4 && edit_cv_step != -1) {
+//                             delta = 0;
+//                              if(x == 0)
+//                                 delta = 409;
+//                             else if(x == 1)
+//                                 delta = 239;
+//                             else if(x == 2)
+//                                 delta = 34;
+//                             else if(x == 3)
+//                                 delta = 3;
+//
+//                             if(y == 6)
+//                                 delta *= -1;
+//
+//                             if(key_alt) {
+//                                 for(i1=0;i1<16;i1++) {
+//                                     if(w.wp[pattern].cv_values[i1] + delta > 4092)
+//                                         w.wp[pattern].cv_values[i1] = 4092;
+//                                     else if(delta < 0 && w.wp[pattern].cv_values[i1] < -1*delta)
+//                                         w.wp[pattern].cv_values[i1] = 0;
+//                                     else
+//                                         w.wp[pattern].cv_values[i1] += delta;
+//                                 }
+//                             }
+//                             else {
+//                                 if(w.wp[pattern].cv_values[edit_cv_value] + delta > 4092)
+//                                     w.wp[pattern].cv_values[edit_cv_value] = 4092;
+//                                 else if(delta < 0 && w.wp[pattern].cv_values[edit_cv_value] < -1*delta)
+//                                     w.wp[pattern].cv_values[edit_cv_value] = 0;
+//                                 else
+//                                     w.wp[pattern].cv_values[edit_cv_value] += delta;
+//                             }
+//
+//                             monomeFrameDirty++;
+//                         }
+//                         // choose values
+//                         else if(y==7) {
+//                             keycount_cv += z*2-1;
+//                             if(keycount_cv < 0)
+//                                 keycount_cv = 0;
+//
+//                             if(z) {
+//                                 count = 0;
+//                                 for(i1=0;i1<16;i1++)
+//                                     if((w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] >> i1) & 1)
+//                                         count++;
+//
+//                                 // single press toggle
+//                                 if(keycount_cv == 1 && count < 2) {
+//                                     w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] = (1<<x);
+//                                     edit_cv_value = x;
+//                                 }
+//                                 // multiselect
+//                                 else if(keycount_cv > 1 || count > 1) {
+//                                     w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] ^= (1<<x);
+//
+//                                     if(!w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step])
+//                                         w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] = (1<<x);
+//
+//                                     count = 0;
+//                                     for(i1=0;i1<16;i1++)
+//                                         if((w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] >> i1) & 1) {
+//                                             count++;
+//                                             edit_cv_value = i1;
+//                                         }
+//
+//                                     if(count > 1)
+//                                         edit_cv_value = -1;
+//                                 }
+//
+//                                 monomeFrameDirty++;
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//             else if(edit_prob == 1) {
+//                 if(z) {
+//                     if(y == 4) w.wp[pattern].cv_probs[edit_cv_ch][x] = 192;
+//                     else if(y == 5) w.wp[pattern].cv_probs[edit_cv_ch][x] = 128;
+//                     else if(y == 6) w.wp[pattern].cv_probs[edit_cv_ch][x] = 64;
+//                     else w.wp[pattern].cv_probs[edit_cv_ch][x] = 0;
+//                 }
+//             }
+//         }
+//
+//         // series mode
+//         else if(edit_mode == mSeries) {
+//             if(z && key_alt) {
+//                 if(x == 0)
+//                     series_next = y-2+scroll_pos;
+//                 else if(x == LENGTH-1)
+//                     w.series_start = y-2+scroll_pos;
+//                 else if(x == LENGTH)
+//                     w.series_end = y-2+scroll_pos;
+//
+//                 if(w.series_end < w.series_start)
+//                     w.series_end = w.series_start;
+//             }
+//             else {
+//                 keycount_series += z*2-1;
+//                 if(keycount_series < 0)
+//                     keycount_series = 0;
+//
+//                 if(z) {
+//                     count = 0;
+//                     for(i1=0;i1<16;i1++)
+//                         count += (w.series_list[y-2+scroll_pos] >> i1) & 1;
+//
+//                     // single press toggle
+//                     if(keycount_series == 1 && count < 2) {
+//                         w.series_list[y-2+scroll_pos] = (1<<x);
+//                     }
+//                     // multi-select
+//                     else if(keycount_series > 1 || count > 1) {
+//                         w.series_list[y-2+scroll_pos] ^= (1<<x);
+//
+//                         // ensure not fully clear
+//                         if(!w.series_list[y-2+scroll_pos])
+//                             w.series_list[y-2+scroll_pos] = (1<<x);
+//                     }
+//                 }
+//             }
+//
+//             monomeFrameDirty++;
+//         }
+//     }
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 // application grid redraw
