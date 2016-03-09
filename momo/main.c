@@ -443,7 +443,6 @@ void clock(u8 phase) {
 			gpio_clr_gpio_pin(B03);
 		}
  	}
-
 	// print_dbg("\r\n pos: ");
 	// print_dbg_ulong(pos);
 }
@@ -551,7 +550,6 @@ static void handler_MonomeConnect(s32 data) {
 	for(i1=0;i1<16;i1++)
 		if(w.wp[i1].loop_end > LENGTH)
 			w.wp[i1].loop_end = LENGTH;
-
 
 	// monome_set_quadrant_flag(0);
 	// monome_set_quadrant_flag(1);

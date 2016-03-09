@@ -393,6 +393,7 @@ static void handler_MonomeConnect(s32 data) {
     // print_dbg("\r monome vari: ");
     // print_dbg_ulong(VARI);
 
+    // here is where re is defined--- function pointer....
     if(VARI) re = &refresh;
     else re = &refresh_mono;
 
@@ -406,7 +407,10 @@ static void handler_MonomeConnect(s32 data) {
     timers_set_monome();
 }
 
-static void handler_MonomePoll(s32 data) { monome_read_serial(); }
+static void handler_MonomePoll(s32 data) {
+    monome_read_serial();
+}
+
 static void handler_MonomeRefresh(s32 data) {
     if(monomeFrameDirty) {
         if(preset_mode == 0) (*re)(); //refresh_mono();
@@ -415,7 +419,6 @@ static void handler_MonomeRefresh(s32 data) {
         (*monome_refresh)();
     }
 }
-
 
 static void handler_Front(s32 data) {
     print_dbg("\r\n FRONT HOLD");
@@ -481,6 +484,7 @@ static void handler_SaveFlash(s32 data) {
     flash_write();
 }
 
+// spooky territory
 static void handler_KeyTimer(s32 data) {
     static u16 i1,x,n1;
 
@@ -496,57 +500,36 @@ static void handler_KeyTimer(s32 data) {
         else front_timer--;
     }
 
+    // loop through all keys held down
     for(i1=0;i1<key_count;i1++) {
-        if(key_times[held_keys[i1]])
-        if(--key_times[held_keys[i1]]==0) {
-            if(edit_mode != mSeries && preset_mode == 0) {
-                // preset copy
-                if(held_keys[i1] / 16 == 2) {
-                    x = held_keys[i1] % 16;
-                    for(n1=0;n1<16;n1++) {
-                        w.wp[x].steps[n1] = w.wp[pattern].steps[n1];
-                        w.wp[x].step_probs[n1] = w.wp[pattern].step_probs[n1];
-                        w.wp[x].cv_values[n1] = w.wp[pattern].cv_values[n1];
-                        w.wp[x].cv_steps[0][n1] = w.wp[pattern].cv_steps[0][n1];
-                        w.wp[x].cv_curves[0][n1] = w.wp[pattern].cv_curves[0][n1];
-                        w.wp[x].cv_probs[0][n1] = w.wp[pattern].cv_probs[0][n1];
-                        w.wp[x].cv_steps[1][n1] = w.wp[pattern].cv_steps[1][n1];
-                        w.wp[x].cv_curves[1][n1] = w.wp[pattern].cv_curves[1][n1];
-                        w.wp[x].cv_probs[1][n1] = w.wp[pattern].cv_probs[1][n1];
+        // FIXME
+        if(key_times[held_keys[i1]]) {
+            if(--key_times[held_keys[i1]]==0) {
+                if(edit_mode != mSeries && preset_mode == 0) {
+                    // preset copy
+                    if(held_keys[i1] / 16 == 2) {
+                        x = held_keys[i1] % 16;
+                        // for ( shared variable in variables struct A)
+                        //  copy to struct B
+
+                        monomeFrameDirty++;
+
+                        // print_dbg("\r\n saved pattern: ");
                     }
-
-                    w.wp[x].cv_mode[0] = w.wp[pattern].cv_mode[0];
-                    w.wp[x].cv_mode[1] = w.wp[pattern].cv_mode[1];
-
-                    w.wp[x].loop_start = w.wp[pattern].loop_start;
-                    w.wp[x].loop_end = w.wp[pattern].loop_end;
-                    w.wp[x].loop_len = w.wp[pattern].loop_len;
-                    w.wp[x].loop_dir = w.wp[pattern].loop_dir;
-
-                    w.wp[x].tr_mode = w.wp[pattern].tr_mode;
-                    w.wp[x].step_mode = w.wp[pattern].step_mode;
-
-                    pattern = x;
-                    next_pattern = x;
-                    monomeFrameDirty++;
-
-                    // print_dbg("\r\n saved pattern: ");
-                    // print_dbg_ulong(x);
                 }
-            }
-            else if(preset_mode == 1) {
-                if(held_keys[i1] % 16 == 0) {
-                    preset_select = held_keys[i1] / 16;
-                    // flash_write();
-                    static event_t e;
-                    e.type = kEventSaveFlash;
-                    event_post(&e);
-                    preset_mode = 0;
+                else if(preset_mode == 1) {
+                    if(held_keys[i1] % 16 == 0) {
+                        preset_select = held_keys[i1] / 16;
+                        // flash_write();
+                        static event_t e;
+                        e.type = kEventSaveFlash;
+                        event_post(&e);
+                        preset_mode = 0;
+                    }
                 }
+                // print_dbg("\rlong press: ");
+                // print_dbg_ulong(held_keys[i1]);
             }
-
-            // print_dbg("\rlong press: ");
-            // print_dbg_ulong(held_keys[i1]);
         }
     }
 }
@@ -1088,504 +1071,311 @@ static void handler_MonomeGridKey(s32 data) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // application grid redraw
+//
+//
+//
+//
+//
+//
 static void refresh() {
     u8 i1,i2;
 
-
+    if(monomeLedBuffer[0] > 15) {
+        i2 = -1;
+    } else if(monomeLedBuffer[0] < 1) {
+        i2 = 1;
+    }
     // clear top, cut, pattern, prob
-    for(i1=0;i1<16;i1++) {
-        monomeLedBuffer[i1] = 0;
-        monomeLedBuffer[16+i1] = 0;
-        monomeLedBuffer[32+i1] = 4;
-        monomeLedBuffer[48+i1] = 0;
-    }
-
-    // dim mode
-    if(edit_mode == mTrig) {
-        monomeLedBuffer[0] = 4;
-        monomeLedBuffer[1] = 4;
-        monomeLedBuffer[2] = 4;
-        monomeLedBuffer[3] = 4;
-    }
-    else if(edit_mode == mMap) {
-        if(SIZE==16) {
-            monomeLedBuffer[4+(edit_cv_ch*4)] = 4;
-            monomeLedBuffer[5+(edit_cv_ch*4)] = 4;
-            monomeLedBuffer[6+(edit_cv_ch*4)] = 4;
-            monomeLedBuffer[7+(edit_cv_ch*4)] = 4;
+    for(i1=0;i1<128;i1+=2) {
+        if(monomeLedBuffer <= 0) {
+            monomeLedBuffer[i1] = 15;
         }
-        else
-            monomeLedBuffer[4+edit_cv_ch] = 4;
-    }
-    else if(edit_mode == mSeries) {
-        monomeLedBuffer[LENGTH-1] = 7;
-    }
-
-    // alt
-    monomeLedBuffer[LENGTH] = 4;
-    if(key_alt) monomeLedBuffer[LENGTH] = 11;
-
-    // show mutes or on steps
-    if(key_meta) {
-        if(w.tr_mute[0]) monomeLedBuffer[0] = 11;
-        if(w.tr_mute[1]) monomeLedBuffer[1] = 11;
-        if(w.tr_mute[2]) monomeLedBuffer[2] = 11;
-        if(w.tr_mute[3]) monomeLedBuffer[3] = 11;
-    }
-    else if(triggered) {
-        if(triggered & 0x1 && w.tr_mute[0]) monomeLedBuffer[0] = 11 - 4 * w.wp[pattern].tr_mode;
-        if(triggered & 0x2 && w.tr_mute[1]) monomeLedBuffer[1] = 11 - 4 * w.wp[pattern].tr_mode;
-        if(triggered & 0x4 && w.tr_mute[2]) monomeLedBuffer[2] = 11 - 4 * w.wp[pattern].tr_mode;
-        if(triggered & 0x8 && w.tr_mute[3]) monomeLedBuffer[3] = 11 - 4 * w.wp[pattern].tr_mode;
-    }
-
-    // cv indication
-    if(key_meta) {
-        if(SIZE==16) {
-            if(w.cv_mute[0]) {
-                monomeLedBuffer[4] = 11;
-                monomeLedBuffer[5] = 11;
-                monomeLedBuffer[6] = 11;
-                monomeLedBuffer[7] = 11;
-            }
-            if(w.cv_mute[1]) {
-                monomeLedBuffer[8] = 11;
-                monomeLedBuffer[9] = 11;
-                monomeLedBuffer[10] = 11;
-                monomeLedBuffer[11] = 11;
-            }
-        }
-        else {
-            if(w.cv_mute[0])
-                monomeLedBuffer[4] = 11;
-            if(w.cv_mute[1])
-                monomeLedBuffer[5] = 11;
-        }
-
-    }
-    else if(SIZE==16) {
-        monomeLedBuffer[cv0 / 1024 + 4] = 11;
-        monomeLedBuffer[cv1 / 1024 + 8] = 11;
-    }
-
-    // show pos loop dim
-    if(w.wp[pattern].loop_dir) {
-        for(i1=0;i1<SIZE;i1++) {
-            if(w.wp[pattern].loop_dir == 1 && i1 >= w.wp[pattern].loop_start && i1 <= w.wp[pattern].loop_end)
-                monomeLedBuffer[16+i1] = 4;
-            else if(w.wp[pattern].loop_dir == 2 && (i1 <= w.wp[pattern].loop_end || i1 >= w.wp[pattern].loop_start))
-                monomeLedBuffer[16+i1] = 4;
-        }
-    }
-
-    // show position and next cut
-    if(cut_pos) monomeLedBuffer[16+next_pos] = 7;
-    monomeLedBuffer[16+pos] = 15;
-
-    // show pattern
-    monomeLedBuffer[32+pattern] = 11;
-    if(pattern != next_pattern) monomeLedBuffer[32+next_pattern] = 7;
-
-    // show step data
-    if(edit_mode == mTrig) {
-        if(edit_prob == 0) {
-            for(i1=0;i1<SIZE;i1++) {
-                 for(i2=0;i2<4;i2++) {
-                    if((w.wp[pattern].steps[i1] & (1<<i2)) && i1 == pos && (triggered & 1<<i2) && w.tr_mute[i2]) monomeLedBuffer[(i2+4)*16+i1] = 11;
-                    else if(w.wp[pattern].steps[i1] & (1<<i2) && (w.wp[pattern].step_choice & 1<<i1)) monomeLedBuffer[(i2+4)*16+i1] = 4;
-                    else if(w.wp[pattern].steps[i1] & (1<<i2)) monomeLedBuffer[(i2+4)*16+i1] = 7;
-                    else if(i1 == pos) monomeLedBuffer[(i2+4)*16+i1] = 4;
-                    else monomeLedBuffer[(i2+4)*16+i1] = 0;
-                }
-
-                // probs
-                if(w.wp[pattern].step_probs[i1] == 255) monomeLedBuffer[48+i1] = 11;
-                else if(w.wp[pattern].step_probs[i1] > 0) monomeLedBuffer[48+i1] = 4;
-            }
-        }
-        else if(edit_prob == 1) {
-            for(i1=0;i1<SIZE;i1++) {
-                monomeLedBuffer[64+i1] = 4;
-                monomeLedBuffer[80+i1] = 4;
-                monomeLedBuffer[96+i1] = 4;
-                monomeLedBuffer[112+i1] = 4;
-
-                if(w.wp[pattern].step_probs[i1] == 255)
-                    monomeLedBuffer[48+i1] = 11;
-                else if(w.wp[pattern].step_probs[i1] == 0) {
-                    monomeLedBuffer[48+i1] = 0;
-                    monomeLedBuffer[112+i1] = 7;
-                }
-                else if(w.wp[pattern].step_probs[i1]) {
-                    monomeLedBuffer[48+i1] = 4;
-                    monomeLedBuffer[64+16*(3-(w.wp[pattern].step_probs[i1]>>6))+i1] = 7;
-                }
-            }
-        }
-    }
-
-    // show map
-    else if(edit_mode == mMap) {
-        if(edit_prob == 0) {
-            // CURVES
-            if(w.wp[pattern].cv_mode[edit_cv_ch] == 0) {
-                for(i1=0;i1<SIZE;i1++) {
-                    // probs
-                    if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255) monomeLedBuffer[48+i1] = 11;
-                    else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 7;
-
-                    monomeLedBuffer[112+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 1023) * 7;
-                    monomeLedBuffer[96+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 2047) * 7;
-                    monomeLedBuffer[80+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 3071) * 7;
-                    monomeLedBuffer[64+i1] = 0;
-                    monomeLedBuffer[64+16*(3-(w.wp[pattern].cv_curves[edit_cv_ch][i1]>>10))+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1]>>7) & 0x7;
-                }
-
-                // play step highlight
-                monomeLedBuffer[64+pos] += 4;
-                monomeLedBuffer[80+pos] += 4;
-                monomeLedBuffer[96+pos] += 4;
-                monomeLedBuffer[112+pos] += 4;
-            }
-            // MAP
-            else {
-                if(!scale_select) {
-                    for(i1=0;i1<SIZE;i1++) {
-                        // probs
-                        if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255) monomeLedBuffer[48+i1] = 11;
-                        else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 7;
-
-                        // clear edit select line
-                        monomeLedBuffer[64+i1] = 4;
-
-                        // show current edit value, selected
-                        if(edit_cv_value != -1) {
-                            if((w.wp[pattern].cv_values[edit_cv_value] >> 8) >= i1)
-                                monomeLedBuffer[80+i1] = 7;
-                            else
-                                monomeLedBuffer[80+i1] = 0;
-
-                            if(((w.wp[pattern].cv_values[edit_cv_value] >> 4) & 0xf) >= i1)
-                                monomeLedBuffer[96+i1] = 4;
-                            else
-                                monomeLedBuffer[96+i1] = 0;
-                        }
-                        else {
-                            monomeLedBuffer[80+i1] = 0;
-                            monomeLedBuffer[96+i1] = 0;
-                        }
-
-                        // show steps
-                        if(w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] & (1<<i1)) monomeLedBuffer[112+i1] = 7;
-                        else monomeLedBuffer[112+i1] = 0;
-                    }
-
-                    // show play position
-                    monomeLedBuffer[64+pos] = 7;
-                    // show edit position
-                    monomeLedBuffer[64+edit_cv_step] = 11;
-                    // show playing note
-                    monomeLedBuffer[112+cv_chosen[edit_cv_ch]] = 11;
-                }
-                else {
-                    for(i1=0;i1<SIZE;i1++) {
-                        // probs
-                        if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255) monomeLedBuffer[48+i1] = 11;
-                        else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 7;
-
-                        monomeLedBuffer[64+i1] = (i1<8) * 4;
-                        monomeLedBuffer[80+i1] = (i1<8) * 4;
-                        monomeLedBuffer[96+i1] = (i1<8) * 4;
-                        monomeLedBuffer[112+i1] = 0;
-                    }
-
-                    monomeLedBuffer[112] = 7;
-                }
-
-            }
-        }
-        else if(edit_prob == 1) {
-            for(i1=0;i1<SIZE;i1++) {
-                monomeLedBuffer[64+i1] = 4;
-                monomeLedBuffer[80+i1] = 4;
-                monomeLedBuffer[96+i1] = 4;
-                monomeLedBuffer[112+i1] = 4;
-
-                if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255)
-                    monomeLedBuffer[48+i1] = 11;
-                else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 0) {
-                    monomeLedBuffer[48+i1] = 0;
-                    monomeLedBuffer[112+i1] = 7;
-                }
-                else if(w.wp[pattern].cv_probs[edit_cv_ch][i1]) {
-                    monomeLedBuffer[48+i1] = 4;
-                    monomeLedBuffer[64+16*(3-(w.wp[pattern].cv_probs[edit_cv_ch][i1]>>6))+i1] = 7;
-                }
-            }
-        }
-
-    }
-
-    // series
-    else if(edit_mode == mSeries) {
-        for(i1 = 0;i1<6;i1++) {
-            for(i2=0;i2<SIZE;i2++) {
-                // start/end bars, clear
-                if(i1+scroll_pos == w.series_start || i1+scroll_pos == w.series_end) monomeLedBuffer[32+i1*16+i2] = 4;
-                else monomeLedBuffer[32+i1*16+i2] = 0;
-            }
-
-            // scroll position helper
-            monomeLedBuffer[32+i1*16+((scroll_pos+i1)/(64/SIZE))] = 4;
-
-            // sidebar selection indicators
-            if(i1+scroll_pos > w.series_start && i1+scroll_pos < w.series_end) {
-                monomeLedBuffer[32+i1*16] = 4;
-                monomeLedBuffer[32+i1*16+LENGTH] = 4;
-            }
-
-            for(i2=0;i2<SIZE;i2++) {
-                // show possible states
-                if((w.series_list[i1+scroll_pos] >> i2) & 1)
-                    monomeLedBuffer[32+(i1*16)+i2] = 7;
-            }
-
-        }
-
-        // highlight playhead
-        if(series_pos >= scroll_pos && series_pos < scroll_pos+6) {
-            monomeLedBuffer[32+(series_pos-scroll_pos)*16+series_playing] = 11;
-        }
+        monomeLedBuffer[i1] -= 1 ;
     }
 
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
 }
 
+// XXX: whitewhale LED refresh
+// static void refresh() {
+//     u8 i1,i2;
+//
+//
+//     // clear top, cut, pattern, prob
+//     for(i1=0;i1<16;i1++) {
+//         monomeLedBuffer[i1] = 0;
+//         monomeLedBuffer[16+i1] = 0;
+//         monomeLedBuffer[32+i1] = 4;
+//         monomeLedBuffer[48+i1] = 0;
+//     }
+//
+//     // dim mode
+//     if(edit_mode == mTrig) {
+//         monomeLedBuffer[0] = 4;
+//         monomeLedBuffer[1] = 4;
+//         monomeLedBuffer[2] = 4;
+//         monomeLedBuffer[3] = 4;
+//     }
+//     else if(edit_mode == mMap) {
+//         if(SIZE==16) {
+//             monomeLedBuffer[4+(edit_cv_ch*4)] = 4;
+//             monomeLedBuffer[5+(edit_cv_ch*4)] = 4;
+//             monomeLedBuffer[6+(edit_cv_ch*4)] = 4;
+//             monomeLedBuffer[7+(edit_cv_ch*4)] = 4;
+//         }
+//         else
+//             monomeLedBuffer[4+edit_cv_ch] = 4;
+//     }
+//     else if(edit_mode == mSeries) {
+//         monomeLedBuffer[LENGTH-1] = 7;
+//     }
+//
+//     // alt
+//     monomeLedBuffer[LENGTH] = 4;
+//     if(key_alt) monomeLedBuffer[LENGTH] = 11;
+//
+//     // show mutes or on steps
+//     if(key_meta) {
+//         if(w.tr_mute[0]) monomeLedBuffer[0] = 11;
+//         if(w.tr_mute[1]) monomeLedBuffer[1] = 11;
+//         if(w.tr_mute[2]) monomeLedBuffer[2] = 11;
+//         if(w.tr_mute[3]) monomeLedBuffer[3] = 11;
+//     }
+//     else if(triggered) {
+//         if(triggered & 0x1 && w.tr_mute[0]) monomeLedBuffer[0] = 11 - 4 * w.wp[pattern].tr_mode;
+//         if(triggered & 0x2 && w.tr_mute[1]) monomeLedBuffer[1] = 11 - 4 * w.wp[pattern].tr_mode;
+//         if(triggered & 0x4 && w.tr_mute[2]) monomeLedBuffer[2] = 11 - 4 * w.wp[pattern].tr_mode;
+//         if(triggered & 0x8 && w.tr_mute[3]) monomeLedBuffer[3] = 11 - 4 * w.wp[pattern].tr_mode;
+//     }
+//
+//     // cv indication
+//     if(key_meta) {
+//         if(SIZE==16) {
+//             if(w.cv_mute[0]) {
+//                 monomeLedBuffer[4] = 11;
+//                 monomeLedBuffer[5] = 11;
+//                 monomeLedBuffer[6] = 11;
+//                 monomeLedBuffer[7] = 11;
+//             }
+//             if(w.cv_mute[1]) {
+//                 monomeLedBuffer[8] = 11;
+//                 monomeLedBuffer[9] = 11;
+//                 monomeLedBuffer[10] = 11;
+//                 monomeLedBuffer[11] = 11;
+//             }
+//         }
+//         else {
+//             if(w.cv_mute[0])
+//                 monomeLedBuffer[4] = 11;
+//             if(w.cv_mute[1])
+//                 monomeLedBuffer[5] = 11;
+//         }
+//
+//     }
+//     else if(SIZE==16) {
+//         monomeLedBuffer[cv0 / 1024 + 4] = 11;
+//         monomeLedBuffer[cv1 / 1024 + 8] = 11;
+//     }
+//
+//     // show pos loop dim
+//     if(w.wp[pattern].loop_dir) {
+//         for(i1=0;i1<SIZE;i1++) {
+//             if(w.wp[pattern].loop_dir == 1 && i1 >= w.wp[pattern].loop_start && i1 <= w.wp[pattern].loop_end)
+//                 monomeLedBuffer[16+i1] = 4;
+//             else if(w.wp[pattern].loop_dir == 2 && (i1 <= w.wp[pattern].loop_end || i1 >= w.wp[pattern].loop_start))
+//                 monomeLedBuffer[16+i1] = 4;
+//         }
+//     }
+//
+//     // show position and next cut
+//     if(cut_pos) monomeLedBuffer[16+next_pos] = 7;
+//     monomeLedBuffer[16+pos] = 15;
+//
+//     // show pattern
+//     monomeLedBuffer[32+pattern] = 11;
+//     if(pattern != next_pattern) monomeLedBuffer[32+next_pattern] = 7;
+//
+//     // show step data
+//     if(edit_mode == mTrig) {
+//         if(edit_prob == 0) {
+//             for(i1=0;i1<SIZE;i1++) {
+//                  for(i2=0;i2<4;i2++) {
+//                     if((w.wp[pattern].steps[i1] & (1<<i2)) && i1 == pos && (triggered & 1<<i2) && w.tr_mute[i2]) monomeLedBuffer[(i2+4)*16+i1] = 11;
+//                     else if(w.wp[pattern].steps[i1] & (1<<i2) && (w.wp[pattern].step_choice & 1<<i1)) monomeLedBuffer[(i2+4)*16+i1] = 4;
+//                     else if(w.wp[pattern].steps[i1] & (1<<i2)) monomeLedBuffer[(i2+4)*16+i1] = 7;
+//                     else if(i1 == pos) monomeLedBuffer[(i2+4)*16+i1] = 4;
+//                     else monomeLedBuffer[(i2+4)*16+i1] = 0;
+//                 }
+//
+//                 // probs
+//                 if(w.wp[pattern].step_probs[i1] == 255) monomeLedBuffer[48+i1] = 11;
+//                 else if(w.wp[pattern].step_probs[i1] > 0) monomeLedBuffer[48+i1] = 4;
+//             }
+//         }
+//         else if(edit_prob == 1) {
+//             for(i1=0;i1<SIZE;i1++) {
+//                 monomeLedBuffer[64+i1] = 4;
+//                 monomeLedBuffer[80+i1] = 4;
+//                 monomeLedBuffer[96+i1] = 4;
+//                 monomeLedBuffer[112+i1] = 4;
+//
+//                 if(w.wp[pattern].step_probs[i1] == 255)
+//                     monomeLedBuffer[48+i1] = 11;
+//                 else if(w.wp[pattern].step_probs[i1] == 0) {
+//                     monomeLedBuffer[48+i1] = 0;
+//                     monomeLedBuffer[112+i1] = 7;
+//                 }
+//                 else if(w.wp[pattern].step_probs[i1]) {
+//                     monomeLedBuffer[48+i1] = 4;
+//                     monomeLedBuffer[64+16*(3-(w.wp[pattern].step_probs[i1]>>6))+i1] = 7;
+//                 }
+//             }
+//         }
+//     }
+//
+//     // show map
+//     else if(edit_mode == mMap) {
+//         if(edit_prob == 0) {
+//             // CURVES
+//             if(w.wp[pattern].cv_mode[edit_cv_ch] == 0) {
+//                 for(i1=0;i1<SIZE;i1++) {
+//                     // probs
+//                     if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255) monomeLedBuffer[48+i1] = 11;
+//                     else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 7;
+//
+//                     monomeLedBuffer[112+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 1023) * 7;
+//                     monomeLedBuffer[96+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 2047) * 7;
+//                     monomeLedBuffer[80+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 3071) * 7;
+//                     monomeLedBuffer[64+i1] = 0;
+//                     monomeLedBuffer[64+16*(3-(w.wp[pattern].cv_curves[edit_cv_ch][i1]>>10))+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1]>>7) & 0x7;
+//                 }
+//
+//                 // play step highlight
+//                 monomeLedBuffer[64+pos] += 4;
+//                 monomeLedBuffer[80+pos] += 4;
+//                 monomeLedBuffer[96+pos] += 4;
+//                 monomeLedBuffer[112+pos] += 4;
+//             }
+//             // MAP
+//             else {
+//                 if(!scale_select) {
+//                     for(i1=0;i1<SIZE;i1++) {
+//                         // probs
+//                         if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255) monomeLedBuffer[48+i1] = 11;
+//                         else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 7;
+//
+//                         // clear edit select line
+//                         monomeLedBuffer[64+i1] = 4;
+//
+//                         // show current edit value, selected
+//                         if(edit_cv_value != -1) {
+//                             if((w.wp[pattern].cv_values[edit_cv_value] >> 8) >= i1)
+//                                 monomeLedBuffer[80+i1] = 7;
+//                             else
+//                                 monomeLedBuffer[80+i1] = 0;
+//
+//                             if(((w.wp[pattern].cv_values[edit_cv_value] >> 4) & 0xf) >= i1)
+//                                 monomeLedBuffer[96+i1] = 4;
+//                             else
+//                                 monomeLedBuffer[96+i1] = 0;
+//                         }
+//                         else {
+//                             monomeLedBuffer[80+i1] = 0;
+//                             monomeLedBuffer[96+i1] = 0;
+//                         }
+//
+//                         // show steps
+//                         if(w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] & (1<<i1)) monomeLedBuffer[112+i1] = 7;
+//                         else monomeLedBuffer[112+i1] = 0;
+//                     }
+//
+//                     // show play position
+//                     monomeLedBuffer[64+pos] = 7;
+//                     // show edit position
+//                     monomeLedBuffer[64+edit_cv_step] = 11;
+//                     // show playing note
+//                     monomeLedBuffer[112+cv_chosen[edit_cv_ch]] = 11;
+//                 }
+//                 else {
+//                     for(i1=0;i1<SIZE;i1++) {
+//                         // probs
+//                         if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255) monomeLedBuffer[48+i1] = 11;
+//                         else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 7;
+//
+//                         monomeLedBuffer[64+i1] = (i1<8) * 4;
+//                         monomeLedBuffer[80+i1] = (i1<8) * 4;
+//                         monomeLedBuffer[96+i1] = (i1<8) * 4;
+//                         monomeLedBuffer[112+i1] = 0;
+//                     }
+//
+//                     monomeLedBuffer[112] = 7;
+//                 }
+//
+//             }
+//         }
+//         else if(edit_prob == 1) {
+//             for(i1=0;i1<SIZE;i1++) {
+//                 monomeLedBuffer[64+i1] = 4;
+//                 monomeLedBuffer[80+i1] = 4;
+//                 monomeLedBuffer[96+i1] = 4;
+//                 monomeLedBuffer[112+i1] = 4;
+//
+//                 if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255)
+//                     monomeLedBuffer[48+i1] = 11;
+//                 else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 0) {
+//                     monomeLedBuffer[48+i1] = 0;
+//                     monomeLedBuffer[112+i1] = 7;
+//                 }
+//                 else if(w.wp[pattern].cv_probs[edit_cv_ch][i1]) {
+//                     monomeLedBuffer[48+i1] = 4;
+//                     monomeLedBuffer[64+16*(3-(w.wp[pattern].cv_probs[edit_cv_ch][i1]>>6))+i1] = 7;
+//                 }
+//             }
+//         }
+//
+//     }
+//
+//     // series
+//     else if(edit_mode == mSeries) {
+//         for(i1 = 0;i1<6;i1++) {
+//             for(i2=0;i2<SIZE;i2++) {
+//                 // start/end bars, clear
+//                 if(i1+scroll_pos == w.series_start || i1+scroll_pos == w.series_end) monomeLedBuffer[32+i1*16+i2] = 4;
+//                 else monomeLedBuffer[32+i1*16+i2] = 0;
+//             }
+//
+//             // scroll position helper
+//             monomeLedBuffer[32+i1*16+((scroll_pos+i1)/(64/SIZE))] = 4;
+//
+//             // sidebar selection indicators
+//             if(i1+scroll_pos > w.series_start && i1+scroll_pos < w.series_end) {
+//                 monomeLedBuffer[32+i1*16] = 4;
+//                 monomeLedBuffer[32+i1*16+LENGTH] = 4;
+//             }
+//
+//             for(i2=0;i2<SIZE;i2++) {
+//                 // show possible states
+//                 if((w.series_list[i1+scroll_pos] >> i2) & 1)
+//                     monomeLedBuffer[32+(i1*16)+i2] = 7;
+//             }
+//
+//         }
+//
+//         // highlight playhead
+//         if(series_pos >= scroll_pos && series_pos < scroll_pos+6) {
+//             monomeLedBuffer[32+(series_pos-scroll_pos)*16+series_playing] = 11;
+//         }
+//     }
+//
+//     monome_set_quadrant_flag(0);
+//     monome_set_quadrant_flag(1);
+// }
+
 
 // application grid redraw without varibright
+// FIXME this should work for 64
 static void refresh_mono() {
-    u8 i1,i2;
-
-    // clear top, cut, pattern, prob
-    for(i1=0;i1<16;i1++) {
-        monomeLedBuffer[i1] = 0;
-        monomeLedBuffer[16+i1] = 0;
-        monomeLedBuffer[32+i1] = 0;
-        monomeLedBuffer[48+i1] = 0;
-    }
-
-    // show mode
-    if(edit_mode == mTrig) {
-        monomeLedBuffer[0] = 11;
-        monomeLedBuffer[1] = 11;
-        monomeLedBuffer[2] = 11;
-        monomeLedBuffer[3] = 11;
-    }
-    else if(edit_mode == mMap) {
-        if(SIZE==16) {
-            monomeLedBuffer[4+(edit_cv_ch*4)] = 11;
-            monomeLedBuffer[5+(edit_cv_ch*4)] = 11;
-            monomeLedBuffer[6+(edit_cv_ch*4)] = 11;
-            monomeLedBuffer[7+(edit_cv_ch*4)] = 11;
-        }
-        else
-            monomeLedBuffer[4+edit_cv_ch] = 11;
-    }
-    else if(edit_mode == mSeries) {
-        monomeLedBuffer[LENGTH-1] = 11;
-    }
-
-    if(key_meta) {
-        monomeLedBuffer[0] = 11 * w.tr_mute[0];
-        monomeLedBuffer[1] = 11 * w.tr_mute[1];
-        monomeLedBuffer[2] = 11 * w.tr_mute[2];
-        monomeLedBuffer[3] = 11 * w.tr_mute[3];
-
-        if(SIZE == 16) {
-            monomeLedBuffer[4] = 11 * w.cv_mute[0];
-            monomeLedBuffer[5] = 11 * w.cv_mute[0];
-            monomeLedBuffer[6] = 11 * w.cv_mute[0];
-            monomeLedBuffer[7] = 11 * w.cv_mute[0];
-            monomeLedBuffer[8] = 11 * w.cv_mute[1];
-            monomeLedBuffer[9] = 11 * w.cv_mute[1];
-            monomeLedBuffer[10] = 11 * w.cv_mute[1];
-            monomeLedBuffer[11] = 11 * w.cv_mute[1];
-        } else {
-            monomeLedBuffer[4] = 11 * w.cv_mute[0];
-            monomeLedBuffer[5] = 11 * w.cv_mute[1];
-        }
-
-
-    }
-
-    // alt
-    if(key_alt) monomeLedBuffer[LENGTH] = 11;
-
-    // show position
-    monomeLedBuffer[16+pos] = 15;
-
-    // show pattern
-    monomeLedBuffer[32+pattern] = 11;
-
-    // show step data
-    if(edit_mode == mTrig) {
-        if(edit_prob == 0) {
-            for(i1=0;i1<SIZE;i1++) {
-                 for(i2=0;i2<4;i2++) {
-                    if(w.wp[pattern].steps[i1] & (1<<i2)) monomeLedBuffer[(i2+4)*16+i1] = 11;
-                    else monomeLedBuffer[(i2+4)*16+i1] = 0;
-                }
-
-                // probs
-                if(w.wp[pattern].step_probs[i1] > 0) monomeLedBuffer[48+i1] = 11;
-            }
-        }
-        else if(edit_prob == 1) {
-            for(i1=0;i1<SIZE;i1++) {
-                monomeLedBuffer[64+i1] = 0;
-                monomeLedBuffer[80+i1] = 0;
-                monomeLedBuffer[96+i1] = 0;
-                monomeLedBuffer[112+i1] = 0;
-
-                if(w.wp[pattern].step_probs[i1] == 255)
-                    monomeLedBuffer[48+i1] = 11;
-                else if(w.wp[pattern].step_probs[i1] == 0) {
-                    monomeLedBuffer[48+i1] = 0;
-                    monomeLedBuffer[112+i1] = 11;
-                }
-                else if(w.wp[pattern].step_probs[i1]) {
-                    monomeLedBuffer[48+i1] = 11;
-                    monomeLedBuffer[64+16*(3-(w.wp[pattern].step_probs[i1]>>6))+i1] = 11;
-                }
-            }
-        }
-    }
-
-    // show map
-    else if(edit_mode == mMap) {
-        if(edit_prob == 0) {
-            // CURVES
-            if(w.wp[pattern].cv_mode[edit_cv_ch] == 0) {
-                for(i1=0;i1<SIZE;i1++) {
-                    // probs
-                    if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 11;
-
-                    monomeLedBuffer[112+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 511) * 11;
-                    monomeLedBuffer[96+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 1535) * 11;
-                    monomeLedBuffer[80+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 2559) * 11;
-                    monomeLedBuffer[64+i1] = (w.wp[pattern].cv_curves[edit_cv_ch][i1] > 3583) * 11;
-                }
-            }
-            // MAP
-            else {
-                if(!scale_select) {
-                    for(i1=0;i1<SIZE;i1++) {
-                        // probs
-                        if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 11;
-
-                        // clear edit row
-                        monomeLedBuffer[64+i1] = 0;
-
-                        // show current edit value, selected
-                        if(edit_cv_value != -1) {
-                            if((w.wp[pattern].cv_values[edit_cv_value] >> 8) >= i1)
-                                monomeLedBuffer[80+i1] = 11;
-                            else
-                                monomeLedBuffer[80+i1] = 0;
-
-                            if(((w.wp[pattern].cv_values[edit_cv_value] >> 4) & 0xf) >= i1)
-                                monomeLedBuffer[96+i1] = 11;
-                            else
-                                monomeLedBuffer[96+i1] = 0;
-                        }
-                        else {
-                            monomeLedBuffer[80+i1] = 0;
-                            monomeLedBuffer[96+i1] = 0;
-                        }
-
-                        // show steps
-                        if(w.wp[pattern].cv_steps[edit_cv_ch][edit_cv_step] & (1<<i1)) monomeLedBuffer[112+i1] = 11;
-                        else monomeLedBuffer[112+i1] = 0;
-                    }
-
-                    // show edit position
-                    monomeLedBuffer[64+edit_cv_step] = 11;
-                    // show playing note
-                    monomeLedBuffer[112+cv_chosen[edit_cv_ch]] = 11;
-                }
-                else {
-                    for(i1=0;i1<SIZE;i1++) {
-                        // probs
-                        if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 11;
-
-                        monomeLedBuffer[64+i1] = 0;
-                        monomeLedBuffer[80+i1] = 0;
-                        monomeLedBuffer[96+i1] = 0;
-                        monomeLedBuffer[112+i1] = 0;
-                    }
-
-                    monomeLedBuffer[112] = 11;
-                }
-
-            }
-        }
-        else if(edit_prob == 1) {
-            for(i1=0;i1<SIZE;i1++) {
-                monomeLedBuffer[64+i1] = 0;
-                monomeLedBuffer[80+i1] = 0;
-                monomeLedBuffer[96+i1] = 0;
-                monomeLedBuffer[112+i1] = 0;
-
-                if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255)
-                    monomeLedBuffer[48+i1] = 11;
-                else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 0) {
-                    monomeLedBuffer[48+i1] = 0;
-                    monomeLedBuffer[112+i1] = 11;
-                }
-                else if(w.wp[pattern].cv_probs[edit_cv_ch][i1]) {
-                    monomeLedBuffer[48+i1] = 11;
-                    monomeLedBuffer[64+16*(3-(w.wp[pattern].cv_probs[edit_cv_ch][i1]>>6))+i1] = 11;
-                }
-            }
-        }
-
-    }
-
-    // series
-    else if(edit_mode == mSeries) {
-        for(i1 = 0;i1<6;i1++) {
-            for(i2=0;i2<SIZE;i2++) {
-                // start/end bars, clear
-                if((key_meta || key_alt) && (i1+scroll_pos == w.series_start || i1+scroll_pos == w.series_end)) monomeLedBuffer[32+i1*16+i2] = 11;
-                else monomeLedBuffer[32+i1*16+i2] = 0;
-            }
-
-            // scroll position helper
-            // monomeLedBuffer[32+i1*16+((scroll_pos+i1)/(64/SIZE))] = 4;
-
-            // sidebar selection indicators
-            if((key_meta || key_alt) && i1+scroll_pos > w.series_start && i1+scroll_pos < w.series_end) {
-                monomeLedBuffer[32+i1*16] = 11;
-                monomeLedBuffer[32+i1*16+LENGTH] = 11;
-            }
-
-            for(i2=0;i2<SIZE;i2++) {
-                // show possible states
-                if((w.series_list[i1+scroll_pos] >> i2) & 1)
-                    monomeLedBuffer[32+(i1*16)+i2] = 11;
-            }
-
-        }
-
-        // highlight playhead
-        if(series_pos >= scroll_pos && series_pos < scroll_pos+6 && (pos & 1)) {
-            monomeLedBuffer[32+(series_pos-scroll_pos)*16+series_playing] = 0;
-        }
-    }
-
-    monome_set_quadrant_flag(0);
-    monome_set_quadrant_flag(1);
 }
 
 
@@ -1616,110 +1406,7 @@ static void refresh_preset() {
     {"WW.MUTEB",WW_MUTEB},
     */
 static void ww_process_ii(uint8_t i, int d) {
-    switch(i) {
-        case WW_PRESET:
-            if(d<0 || d>7)
-                break;
-            preset_select = d;
-            flash_read();
-            break;
-        case WW_POS:
-            if(d<0 || d>15)
-                break;
-            next_pos = d;
-            cut_pos++;
-            monomeFrameDirty++;
-            break;
-        case WW_SYNC:
-            if(d<0 || d>15)
-                break;
-            next_pos = d;
-            cut_pos++;
-            timer_set(&clockTimer,clock_time);
-            clock_phase = 1;
-            (*clock_pulse)(clock_phase);
-            break;
-        case WW_START:
-            if(d<0 || d>15)
-                break;
-            w.wp[pattern].loop_start = d;
-             if(w.wp[pattern].loop_start > w.wp[pattern].loop_end) w.wp[pattern].loop_dir = 2;
-             else if(w.wp[pattern].loop_start == 0 && w.wp[pattern].loop_end == LENGTH) w.wp[pattern].loop_dir = 0;
-             else w.wp[pattern].loop_dir = 1;
-
-             w.wp[pattern].loop_len = w.wp[pattern].loop_end - w.wp[pattern].loop_start;
-
-             if(w.wp[pattern].loop_dir == 2)
-                 w.wp[pattern].loop_len = (LENGTH - w.wp[pattern].loop_start) + w.wp[pattern].loop_end + 1;
-             monomeFrameDirty++;
-            break;
-        case WW_END:
-            if(d<0 || d>15)
-                break;
-            w.wp[pattern].loop_end = d;
-             if(w.wp[pattern].loop_start > w.wp[pattern].loop_end) w.wp[pattern].loop_dir = 2;
-             else if(w.wp[pattern].loop_start == 0 && w.wp[pattern].loop_end == LENGTH) w.wp[pattern].loop_dir = 0;
-             else w.wp[pattern].loop_dir = 1;
-
-             w.wp[pattern].loop_len = w.wp[pattern].loop_end - w.wp[pattern].loop_start;
-
-             if(w.wp[pattern].loop_dir == 2)
-                 w.wp[pattern].loop_len = (LENGTH - w.wp[pattern].loop_start) + w.wp[pattern].loop_end + 1;
-             monomeFrameDirty++;
-             break;
-         case WW_PMODE:
-             if(d<0 || d>3)
-                break;
-             w.wp[pattern].step_mode = d;
-             break;
-         case WW_PATTERN:
-             if(d<0 || d>15)
-                break;
-             pattern = d;
-            next_pattern = d;
-            monomeFrameDirty++;
-             break;
-         case WW_QPATTERN:
-             if(d<0 || d>15)
-                break;
-             next_pattern = d;
-             monomeFrameDirty++;
-             break;
-         case WW_MUTE1:
-             if(d) w.tr_mute[0] = 1;
-             else w.tr_mute[0] = 0;
-             break;
-         case WW_MUTE2:
-             if(d) w.tr_mute[1] = 1;
-             else w.tr_mute[1] = 0;
-             break;
-         case WW_MUTE3:
-             if(d) w.tr_mute[2] = 1;
-             else w.tr_mute[2] = 0;
-             break;
-         case WW_MUTE4:
-             if(d) w.tr_mute[3] = 1;
-             else w.tr_mute[3] = 0;
-             break;
-         case WW_MUTEA:
-             if(d) w.cv_mute[0] = 1;
-             else w.cv_mute[0] = 0;
-             break;
-         case WW_MUTEB:
-             if(d) w.cv_mute[1] = 1;
-             else w.cv_mute[1] = 0;
-             break;
-        default:
-            break;
-    }
-  // print_dbg("\r\nmp: ");
-  // print_dbg_ulong(i);
-  // print_dbg(" ");
-  // print_dbg_ulong(d);
 }
-
-
-
 
 // assign event handlers
 static inline void assign_main_event_handlers(void) {
@@ -1769,6 +1456,7 @@ void flash_write(void) {
 }
 
 void flash_read(void) {
+    // figure out how to make this work
     u8 i1, i2;
 
     print_dbg("\r\n read preset ");
@@ -1917,6 +1605,7 @@ int main(void)
     LENGTH = 15;
     SIZE = 16;
 
+    // why is this renamed/assigned
     re = &refresh;
 
     process_ii = &ww_process_ii;
