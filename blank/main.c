@@ -69,6 +69,18 @@ const u16 SCALES[24][16] = {
 
 };
 
+const u16 FOURTHS_GRID[8][16] = {
+     0, 170, 340, 511, 681, 852, 1022, 1193, 1363, 1534, 1704, 1875, 2045, 2215, 2386, 2556 ,
+     34, 204, 374, 545, 715, 886, 1056, 1227, 1397, 1568, 1738, 1909, 2079, 2249, 2420, 2590 ,
+     68, 238, 408, 579, 749, 920, 1090, 1261, 1431, 1602, 1772, 1943, 2113, 2283, 2454, 2624 ,
+     102, 272, 442, 613, 783, 954, 1124, 1295, 1465, 1636, 1806, 1977, 2147, 2317, 2488, 2658 ,
+     136, 306, 476, 647, 817, 988, 1158, 1329, 1499, 1670, 1840, 2011, 2181, 2351, 2522, 2692 ,
+     170, 340, 510, 681, 851, 1022, 1192, 1363, 1533, 1704, 1874, 2045, 2215, 2385, 2556, 2726 ,
+     204, 374, 544, 715, 885, 1056, 1226, 1397, 1567, 1738, 1908, 2079, 2249, 2419, 2590, 2760 ,
+     238, 408, 578, 749, 919, 1090, 1260, 1431, 1601, 1772, 1942, 2113, 2283, 2453, 2624, 2794
+};
+
+
 typedef enum {
     mTrig, mMap, mSeries
 } edit_modes;
@@ -546,46 +558,45 @@ static void handler_ClockNormal(s32 data) {
 // application grid code
 //
 //
+
+static int xy_to_1d(u8 x, u8 y) {
+    return x + (8 * y);
+}
+
 static void handler_MonomeGridKey(s32 data) {
 
-    /* 0, 68, 136, 170, 238, 306, 375, 409, 477, 545, 579, 647, 715, 784, 818,    886,                    // ionian [2, 2, 1, 2, 2, 2, 1] */
 
     u8 x, y, z, index, i1, found, count;
     s16 delta;
     monome_grid_key_parse_event_data(data, &x, &y, &z);
 
-    if(x == 0)
-        cv0 = 0;
-    if(x == 1)
-        cv0 = 68;
-    if(x == 2)
-        cv0 = 136;
-    if(x == 3)
-        cv0 = 170;
-    if(x == 4)
-        cv0 = 238;
-    if(x == 5)
-        cv0 = 306;
-    if(x == 6)
-        cv0 = 375;
-    if(x == 7)
-        cv0 = 409;
-    if(x == 8)
-        cv0 = 477;
-    if(x == 9)
-        cv0 = 545;
-    if(x == 10)
-        cv0 = 579;
-    if(x == 11)
-        cv0 = 647;
-    if(x == 12)
-        cv0 = 715;
-    if(x == 13)
-        cv0 = 784;
-    if(x == 14)
-        cv0 = 818;
-    if(x == 15)
-        cv0 = 886;
+    /* 0, 68, 136, 170, 238, 306, 375, 409, 477, 545, 579, 647, 715, 784, 818,    886,                    // ionian [2, 2, 1, 2, 2, 2, 1] */
+    if(z != 0) {
+        /* cv0 = FOURTHS_GRID[y][x ^ 7]; */
+        /* cv0 = FOURTHS_GRID[xy_to_1d(x, y)]; */
+        /* cv0 = FOURTHS_GRID[x + y * 8]; */
+
+        // xor so that we go lowest to highest
+        // 0 -> 7, 1 -> 6 ... 7 -> 0
+        cv0 = FOURTHS_GRID[y ^ 7][x];
+
+        spi_selectChip(SPI,DAC_SPI);
+        // spi_write(SPI,0x39);    // update both
+        spi_write(SPI,0x31);    // update A
+        // spi_write(SPI,0x38);    // update B
+        // spi_write(SPI,pos*15);    // send position
+        // spi_write(SPI,0);
+        spi_write(SPI,cv0>>4);
+        spi_write(SPI,cv0<<4);
+        spi_unselectChip(SPI,DAC_SPI);
+
+        spi_selectChip(SPI,DAC_SPI);
+        spi_write(SPI,0x38);    // update B
+        spi_write(SPI,cv1>>4);
+        spi_write(SPI,cv1<<4);
+        spi_unselectChip(SPI,DAC_SPI);
+
+    }
 }
 
 // XXX: monome event~
@@ -1124,17 +1135,14 @@ static void handler_MonomeGridKey(s32 data) {
 static void refresh() {
     u8 i1,i2;
 
-    if(monomeLedBuffer[0] > 15) {
-        i2 = -1;
-    } else if(monomeLedBuffer[0] < 1) {
-        i2 = 1;
-    }
-    // clear top, cut, pattern, prob
+//    if(monomeLedBuffer[0] > 15) {
+//        i2 = -1;
+//    } else if(monomeLedBuffer[0] < 1) {
+//        i2 = 1;
+//    }
+//    // clear top, cut, pattern, prob
     for(i1=0;i1<128;i1+=2) {
-        if(monomeLedBuffer <= 0) {
-            monomeLedBuffer[i1] = 15;
-        }
-        monomeLedBuffer[i1] -= 1 ;
+        monomeLedBuffer[i1] = 0;
     }
 
     monome_set_quadrant_flag(0);
