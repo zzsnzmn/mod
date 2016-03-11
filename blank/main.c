@@ -556,12 +556,6 @@ static void handler_ClockNormal(s32 data) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // application grid code
-//
-//
-
-static int xy_to_1d(u8 x, u8 y) {
-    return x + (8 * y);
-}
 
 static void handler_MonomeGridKey(s32 data) {
 
@@ -570,11 +564,14 @@ static void handler_MonomeGridKey(s32 data) {
     s16 delta;
     monome_grid_key_parse_event_data(data, &x, &y, &z);
 
-    /* 0, 68, 136, 170, 238, 306, 375, 409, 477, 545, 579, 647, 715, 784, 818,    886,                    // ionian [2, 2, 1, 2, 2, 2, 1] */
+    // track the amount of keys pressed so that we can send a low gate
+    // if the key_count == 0
+    if(key_count =< 0) {
+        key_count = 0;
+    }
+
     if(z != 0) {
-        /* cv0 = FOURTHS_GRID[y][x ^ 7]; */
-        /* cv0 = FOURTHS_GRID[xy_to_1d(x, y)]; */
-        /* cv0 = FOURTHS_GRID[x + y * 8]; */
+        key_count++;
 
         // xor so that we go lowest to highest
         // 0 -> 7, 1 -> 6 ... 7 -> 0
@@ -596,6 +593,23 @@ static void handler_MonomeGridKey(s32 data) {
         spi_write(SPI,cv1<<4);
         spi_unselectChip(SPI,DAC_SPI);
 
+        gpio_set_gpio_pin(B00);
+        gpio_set_gpio_pin(B01);
+        gpio_set_gpio_pin(B02);
+        gpio_set_gpio_pin(B03);
+
+
+    } else {
+        key_count--;
+    }
+
+    if(key_count <= 0) {
+
+        // send low voltages
+        gpio_clr_gpio_pin(B00);
+        gpio_clr_gpio_pin(B01);
+        gpio_clr_gpio_pin(B02);
+        gpio_clr_gpio_pin(B03);
     }
 }
 
