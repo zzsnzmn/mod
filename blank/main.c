@@ -244,13 +244,12 @@ void timers_unset_monome(void) {
 static void handler_FtdiConnect(s32 data) { ftdi_setup(); }
 static void handler_FtdiDisconnect(s32 data) {
     timers_unset_monome();
-    // event_t e = { .type = kEventMonomeDisconnect };
-    // event_post(&e);
 }
 
 static void handler_MonomeConnect(s32 data) {
     u8 i1;
     // print_dbg("\r\n// monome connect /////////////////");
+
     keycount_pos = 0;
     key_count = 0;
     SIZE = monome_size_x();
@@ -259,11 +258,10 @@ static void handler_MonomeConnect(s32 data) {
     VARI = monome_is_vari();
 
     // here is where re is defined--- function pointer....
+    // determines which LED refresh method to use
     if(VARI) re = &refresh;
     else re = &refresh_mono;
 
-    // monome_set_quadrant_flag(0);
-    // monome_set_quadrant_flag(1);
     timers_set_monome();
 }
 
@@ -360,39 +358,6 @@ static void handler_KeyTimer(s32 data) {
             front_timer--;
         }
         else front_timer--;
-    }
-
-    // loop through all keys held down
-    for(i1=0;i1<key_count;i1++) {
-        // FIXME
-        if(key_times[held_keys[i1]]) {
-            if(--key_times[held_keys[i1]]==0) {
-                if(edit_mode != mSeries && preset_mode == 0) {
-                    // preset copy
-                    if(held_keys[i1] / 16 == 2) {
-                        x = held_keys[i1] % 16;
-                        // for ( shared variable in variables struct A)
-                        //  copy to struct B
-
-                        monomeFrameDirty++;
-
-                        // print_dbg("\r\n saved pattern: ");
-                    }
-                }
-                else if(preset_mode == 1) {
-                    if(held_keys[i1] % 16 == 0) {
-                        preset_select = held_keys[i1] / 16;
-                        // flash_write();
-                        static event_t e;
-                        e.type = kEventSaveFlash;
-                        event_post(&e);
-                        preset_mode = 0;
-                    }
-                }
-                // print_dbg("\rlong press: ");
-                // print_dbg_ulong(held_keys[i1]);
-            }
-        }
     }
 }
 
