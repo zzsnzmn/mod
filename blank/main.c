@@ -37,38 +37,6 @@
 
 #define FIRSTRUN_KEY 0x22
 
-
-const u16 SCALES[24][16] = {
-
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                                                    // ZERO
-0, 68, 136, 170, 238, 306, 375, 409, 477, 545, 579, 647, 715, 784, 818,    886,                    // ionian [2, 2, 1, 2, 2, 2, 1]
-0, 68, 102, 170, 238, 306, 340, 409, 477, 511, 579, 647, 715, 750, 818,    886,                    // dorian [2, 1, 2, 2, 2, 1, 2]
-0, 34, 102, 170, 238, 272, 340, 409, 443, 511, 579, 647, 681, 750, 818,    852,                    // phrygian [1, 2, 2, 2, 1, 2, 2]
-0, 68, 136, 204, 238, 306, 375, 409, 477, 545, 613, 647, 715, 784, 818,    886,                    // lydian [2, 2, 2, 1, 2, 2, 1]
-0, 68, 136, 170, 238, 306, 340, 409, 477, 545, 579, 647, 715, 750, 818,    886,                    // mixolydian [2, 2, 1, 2, 2, 1, 2]
-0, 68, 136, 170, 238, 306, 340, 409, 477, 545, 579, 647, 715, 750, 818,    886,                    // aeolian [2, 1, 2, 2, 1, 2, 2]
-0, 34, 102, 170, 204, 272, 340, 409, 443, 511, 579, 613, 681, 750, 818,    852,                    // locrian [1, 2, 2, 1, 2, 2, 2]
-
-0, 34, 68, 102, 136, 170, 204, 238, 272, 306, 341, 375, 409, 443, 477, 511,                        // chromatic
-0, 68, 136, 204, 272, 341, 409, 477, 545, 613, 682, 750, 818, 886, 954,    1022,                   // whole
-0, 170, 340, 511, 681, 852, 1022, 1193, 1363, 1534, 1704, 1875, 2045, 2215, 2386, 2556,            // fourths
-0, 238, 477, 715, 954, 1193, 1431, 1670, 1909, 2147, 2386, 2625, 2863, 3102, 3340, 3579,           // fifths
-0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238,    255,                        // quarter
-0, 8, 17, 25, 34, 42, 51, 59, 68, 76, 85, 93, 102, 110, 119, 127,                                  // eighth
-0, 61, 122, 163, 245, 327, 429, 491, 552, 613, 654, 736, 818, 920, 982, 1105,                      // just
-0, 61, 130, 163, 245, 337, 441, 491, 552, 621, 654, 736, 828, 932, 982, 1105,                      // pythagorean
-
-0, 272, 545, 818, 1090, 1363, 1636, 1909, 2181, 2454, 2727, 3000, 3272, 3545, 3818, 4091,          // equal 10v
-0, 136, 272, 409, 545, 682, 818, 955, 1091, 1228, 1364, 1501, 1637, 1774, 1910, 2047,              // equal 5v
-0, 68, 136, 204, 272, 341, 409, 477, 545, 613, 682, 750, 818, 886, 954, 1023,                      // equal 2.5v
-0, 34, 68, 102, 136, 170, 204, 238, 272, 306, 340, 374, 408, 442, 476, 511,                        // equal 1.25v
-0, 53, 118, 196, 291, 405, 542, 708, 908, 1149, 1441, 1792, 2216, 2728, 3345, 4091,                // log-ish 10v
-0, 136, 272, 409, 545, 682, 818, 955, 1091, 1228, 1364, 1501, 1637, 1774, 1910, 2047,              // log-ish 5v
-0, 745, 1362, 1874, 2298, 2649, 2941, 3182, 3382, 3548, 3685, 3799, 3894, 3972, 4037, 4091,        // exp-ish 10v
-0, 372, 681, 937, 1150, 1325, 1471, 1592, 1692, 1775, 1844, 1901, 1948, 1987, 2020, 2047           // exp-ish 5v
-
-};
-
 const u16 FOURTHS_GRID[8][16] = {
      0, 170, 340, 511, 681, 852, 1022, 1193, 1363, 1534, 1704, 1875, 2045, 2215, 2386, 2556 ,
      34, 204, 374, 545, 715, 886, 1056, 1227, 1397, 1568, 1738, 1909, 2079, 2249, 2420, 2590 ,
@@ -90,21 +58,6 @@ typedef enum {
 } step_modes;
 
 typedef struct {
-    u8 loop_start, loop_end, loop_len, loop_dir;
-    u16 step_choice;
-    u8 cv_mode[2];
-    u8 tr_mode;
-    step_modes step_mode;
-    u8 steps[16];
-    u8 step_probs[16];
-    u16 cv_values[16];
-    u16 cv_steps[2][16];
-    u16 cv_curves[2][16];
-    u8 cv_probs[2][16];
-} whale_pattern;
-
-typedef struct {
-    whale_pattern wp[16];
     u16 series_list[64];
     u8 series_start, series_end;
     u8 tr_mute[4];
@@ -190,16 +143,13 @@ void flash_unfresh(void);
 void flash_write(void);
 void flash_read(void);
 
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // application clock code
 
-// XXX: phase...?
+// phase is 1 during pulse
 void clock(u8 phase) {
     static u8 i1, count;
     static u16 found[16];
@@ -305,20 +255,12 @@ static void handler_MonomeConnect(s32 data) {
     key_count = 0;
     SIZE = monome_size_x();
     LENGTH = SIZE - 1;
-    // print_dbg("\r monome size: ");
-    // print_dbg_ulong(SIZE);
+
     VARI = monome_is_vari();
-    // print_dbg("\r monome vari: ");
-    // print_dbg_ulong(VARI);
 
     // here is where re is defined--- function pointer....
     if(VARI) re = &refresh;
     else re = &refresh_mono;
-
-    for(i1=0;i1<16;i1++)
-        if(w.wp[i1].loop_end > LENGTH)
-            w.wp[i1].loop_end = LENGTH;
-
 
     // monome_set_quadrant_flag(0);
     // monome_set_quadrant_flag(1);
@@ -353,6 +295,8 @@ static void handler_Front(s32 data) {
     monomeFrameDirty++;
 }
 
+// handler for front knobs
+// XXX: remove stuff and figure out how to use non-tempo knob with arp pitch
 static void handler_PollADC(s32 data) {
     u16 i;
     adc_convert(&adc);
@@ -471,7 +415,6 @@ static void handler_MonomeGridKey(s32 data) {
     monome_grid_key_parse_event_data(data, &x, &y, &z);
 
     // track the amount of keys pressed so that we can send a low gate
-    // if the key_count == 0
     if(key_count <= 0) {
         key_count = 0;
     }
@@ -485,11 +428,7 @@ static void handler_MonomeGridKey(s32 data) {
         monomeLedBuffer[y * 16 + x] = 15;
 
         spi_selectChip(SPI,DAC_SPI);
-        // spi_write(SPI,0x39);    // update both
         spi_write(SPI,0x31);    // update A
-        // spi_write(SPI,0x38);    // update B
-        // spi_write(SPI,pos*15);    // send position
-        // spi_write(SPI,0);
         spi_write(SPI,cv0>>4);
         spi_write(SPI,cv0<<4);
         spi_unselectChip(SPI,DAC_SPI);
@@ -500,11 +439,11 @@ static void handler_MonomeGridKey(s32 data) {
         spi_write(SPI,cv1<<4);
         spi_unselectChip(SPI,DAC_SPI);
 
+        // send high gate signals
         gpio_set_gpio_pin(B00);
         gpio_set_gpio_pin(B01);
         gpio_set_gpio_pin(B02);
         gpio_set_gpio_pin(B03);
-
 
     } else {
         monomeLedBuffer[y * 16 + x] = 0;
@@ -513,7 +452,7 @@ static void handler_MonomeGridKey(s32 data) {
 
     if(key_count <= 0) {
 
-        // send low voltages
+        // clear high gate signals
         gpio_clr_gpio_pin(B00);
         gpio_clr_gpio_pin(B01);
         gpio_clr_gpio_pin(B02);
@@ -619,43 +558,6 @@ void flash_read(void) {
 
     print_dbg("\r\n read preset ");
     print_dbg_ulong(preset_select);
-
-    for(i1=0;i1<16;i1++) {
-        for(i2=0;i2<16;i2++) {
-            w.wp[i1].steps[i2] = flashy.w[preset_select].wp[i1].steps[i2];
-            w.wp[i1].step_probs[i2] = flashy.w[preset_select].wp[i1].step_probs[i2];
-            w.wp[i1].cv_probs[0][i2] = flashy.w[preset_select].wp[i1].cv_probs[0][i2];
-            w.wp[i1].cv_probs[1][i2] = flashy.w[preset_select].wp[i1].cv_probs[1][i2];
-            w.wp[i1].cv_curves[0][i2] = flashy.w[preset_select].wp[i1].cv_curves[0][i2];
-            w.wp[i1].cv_curves[1][i2] = flashy.w[preset_select].wp[i1].cv_curves[1][i2];
-            w.wp[i1].cv_steps[0][i2] = flashy.w[preset_select].wp[i1].cv_steps[0][i2];
-            w.wp[i1].cv_steps[1][i2] = flashy.w[preset_select].wp[i1].cv_steps[1][i2];
-            w.wp[i1].cv_values[i2] = flashy.w[preset_select].wp[i1].cv_values[i2];
-        }
-
-        w.wp[i1].step_choice = flashy.w[preset_select].wp[i1].step_choice;
-        w.wp[i1].loop_end = flashy.w[preset_select].wp[i1].loop_end;
-        w.wp[i1].loop_len = flashy.w[preset_select].wp[i1].loop_len;
-        w.wp[i1].loop_start = flashy.w[preset_select].wp[i1].loop_start;
-        w.wp[i1].loop_dir = flashy.w[preset_select].wp[i1].loop_dir;
-        w.wp[i1].step_mode = flashy.w[preset_select].wp[i1].step_mode;
-        w.wp[i1].cv_mode[0] = flashy.w[preset_select].wp[i1].cv_mode[0];
-        w.wp[i1].cv_mode[1] = flashy.w[preset_select].wp[i1].cv_mode[1];
-        w.wp[i1].tr_mode = flashy.w[preset_select].wp[i1].tr_mode;
-    }
-
-    w.series_start = flashy.w[preset_select].series_start;
-    w.series_end = flashy.w[preset_select].series_end;
-
-    w.tr_mute[0] = flashy.w[preset_select].tr_mute[0];
-    w.tr_mute[1] = flashy.w[preset_select].tr_mute[1];
-    w.tr_mute[2] = flashy.w[preset_select].tr_mute[2];
-    w.tr_mute[3] = flashy.w[preset_select].tr_mute[3];
-    w.cv_mute[0] = flashy.w[preset_select].cv_mute[0];
-    w.cv_mute[1] = flashy.w[preset_select].cv_mute[1];
-
-    for(i1=0;i1<64;i1++)
-        w.series_list[i1] = flashy.w[preset_select].series_list[i1];
 }
 
 
@@ -691,7 +593,7 @@ int main(void)
     init_i2c_slave(0x10);
 
 
-    print_dbg("\r\n\n// white whale //////////////////////////////// ");
+    print_dbg("\r\n\n// white whale --- spooky keyboard edition //////////////////////////////// ");
     print_dbg_ulong(sizeof(flashy));
 
     print_dbg(" ");
@@ -705,51 +607,6 @@ int main(void)
         flash_unfresh();
         flashc_memset8((void*)&(flashy.edit_mode), mTrig, 4, true);
         flashc_memset32((void*)&(flashy.preset_select), 0, 4, true);
-
-
-        // clear out some reasonable defaults
-        for(i1=0;i1<16;i1++) {
-            for(i2=0;i2<16;i2++) {
-                w.wp[i1].steps[i2] = 0;
-                w.wp[i1].step_probs[i2] = 255;
-                w.wp[i1].cv_probs[0][i2] = 255;
-                w.wp[i1].cv_probs[1][i2] = 255;
-                w.wp[i1].cv_curves[0][i2] = 0;
-                w.wp[i1].cv_curves[1][i2] = 0;
-                w.wp[i1].cv_values[i2] = SCALES[2][i2];
-                w.wp[i1].cv_steps[0][i2] = 1<<i2;
-                w.wp[i1].cv_steps[1][i2] = 1<<i2;
-            }
-            w.wp[i1].step_choice = 0;
-            w.wp[i1].loop_end = 15;
-            w.wp[i1].loop_len = 15;
-            w.wp[i1].loop_start = 0;
-            w.wp[i1].loop_dir = 0;
-            w.wp[i1].step_mode = mForward;
-            w.wp[i1].cv_mode[0] = 0;
-            w.wp[i1].cv_mode[1] = 0;
-            w.wp[i1].tr_mode = 0;
-        }
-
-        w.series_start = 0;
-        w.series_end = 3;
-
-        w.tr_mute[0] = 1;
-        w.tr_mute[1] = 1;
-        w.tr_mute[2] = 1;
-        w.tr_mute[3] = 1;
-        w.cv_mute[0] = 1;
-        w.cv_mute[1] = 1;
-
-        for(i1=0;i1<64;i1++)
-            w.series_list[i1] = 1;
-
-        // save all presets, clear glyphs
-        for(i1=0;i1<8;i1++) {
-            flashc_memcpy((void *)&flashy.w[i1], &w, sizeof(w), true);
-            glyph[i1] = (1<<i1);
-            flashc_memcpy((void *)&flashy.glyph[i1], &glyph, sizeof(glyph), true);
-        }
     }
     else {
         // load from flash at startup
@@ -775,13 +632,6 @@ int main(void)
     timer_add(&keyTimer,50,&keyTimer_callback, NULL);
     timer_add(&adcTimer,100,&adcTimer_callback, NULL);
     clock_temp = 10000; // out of ADC range to force tempo
-
-    // setup daisy chain for two dacs
-    // spi_selectChip(SPI,DAC_SPI);
-    // spi_write(SPI,0x80);
-    // spi_write(SPI,0xff);
-    // spi_write(SPI,0xff);
-    // spi_unselectChip(SPI,DAC_SPI);
 
     while (true) {
         check_events();
