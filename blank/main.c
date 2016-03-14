@@ -224,14 +224,12 @@ static void monome_refresh_timer_callback(void* obj) {
 
 // monome: start polling
 void timers_set_monome(void) {
-    // print_dbg("\r\n setting monome timers");
     timer_add(&monomePollTimer, 20, &monome_poll_timer_callback, NULL );
     timer_add(&monomeRefreshTimer, 30, &monome_refresh_timer_callback, NULL );
 }
 
 // monome: stop polling
 void timers_unset_monome(void) {
-    // print_dbg("\r\n unsetting monome timers");
     timer_remove( &monomePollTimer );
     timer_remove( &monomeRefreshTimer );
 }
@@ -498,9 +496,6 @@ void check_events(void) {
 // flash commands
 u8 flash_is_fresh(void) {
   return (flashy.fresh != FIRSTRUN_KEY);
-  // flashc_memcpy((void *)&flashy.fresh, &i, sizeof(flashy.fresh),   true);
-  // flashc_memset32((void*)&(flashy.fresh), fresh_MAGIC, 4, true);
-  // flashc_memset((void *)nvram_data, 0x00, 8, sizeof(*nvram_data), true);
 }
 
 // write fresh status
@@ -509,8 +504,7 @@ void flash_unfresh(void) {
 }
 
 void flash_write(void) {
-    // print_dbg("\r write preset ");
-    // print_dbg_ulong(preset_select);
+    // w is a whale_set variable
     flashc_memcpy((void *)&flashy.w[preset_select], &w, sizeof(w), true);
     flashc_memcpy((void *)&flashy.glyph[preset_select], &glyph, sizeof(glyph), true);
     flashc_memset8((void*)&(flashy.preset_select), preset_select, 1, true);
