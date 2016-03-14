@@ -66,10 +66,6 @@ typedef struct {
 
 typedef const struct {
     u8 fresh;
-    edit_modes edit_mode;
-    u8 preset_select;
-    u8 glyph[8][8];
-    whale_set w[8];
 } nvram_data_t;
 
 whale_set w;
@@ -454,7 +450,7 @@ static void refresh_preset() {
     for(i1=0;i1<128;i1++)
         monomeLedBuffer[i1] = 0;
 
-    monomeLedBuffer[preset_select * 16] = 11;
+    /* monomeLedBuffer[preset_select * 16] = 11; */
 
     for(i1=0;i1<8;i1++)
         for(i2=0;i2<8;i2++)
@@ -504,19 +500,11 @@ void flash_unfresh(void) {
 }
 
 void flash_write(void) {
-    // w is a whale_set variable
-    flashc_memcpy((void *)&flashy.w[preset_select], &w, sizeof(w), true);
-    flashc_memcpy((void *)&flashy.glyph[preset_select], &glyph, sizeof(glyph), true);
-    flashc_memset8((void*)&(flashy.preset_select), preset_select, 1, true);
-    flashc_memset32((void*)&(flashy.edit_mode), edit_mode, 4, true);
 }
 
 void flash_read(void) {
     // figure out how to make this work
     u8 i1, i2;
-
-    print_dbg("\r\n read preset ");
-    print_dbg_ulong(preset_select);
 }
 
 
@@ -564,16 +552,16 @@ int main(void)
     if(flash_is_fresh()) {
         print_dbg("\r\nfirst run.");
         flash_unfresh();
-        flashc_memset8((void*)&(flashy.edit_mode), mTrig, 4, true);
-        flashc_memset32((void*)&(flashy.preset_select), 0, 4, true);
+        /* flashc_memset8((void*)&(flashy.edit_mode), mTrig, 4, true); */
+        /* flashc_memset32((void*)&(flashy.preset_select), 0, 4, true); */
     }
     else {
         // load from flash at startup
-        preset_select = flashy.preset_select;
-        edit_mode = flashy.edit_mode;
+        /* preset_select = flashy.preset_select; */
+        /* edit_mode = flashy.edit_mode; */
         flash_read();
-        for(i1=0;i1<8;i1++)
-            glyph[i1] = flashy.glyph[preset_select][i1];
+        /* for(i1=0;i1<8;i1++) */
+            /* glyph[i1] = flashy.glyph[preset_select][i1]; */
     }
 
     LENGTH = 15;
