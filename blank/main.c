@@ -450,13 +450,6 @@ static void refresh_preset() {
     for(i1=0;i1<128;i1++)
         monomeLedBuffer[i1] = 0;
 
-    /* monomeLedBuffer[preset_select * 16] = 11; */
-
-    for(i1=0;i1<8;i1++)
-        for(i2=0;i2<8;i2++)
-            if(glyph[i1] & (1<<i2))
-                monomeLedBuffer[i1*16+i2+8] = 11;
-
     monome_set_quadrant_flag(0);
     monome_set_quadrant_flag(1);
 }
@@ -552,16 +545,10 @@ int main(void)
     if(flash_is_fresh()) {
         print_dbg("\r\nfirst run.");
         flash_unfresh();
-        /* flashc_memset8((void*)&(flashy.edit_mode), mTrig, 4, true); */
-        /* flashc_memset32((void*)&(flashy.preset_select), 0, 4, true); */
     }
     else {
         // load from flash at startup
-        /* preset_select = flashy.preset_select; */
-        /* edit_mode = flashy.edit_mode; */
         flash_read();
-        /* for(i1=0;i1<8;i1++) */
-            /* glyph[i1] = flashy.glyph[preset_select][i1]; */
     }
 
     LENGTH = 15;
