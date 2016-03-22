@@ -33,7 +33,7 @@
 // this
 #include "conf_board.h"
 #include "ii.h"
-	
+
 
 #define FIRSTRUN_KEY 0x22
 
@@ -247,6 +247,7 @@ void clock(u8 phase) {
 		pos = next_pos;
 
 		// live param record
+        // XXX: how is live param recording done
 		if(param_accept && live_in) {
 			param_dest = &w.wp[pattern].cv_curves[edit_cv_ch][pos];
 			w.wp[pattern].cv_curves[edit_cv_ch][pos] = adc[1];
@@ -273,9 +274,9 @@ void clock(u8 phase) {
 			else if(drunk_step > 1) drunk_step = 1;
 
 			next_pos += drunk_step;
-			if(next_pos < 0) 
+			if(next_pos < 0)
 				next_pos = LENGTH;
-			else if(next_pos > LENGTH) 
+			else if(next_pos > LENGTH)
 				next_pos = 0;
 			else if(w.wp[pattern].loop_dir == 1 && next_pos < w.wp[pattern].loop_start)
 				next_pos = w.wp[pattern].loop_end;
@@ -300,13 +301,13 @@ void clock(u8 phase) {
 
 		// next pattern?
 		if(pos == w.wp[pattern].loop_end && w.wp[pattern].step_mode == mForward) {
-			if(edit_mode == mSeries) 
+			if(edit_mode == mSeries)
 				series_jump++;
 			else if(next_pattern != pattern)
 				pattern_jump++;
 		}
 		else if(pos == w.wp[pattern].loop_start && w.wp[pattern].step_mode == mReverse) {
-			if(edit_mode == mSeries) 
+			if(edit_mode == mSeries)
 				series_jump++;
 			else if(next_pattern != pattern)
 				pattern_jump++;
@@ -321,8 +322,9 @@ void clock(u8 phase) {
 
 		// TRIGGER
 		triggered = 0;
+        // XXX: check if pattern should play next
 		if((rnd() % 255) < w.wp[pattern].step_probs[pos]) {
-			
+
 			if(w.wp[pattern].step_choice & 1<<pos) {
 				count = 0;
 				for(i1=0;i1<4;i1++)
@@ -337,11 +339,12 @@ void clock(u8 phase) {
 					triggered = 1<<found[0];
 				else
 					triggered = 1<<found[rnd()%count];
-			}	
+			}
 			else {
 				triggered = w.wp[pattern].steps[pos];
 			}
-			
+
+            // XXX: ZZ trigger the pattern
 			if(w.wp[pattern].tr_mode == 0) {
 				if(triggered & 0x1 && w.tr_mute[0]) gpio_set_gpio_pin(B00);
 				if(triggered & 0x2 && w.tr_mute[1]) gpio_set_gpio_pin(B01);
@@ -383,11 +386,11 @@ void clock(u8 phase) {
 						found[count] = i1;
 						count++;
 					}
-				if(count == 1) 
+				if(count == 1)
 					cv_chosen[0] = found[0];
 				else
 					cv_chosen[0] = found[rnd() % count];
-				cv0 = w.wp[pattern].cv_values[cv_chosen[0]];			
+				cv0 = w.wp[pattern].cv_values[cv_chosen[0]];
 			}
 		}
 
@@ -403,12 +406,12 @@ void clock(u8 phase) {
 						found[count] = i1;
 						count++;
 					}
-				if(count == 1) 
+				if(count == 1)
 					cv_chosen[1] = found[0];
 				else
 					cv_chosen[1] = found[rnd() % count];
 
-				cv1 = w.wp[pattern].cv_values[cv_chosen[1]];			
+				cv1 = w.wp[pattern].cv_values[cv_chosen[1]];
 			}
 		}
 
@@ -440,7 +443,6 @@ void clock(u8 phase) {
 			gpio_clr_gpio_pin(B03);
 		}
  	}
-
 	// print_dbg("\r\n pos: ");
 	// print_dbg_ulong(pos);
 }
@@ -458,7 +460,7 @@ static softTimer_t monomeRefreshTimer  = { .next = NULL, .prev = NULL };
 
 
 
-static void clockTimer_callback(void* o) {  
+static void clockTimer_callback(void* o) {
 	// static event_t e;
 	// e.type = kEventTimer;
 	// e.data = 0;
@@ -472,14 +474,14 @@ static void clockTimer_callback(void* o) {
 	}
 }
 
-static void keyTimer_callback(void* o) {  
+static void keyTimer_callback(void* o) {
 	static event_t e;
 	e.type = kEventKeyTimer;
 	e.data = 0;
 	event_post(&e);
 }
 
-static void adcTimer_callback(void* o) {  
+static void adcTimer_callback(void* o) {
 	static event_t e;
 	e.type = kEventPollADC;
 	e.data = 0;
@@ -514,7 +516,7 @@ void timers_set_monome(void) {
 void timers_unset_monome(void) {
 	// print_dbg("\r\n unsetting monome timers");
 	timer_remove( &monomePollTimer );
-	timer_remove( &monomeRefreshTimer ); 
+	timer_remove( &monomeRefreshTimer );
 }
 
 
@@ -523,7 +525,7 @@ void timers_unset_monome(void) {
 // event handlers
 
 static void handler_FtdiConnect(s32 data) { ftdi_setup(); }
-static void handler_FtdiDisconnect(s32 data) { 
+static void handler_FtdiDisconnect(s32 data) {
 	timers_unset_monome();
 	// event_t e = { .type = kEventMonomeDisconnect };
 	// event_post(&e);
@@ -531,7 +533,7 @@ static void handler_FtdiDisconnect(s32 data) {
 
 static void handler_MonomeConnect(s32 data) {
 	u8 i1;
-	// print_dbg("\r\n// monome connect /////////////////"); 
+	// print_dbg("\r\n// monome connect /////////////////");
 	keycount_pos = 0;
 	key_count = 0;
 	SIZE = monome_size_x();
@@ -548,7 +550,6 @@ static void handler_MonomeConnect(s32 data) {
 	for(i1=0;i1<16;i1++)
 		if(w.wp[i1].loop_end > LENGTH)
 			w.wp[i1].loop_end = LENGTH;
-	
 
 	// monome_set_quadrant_flag(0);
 	// monome_set_quadrant_flag(1);
@@ -694,14 +695,14 @@ static void handler_KeyTimer(s32 data) {
 				}
 			}
 
-			// print_dbg("\rlong press: "); 
+			// print_dbg("\rlong press: ");
 			// print_dbg_ulong(held_keys[i1]);
 		}
 	}
 }
 
 static void handler_ClockNormal(s32 data) {
-	clock_external = !gpio_get_pin_value(B09); 
+	clock_external = !gpio_get_pin_value(B09);
 }
 
 
@@ -711,15 +712,15 @@ static void handler_ClockNormal(s32 data) {
 ////////////////////////////////////////////////////////////////////////////////
 // application grid code
 
-static void handler_MonomeGridKey(s32 data) { 
+static void handler_MonomeGridKey(s32 data) {
 	u8 x, y, z, index, i1, found, count;
 	s16 delta;
 	monome_grid_key_parse_event_data(data, &x, &y, &z);
-	// print_dbg("\r\n monome event; x: "); 
-	// print_dbg_hex(x); 
-	// print_dbg("; y: 0x"); 
-	// print_dbg_hex(y); 
-	// print_dbg("; z: 0x"); 
+	// print_dbg("\r\n monome event; x: ");
+	// print_dbg_hex(x);
+	// print_dbg("; y: 0x");
+	// print_dbg_hex(y);
+	// print_dbg("; z: 0x");
 	// print_dbg_hex(z);
 
 	//// TRACK LONG PRESSES
@@ -731,9 +732,9 @@ static void handler_MonomeGridKey(s32 data) {
 	} else {
 		found = 0; // "found"
 		for(i1 = 0; i1<key_count; i1++) {
-			if(held_keys[i1] == index) 
+			if(held_keys[i1] == index)
 				found++;
-			if(found) 
+			if(found)
 				held_keys[i1] = held_keys[i1+1];
 		}
 		key_count--;
@@ -776,7 +777,7 @@ static void handler_MonomeGridKey(s32 data) {
 		// glyph magic
 		if(z && x>7) {
 			glyph[y] ^= 1<<(x-8);
-			monomeFrameDirty++;	
+			monomeFrameDirty++;
 		}
 	}
 	// NOT PRESET
@@ -789,7 +790,7 @@ static void handler_MonomeGridKey(s32 data) {
 		if(y == 1) {
 			keycount_pos += z * 2 - 1;
 			if(keycount_pos < 0) keycount_pos = 0;
-			// print_dbg("\r\nkeycount: "); 
+			// print_dbg("\r\nkeycount: ");
 			// print_dbg_ulong(keycount_pos);
 
 			if(keycount_pos == 1 && z) {
@@ -831,7 +832,7 @@ static void handler_MonomeGridKey(s32 data) {
 					else if(x == 2 ) {
 						next_pos = (rnd() % (w.wp[pattern].loop_len + 1)) + w.wp[pattern].loop_start;
 						cut_pos = 1;
-						monomeFrameDirty++;					
+						monomeFrameDirty++;
 					}
 				}
 			}
@@ -848,13 +849,15 @@ static void handler_MonomeGridKey(s32 data) {
 	 			if(w.wp[pattern].loop_dir == 2)
 	 				w.wp[pattern].loop_len = (LENGTH - w.wp[pattern].loop_start) + w.wp[pattern].loop_end + 1;
 
-				// print_dbg("\r\nloop_len: "); 
+				// print_dbg("\r\nloop_len: ");
 				// print_dbg_ulong(w.wp[pattern].loop_len);
 			}
 		}
 
 		// top row
 		else if(y == 0) {
+            // XXX: alt key is pressed
+            // always top right 0
 			if(x == LENGTH) {
 				key_alt = z;
 				if(z == 0) {
@@ -868,13 +871,18 @@ static void handler_MonomeGridKey(s32 data) {
 					w.wp[pattern].tr_mode ^= 1;
 				else if(key_meta)
 					w.tr_mute[x] ^= 1;
-				else 
+				else
 					edit_mode = mTrig;
 				edit_prob = 0;
 				param_accept = 0;
 				monomeFrameDirty++;
 			}
+            // XXX: 128
 			else if(SIZE==16 && x > 3 && x < 12 && z) {
+                // XXX: ZZ CODE
+                //
+                // next_pos = 0;
+                //
 				param_accept = 0;
 				edit_cv_ch = (x-4)/4;
 				edit_prob = 0;
@@ -888,6 +896,7 @@ static void handler_MonomeGridKey(s32 data) {
 
 				monomeFrameDirty++;
 			}
+            // XXX: 64
 			else if(SIZE==8 && (x == 4 || x == 5) && z) {
 				param_accept = 0;
 				edit_cv_ch = x-4;
@@ -929,7 +938,7 @@ static void handler_MonomeGridKey(s32 data) {
 				else {
 					if(w.wp[pattern].step_probs[x] == 255) w.wp[pattern].step_probs[x] = 0;
 					else w.wp[pattern].step_probs[x] = 255;
-				}	
+				}
 				monomeFrameDirty++;
 			}
 			else if(edit_prob == 1) {
@@ -940,8 +949,8 @@ static void handler_MonomeGridKey(s32 data) {
 					else w.wp[pattern].step_probs[x] = 0;
 				}
 			}
-		}	
-		
+		}
+
 		// edit map and probs
 		else if(edit_mode == mMap) {
 			// step probs
@@ -952,19 +961,20 @@ static void handler_MonomeGridKey(s32 data) {
 					if(w.wp[pattern].cv_probs[edit_cv_ch][x] == 255) w.wp[pattern].cv_probs[edit_cv_ch][x] = 0;
 					else w.wp[pattern].cv_probs[edit_cv_ch][x] = 255;
 				}
-					
+
 				monomeFrameDirty++;
 			}
 			// edit data
 			else if(edit_prob == 0) {
 				// CURVES
+                // XXX: curves mode
 				if(w.wp[pattern].cv_mode[edit_cv_ch] == 0) {
 					if(y == 4 && z) {
-						if(center) 
+						if(center)
 							delta = 3;
 						else if(key_alt)
 							delta = 409;
-						else						
+						else
 							delta = 34;
 
 						if(key_meta == 0) {
@@ -1032,7 +1042,7 @@ static void handler_MonomeGridKey(s32 data) {
 							live_in = 1;
 						}
 						else if(center && z) {
-							if(key_meta == 0) 
+							if(key_meta == 0)
 								w.wp[pattern].cv_curves[edit_cv_ch][x] = rand() % ((adc[1] / 34) * 34 + 1);
 							else {
 								for(i1=0;i1<16;i1++) {
@@ -1054,6 +1064,7 @@ static void handler_MonomeGridKey(s32 data) {
 					}
 				}
 				// MAP
+                // XXX: map mode
 				else {
 					if(scale_select && z) {
 						// index -= 64;
@@ -1089,7 +1100,7 @@ static void handler_MonomeGridKey(s32 data) {
 							scale_select++;
 							monomeFrameDirty++;
 						}
-						// read pot					
+						// read pot
 						else if(y==7 && key_alt && edit_cv_value != -1 && x==LENGTH) {
 							param_accept = z;
 							param_dest = &(w.wp[pattern].cv_values[edit_cv_value]);
@@ -1109,7 +1120,7 @@ static void handler_MonomeGridKey(s32 data) {
 
 							if(y == 6)
 								delta *= -1;
-							
+
 							if(key_alt) {
 								for(i1=0;i1<16;i1++) {
 									if(w.wp[pattern].cv_values[i1] + delta > 4092)
@@ -1308,11 +1319,11 @@ static void refresh() {
 	}
 
 	// show pos loop dim
-	if(w.wp[pattern].loop_dir) {	
+	if(w.wp[pattern].loop_dir) {
 		for(i1=0;i1<SIZE;i1++) {
 			if(w.wp[pattern].loop_dir == 1 && i1 >= w.wp[pattern].loop_start && i1 <= w.wp[pattern].loop_end)
 				monomeLedBuffer[16+i1] = 4;
-			else if(w.wp[pattern].loop_dir == 2 && (i1 <= w.wp[pattern].loop_end || i1 >= w.wp[pattern].loop_start)) 
+			else if(w.wp[pattern].loop_dir == 2 && (i1 <= w.wp[pattern].loop_end || i1 >= w.wp[pattern].loop_start))
 				monomeLedBuffer[16+i1] = 4;
 		}
 	}
@@ -1432,9 +1443,9 @@ static void refresh() {
 						if(w.wp[pattern].cv_probs[edit_cv_ch][i1] == 255) monomeLedBuffer[48+i1] = 11;
 						else if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 7;
 
-						monomeLedBuffer[64+i1] = (i1<8) * 4;						
-						monomeLedBuffer[80+i1] = (i1<8) * 4;						
-						monomeLedBuffer[96+i1] = (i1<8) * 4;						
+						monomeLedBuffer[64+i1] = (i1<8) * 4;
+						monomeLedBuffer[80+i1] = (i1<8) * 4;
+						monomeLedBuffer[96+i1] = (i1<8) * 4;
 						monomeLedBuffer[112+i1] = 0;
 					}
 
@@ -1476,7 +1487,7 @@ static void refresh() {
 
 			// scroll position helper
 			monomeLedBuffer[32+i1*16+((scroll_pos+i1)/(64/SIZE))] = 4;
-			
+
 			// sidebar selection indicators
 			if(i1+scroll_pos > w.series_start && i1+scroll_pos < w.series_end) {
 				monomeLedBuffer[32+i1*16] = 4;
@@ -1658,9 +1669,9 @@ static void refresh_mono() {
 						// probs
 						if(w.wp[pattern].cv_probs[edit_cv_ch][i1] > 0) monomeLedBuffer[48+i1] = 11;
 
-						monomeLedBuffer[64+i1] = 0;						
-						monomeLedBuffer[80+i1] = 0;						
-						monomeLedBuffer[96+i1] = 0;						
+						monomeLedBuffer[64+i1] = 0;
+						monomeLedBuffer[80+i1] = 0;
+						monomeLedBuffer[96+i1] = 0;
 						monomeLedBuffer[112+i1] = 0;
 					}
 
@@ -1702,7 +1713,7 @@ static void refresh_mono() {
 
 			// scroll position helper
 			// monomeLedBuffer[32+i1*16+((scroll_pos+i1)/(64/SIZE))] = 4;
-			
+
 			// sidebar selection indicators
 			if((key_meta || key_alt) && i1+scroll_pos > w.series_start && i1+scroll_pos < w.series_end) {
 				monomeLedBuffer[32+i1*16] = 11;

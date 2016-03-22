@@ -40,4 +40,4 @@
 
 # Debug files
 *.dSYM/
-momo/avr32
+*/avr32
